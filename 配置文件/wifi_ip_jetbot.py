@@ -5,13 +5,58 @@ import socket
 import datetime
 import time
 import requests
+import platform
+import subprocess
+
+
+def get_wifi_ssid_windows():
+    try:
+        result = subprocess.run(
+            ["netsh", "wlan", "show", "interfaces"],
+            capture_output=True, text=True, check=True
+        )
+        for line in result.stdout.split("\n"):
+            if "SSID" in line and "BSSID" not in line:
+                ssid = line.split(":")[1].strip()
+                return ssid
+    except subprocess.CalledProcessError as e:
+        print(f"Failed to get Wi-Fi SSID: {e}")
+        return None
+
+def get_wifi_ssid_linux():
+    try:
+        result = subprocess.run(
+            ["iwgetid", "-r"],
+            capture_output=True, text=True, check=True
+        )
+        ssid = result.stdout.strip()
+        return ssid.decode("utf-8") if isinstance(ssid, bytes) else ssid
+    except subprocess.CalledProcessError as e:
+        print(f"Failed to get Wi-Fi SSID: {e}")
+        return None
+
+def get_wifi_ssid():
+    system = platform.system()
+    if system == "Windows":
+        return get_wifi_ssid_windows()
+    elif system == "Linux":
+        return get_wifi_ssid_linux()
+    else:
+        raise NotImplementedError(f"Unsupported OS: {system}")
 
 def get_local_ip():
-    hostname = socket.gethostname()
-    local_ip = socket.gethostbyname(hostname)
+    try:
+        # 创建一个UDP套接字
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        # 连接到外部地址（不实际发送数据）
+        s.connect(("8.8.8.8", 80))
+        local_ip = s.getsockname()[0]
+    except Exception as e:
+        local_ip = "Unable to get IP address"
+        print(f"Error: {e}")
+    finally:
+        s.close()
     return local_ip
-
-
 
 def check_network_connection():
     try:
@@ -53,15 +98,15 @@ def send_anonymous_email(to_email, subject, body):
         # 发送邮件
         server.sendmail(from_email, to_email, msg.as_string())
         print("Email sent successfully")
-        
     except Exception as e:
         print(f"Failed to send email: {e}")
-    
     finally:
         server.quit()
-
-# net_flag = check_network_connection()
-text = '当前时间:\t\t' + str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")) + '\nip-Address:\t' + get_local_ip()
+        
+wifi = get_wifi_ssid()
+text ='当前时间:\t\t' + str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")) +\
+    '\n当前WIFI:\t\t' + str(wifi) + \
+    '\nip-Address:\t' + get_local_ip()
 # print(text)
 while not check_network_connection():
     time.sleep(1)
