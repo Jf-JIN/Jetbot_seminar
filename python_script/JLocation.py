@@ -1,6 +1,6 @@
 
 '''
-该类是自定义的数据类，类主要关于小车的物理信息
+该类是自定义的数据类，主要关于小车的物理信息, 如距离, 速度, 加速度等
 主要接口: 
 JLocation_def:          用于存储Apriltag信息和IMU信息
     读取: 
@@ -37,14 +37,14 @@ JApril_Tag_Info_def:    用于存储Apriltag信息
 以上的所有信息的最终访问参数x,y,z, 必须使用方法x(), y(), z()
 
 调用示例：
-a = JLocation_def()                 实例化数据类
+a = JLocation_def()                  实例化数据类
 bb = JApril_Tag_Info_def()           实例化Apriltag类
 cc = JApril_Tag_Info_def()           实例化Apriltag类
 bb.set_distance([1, 1, 1])           写入数据
 cc.set_distance([2, 2, 2])           写入数据
-a.set_left_list([bb, cc])             写入数据
-d = a.left_list[1].distance.x()     读取左侧列表第2个元素的距离中的x数值
-e = a.left_list                     读取左侧列表
+a.set_left_list([bb, cc])            写入数据
+d = a.left_list[1].distance.x()      读取左侧列表第2个元素的距离中的x数值
+e = a.left_list                      读取左侧列表
 '''
 # 坐标系基础类
 class JCoordinate_def():
