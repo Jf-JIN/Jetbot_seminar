@@ -9,10 +9,10 @@ JLocation:          用于存储Apriltag信息和IMU信息
         front           正前Apriltag数据
         imu             IMU数据
     写入: 
-        set_left_list   写入左侧Apriltag数据
-        set_right_list  写入右侧Apriltag数据
-        set_front       写入正前Apriltag数据
-        set_imu         写入IMU数据
+        set_left_list()   写入左侧Apriltag数据
+        set_right_list()  写入右侧Apriltag数据
+        set_front()       写入正前Apriltag数据
+        set_imu()         写入IMU数据
 
 JImu_Info:          用于存储IMU信息
     读取:   
