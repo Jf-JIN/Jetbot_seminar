@@ -8,3 +8,6 @@ from JLocation import *
 class JData_Collection_def():
     def __init__(self, input) -> None: # 这里写类的输入(input)
         pass
+    
+    def update(self):
+        pass
