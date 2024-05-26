@@ -5,9 +5,25 @@
 
 from JLocation import *
 
-class JData_Collection_def():
+class Imu_Data_Collection():
+    def __init__(self) -> None:
+        pass
+
+
+class Camera_Data_Collection():
+    def __init__(self) -> None:
+        pass
+
+
+
+class JData_Collection():
     def __init__(self, input) -> None: # 这里写类的输入(input)
         pass
     
+    # 四元数转换为欧拉角
+    def quaternion_to_euler(self):
+        pass
+    
+    # 更新数据
     def update(self):
         pass
