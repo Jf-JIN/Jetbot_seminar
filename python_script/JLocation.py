@@ -1,11 +1,51 @@
 
 '''
 该类是自定义的数据类，类主要关于小车的物理信息
+主要接口: 
+JLocation_def:          用于存储Apriltag信息和IMU信息
+    读取: 
+        left_list   左侧Apriltag数据
+        right_list  右侧Apriltag数据
+        front       正前Apriltag数据
+        imu         IMU数据
+    写入: 
+        set_left_list   写入左侧Apriltag数据
+        set_right_list  写入右侧Apriltag数据
+        set_front       写入正前Apriltag数据
+        set_imu         写入IMU数据
+
+JImu_Info_def:          用于存储IMU信息
+    读取:   
+        velocity                速度
+        angular_velocity        角速度
+        acceleration            加速度
+        angular_acceleration    角加速度
+    写入:  
+        set_velocity()              写入速度
+        set_angular_velocity()      写入角速度
+        set_acceleration()          写入加速度
+        set_angular_acceleration()  写入角加速度
+
+JApril_Tag_Info_def:    用于存储Apriltag信息
+    读取: 
+        distance        距离
+        orientation     方向
+    写入: 
+        set_distance()      写入距离
+        set_orientation()   写入方向
+
+以上的所有信息的最终访问参数x,y,z, 必须使用方法x(), y(), z()
+
+调用示例：
+a = JLocation_def()                 实例化数据类
+bb = JApril_Tag_Info_def()           实例化Apriltag类
+cc = JApril_Tag_Info_def()           实例化Apriltag类
+bb.set_distance([1, 1, 1])           写入数据
+cc.set_distance([2, 2, 2])           写入数据
+a.set_left_list([bb, cc])             写入数据
+d = a.left_list[1].distance.x()     读取左侧列表第2个元素的距离中的x数值
+e = a.left_list                     读取左侧列表
 '''
-
-from types import UnionType
-from typing import Any
-
 # 坐标系基础类
 class JCoordinate_def():
     def __init__(self) -> None:
@@ -21,13 +61,13 @@ class JCoordinate_def():
         self.__x = x
 
     # 向Coordinate的 y 属性赋值
-    def set_y(self, y: float) -> None:
+    def set_y(self, y: float | int) -> None:
         if not isinstance(y, (float, int)):
             raise ValueError('y值必须为浮点数或者整数 !')
         self.__y = y
 
     # 向Coordinate的 z 属性赋值
-    def set_z(self, z: float) -> None:
+    def set_z(self, z: float | int) -> None:
         if not isinstance(z, (float, int)):
             raise ValueError('z值必须为浮点数或者整数 !')
         self.__z = z
@@ -74,10 +114,20 @@ class JApril_Tag_Info_def():
         self.__distance = JDistance_def()
         self.__orientation = JOrientation_def()
 
+    # 获取距离信息
+    @property
+    def distance(self) -> JDistance_def:
+        return self.__distance
+
+    # 获取方向信息
+    @property
+    def orientation(self) -> JOrientation_def:
+        return self.__orientation
+
     # 赋值距离参数
     def set_distance(self, distance_list: list | tuple) -> None:
-        # 如果输入不是元组或是列表，亦或元组/列表中的元素不是浮点数或整数，亦或其元素个数不为3，即非（x,y,z），则触发报错
-        if not isinstance(distance_list, (tuple, list)) or \
+        # 如果输入不是元组或是列表，亦或元组/列表中的元素不是浮点数或整数，亦或其元素个数不为3，即非(x,y,z)，则触发报错
+        if not isinstance(distance_list, (list, tuple)) or \
                 not all([isinstance(i, (float, int)) for i in distance_list]) or \
                 len(distance_list) != 3:
             raise ValueError(
@@ -86,10 +136,11 @@ class JApril_Tag_Info_def():
         self.__distance.set_y(distance_list[1])
         self.__distance.set_z(distance_list[2])
 
+
     # 赋值方向参数
     def set_orientation(self, orientation_list: list | tuple) -> None:
         # 如果输入不是元组或是列表，亦或元组/列表中的元素不是浮点数或整数，则触发报错
-        if not isinstance(orientation_list, (tuple, list)) or \
+        if not isinstance(orientation_list, (list, tuple)) or \
                 not all([isinstance(i, (float, int)) for i in orientation_list]) or \
                 len(orientation_list) != 3:
             raise ValueError(
@@ -98,17 +149,7 @@ class JApril_Tag_Info_def():
         self.__orientation.set_y(orientation_list[1])
         self.__orientation.set_z(orientation_list[2])
 
-    # 获取距离信息
-    def distance(self) -> JDistance_def:
-        return self.__distance
-
-    # 获取方向信息
-    def orientation(self) -> JOrientation_def:
-        return self.__orientation
-
 # Imu信息类
-
-
 class JImu_Info_def():
     def __init__(self) -> None:
         self.__imu_velocity = JImu_Velocity_def()
@@ -116,9 +157,29 @@ class JImu_Info_def():
         self.__imu_acceleration = JImu_Acceleration_def()
         self.__imu_angular_acceleration = JImu_Angular_Acceleration_def()
 
+    # 获取速度
+    @property
+    def velocity(self) -> JImu_Velocity_def:
+        return self.__imu_velocity
+
+    # 获取角速度
+    @property
+    def angular_velocity(self) -> JImu_Angular_Velocity_def:
+        return self.__imu_angular_velocity
+
+    # 获取加速度
+    @property
+    def acceleration(self) -> JImu_Acceleration_def:
+        return self.__imu_acceleration
+
+    # 获取角加速度
+    @property
+    def angular_acceleration(self) -> JImu_Angular_Acceleration_def:
+        return self.__imu_angular_acceleration
+
     # 赋值速度参数
-    def set_velocity(self, velocity_list: float | int) -> None:
-        if not isinstance(velocity_list, (tuple, list)) or \
+    def set_velocity(self, velocity_list: list | tuple) -> None:
+        if not isinstance(velocity_list, (list, tuple)) or \
                 not all([isinstance(i, (float, int)) for i in velocity_list]) or \
                 len(velocity_list) != 3:
             raise ValueError(
@@ -128,8 +189,8 @@ class JImu_Info_def():
         self.__imu_velocity.set_z(velocity_list[2])
 
     # 赋值角速度参数
-    def set_angular_velocity(self, angular_velocity_list: float | int) -> None:
-        if not isinstance(angular_velocity_list, (tuple, list)) or \
+    def set_angular_velocity(self, angular_velocity_list: list | tuple) -> None:
+        if not isinstance(angular_velocity_list, (list, tuple)) or \
                 not all([isinstance(i, (float, int)) for i in angular_velocity_list]) or \
                 len(angular_velocity_list) != 3:
             raise ValueError(
@@ -139,8 +200,8 @@ class JImu_Info_def():
         self.__imu_angular_velocity.set_z(angular_velocity_list[2])
 
     # 赋值加速度参数
-    def set_acceleration(self, acceleration_list: float | int) -> None:
-        if not isinstance(acceleration_list, (tuple, list)) or \
+    def set_acceleration(self, acceleration_list: list | tuple) -> None:
+        if not isinstance(acceleration_list, (list, tuple)) or \
                 not all([isinstance(i, (float, int)) for i in acceleration_list]) or \
                 len(acceleration_list) != 3:
             raise ValueError(
@@ -150,8 +211,8 @@ class JImu_Info_def():
         self.__imu_acceleration.set_z(acceleration_list[2])
 
     # 赋值角加速度参数
-    def set_angular_acceleration(self, angular_acceleration_list: float | int) -> None:
-        if not isinstance(angular_acceleration_list, (tuple, list)) or \
+    def set_angular_acceleration(self, angular_acceleration_list: list | tuple) -> None:
+        if not isinstance(angular_acceleration_list, (list, tuple)) or \
                 not all([isinstance(i, (float, int)) for i in angular_acceleration_list]) or \
                 len(angular_acceleration_list) != 3:
             raise ValueError(
@@ -160,21 +221,6 @@ class JImu_Info_def():
         self.__imu_angular_acceleration.set_y(angular_acceleration_list[1])
         self.__imu_angular_acceleration.set_z(angular_acceleration_list[2])
 
-    # 获取速度
-    def velocity(self) -> JImu_Velocity_def:
-        return self.__imu_velocity
-
-    # 获取角速度
-    def angular_velocity(self) -> JImu_Angular_Velocity_def:
-        return self.__imu_angular_velocity
-
-    # 获取加速度
-    def acceleration(self) -> JImu_Acceleration_def:
-        return self.__imu_acceleration
-
-    # 获取角加速度
-    def angular_acceleration(self) -> JImu_Angular_Acceleration_def:
-        return self.__imu_angular_acceleration
 
 # 位置信息类
 class JLocation_def():
@@ -184,17 +230,37 @@ class JLocation_def():
         self.__front = JApril_Tag_Info_def()
         self.__imu = JImu_Info_def()
 
+    # 获取左侧位置信息
+    @property
+    def left_list(self) -> list[JApril_Tag_Info_def]:
+        return self.__left_list
+
+    # 获取右侧信息
+    @property
+    def right_list(self) -> list[JApril_Tag_Info_def]:
+        return self.__right_list
+
+    # 获取前方信息
+    @property
+    def front(self) -> JApril_Tag_Info_def:
+        return self.__front
+
+    # 获取IMU信息
+    @property
+    def imu(self) -> JImu_Info_def:
+        return self.__imu
+
     # 赋值左侧位置信息
-    def set_left_list(self, left_list: tuple | list) -> None:
-        if not isinstance(left_list, (tuple, list)) or \
+    def set_left_list(self, left_list: list | tuple) -> None:
+        if not isinstance(left_list, (list, tuple)) or \
                 not all([isinstance(i, JApril_Tag_Info_def) for i in left_list]):
             raise ValueError(
                 '在 JLocation_def 中, 方法 set_left_list 的参数必须为元组或列表, 且其中元素必须为 JApril_Tag_Info_def !')
         self.__left_list = left_list
 
     # 赋值右侧位置信息
-    def set_right_list(self, right_list: tuple | list) -> None:
-        if not isinstance(right_list, (tuple, list)) or \
+    def set_right_list(self, right_list: list | tuple) -> None:
+        if not isinstance(right_list, (list, tuple)) or \
                 not all([isinstance(i, JApril_Tag_Info_def) for i in right_list]):
             raise ValueError(
                 '在 JLocation_def 中, 方法 set_right_list 的参数必须为元组或列表, 且其中元素必须为 JApril_Tag_Info_def !')
@@ -213,39 +279,3 @@ class JLocation_def():
             raise ValueError(
                 '在 JLocation_def 中, 方法 set_imu 的参数必须为 JApril_Tag_Info_def !')
         self.__imu = imu
-
-    # 获取左侧位置信息
-    def left_list(self, index:int|None = None) -> list:
-        if index or index == 0:
-            return self.__left_list[index]
-        else:
-            return self.__left_list
-
-    # 获取右侧信息
-    def right_list(self, index:int|None = None) -> list:
-        if index or index == 0:
-            return self.__right_list[index]
-        else:
-            return self.__right_list
-
-    # 获取前方信息
-    def front(self) -> JApril_Tag_Info_def:
-        return self.__front
-
-    def imu(self) -> JImu_Info_def:
-        return self.__imu
-
-a = JLocation_def()
-b = JApril_Tag_Info_def()
-c = JApril_Tag_Info_def()
-b.set_distance([1, 1, 1])
-c.set_distance([2, 2, 2])
-a.set_left_list([b, c])
-d = a.left_list(0)
-e = a.left_list(1)
-f =a.left_list()
-g = a.left_list(0).distance().x()
-print(d)
-print(e)
-print(f)
-print(g)
