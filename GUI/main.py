@@ -1,11 +1,11 @@
-from JClient_UI import *
+from JClient_Function import *
 
 
 import sys
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget
 
-class Main(QMainWindow, JClient_UI):
+class Main(QMainWindow, JClient_Function):
     def __init__(self) -> None:
         super().__init__()
 
