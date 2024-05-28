@@ -14,7 +14,12 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1000, 1051)
+        MainWindow.resize(811, 750)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
+        MainWindow.setSizePolicy(sizePolicy)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -23,11 +28,14 @@ class Ui_MainWindow(object):
         self.centralwidget.setSizePolicy(sizePolicy)
         self.centralwidget.setStyleSheet("QWidget#centralwidget{\n"
 "    background-color: rgb(85, 170, 255);\n"
-"    min-width: 1000px;\n"
-"    min-height: 1000px;\n"
+"    min-width: 600px;\n"
+"    min-height: 600px;\n"
 "}\n"
 "\n"
 "QPushButton{\n"
+"    background-color: rgb(100, 190, 0);\n"
+"    min-width:50px;\n"
+"    min-height:40px;\n"
 "    border: 1px solid;\n"
 "    border-radius: 20px;\n"
 "    font: 18px \'幼圆\';\n"
@@ -66,7 +74,7 @@ class Ui_MainWindow(object):
 "}\n"
 "\n"
 "QFrame#frame_left{\n"
-"    max-width: 500px;\n"
+"    min-width: 300px;\n"
 "}\n"
 "\n"
 "QFrame#frame_left QLabel{\n"
@@ -80,8 +88,12 @@ class Ui_MainWindow(object):
 "}\n"
 "\n"
 "QFrame#frame_left QLabel#lb_status{\n"
-"    padding: 5px;\n"
+"    margin-left: 5px;\n"
+"    margin-right: 10px;\n"
+"    padding-right: 10px;\n"
 "    font-weight: bold;\n"
+"    min-width:60px;\n"
+"    max-width: 60px;\n"
 "}\n"
 "\n"
 "QFrame#frame_task{\n"
@@ -96,6 +108,13 @@ class Ui_MainWindow(object):
 "    font: 18px \'Arial\';\n"
 "    min-height: 35px;\n"
 "    max-height: 40px;\n"
+"}\n"
+"\n"
+"QTextBrowser{\n"
+"    border: 1px solid;\n"
+"    border-radius: 10px;\n"
+"    background-color: rgb(50, 50, 50);\n"
+"    color: rgb(240, 240, 240)\n"
 "}")
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.centralwidget)
@@ -104,7 +123,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.frame_left = QtWidgets.QFrame(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setHorizontalStretch(70)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.frame_left.sizePolicy().hasHeightForWidth())
         self.frame_left.setSizePolicy(sizePolicy)
@@ -180,22 +199,6 @@ class Ui_MainWindow(object):
         self.le_jetbot_ip.setSizePolicy(sizePolicy)
         self.le_jetbot_ip.setObjectName("le_jetbot_ip")
         self.formLayout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.le_jetbot_ip)
-        self.label_4 = QtWidgets.QLabel(self.frame_7)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.label_4.sizePolicy().hasHeightForWidth())
-        self.label_4.setSizePolicy(sizePolicy)
-        self.label_4.setObjectName("label_4")
-        self.formLayout.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.label_4)
-        self.cbb_port = QtWidgets.QComboBox(self.frame_7)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.cbb_port.sizePolicy().hasHeightForWidth())
-        self.cbb_port.setSizePolicy(sizePolicy)
-        self.cbb_port.setObjectName("cbb_port")
-        self.formLayout.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.cbb_port)
         self.label_3 = QtWidgets.QLabel(self.frame_7)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -236,27 +239,29 @@ class Ui_MainWindow(object):
         self.lb_status.setSizePolicy(sizePolicy)
         self.lb_status.setObjectName("lb_status")
         self.horizontalLayout_4.addWidget(self.lb_status)
-        spacerItem = QtWidgets.QSpacerItem(290, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_4.addItem(spacerItem)
+        self.pb_connect = QtWidgets.QPushButton(self.frame_4)
+        self.pb_connect.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.pb_connect.setObjectName("pb_connect")
+        self.horizontalLayout_4.addWidget(self.pb_connect)
         self.formLayout.setWidget(5, QtWidgets.QFormLayout.FieldRole, self.frame_4)
         self.verticalLayout_3.addWidget(self.frame_7)
         self.verticalLayout.addWidget(self.frame_3)
         self.frame = QtWidgets.QFrame(self.frame_left)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setVerticalStretch(100)
         sizePolicy.setHeightForWidth(self.frame.sizePolicy().hasHeightForWidth())
         self.frame.setSizePolicy(sizePolicy)
         self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame.setObjectName("frame")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.frame)
-        self.verticalLayout_4.setContentsMargins(0, 0, 0, -1)
+        self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.frame_2 = QtWidgets.QFrame(self.frame)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(50)
+        sizePolicy.setVerticalStretch(100)
         sizePolicy.setHeightForWidth(self.frame_2.sizePolicy().hasHeightForWidth())
         self.frame_2.setSizePolicy(sizePolicy)
         self.frame_2.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -296,12 +301,18 @@ class Ui_MainWindow(object):
         self.cbb_task.setObjectName("cbb_task")
         self.formLayout_2.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.cbb_task)
         self.verticalLayout_5.addWidget(self.frame_task)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout_5.addItem(spacerItem1)
+        self.textBrowser = QtWidgets.QTextBrowser(self.frame_2)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(60)
+        sizePolicy.setHeightForWidth(self.textBrowser.sizePolicy().hasHeightForWidth())
+        self.textBrowser.setSizePolicy(sizePolicy)
+        self.textBrowser.setObjectName("textBrowser")
+        self.verticalLayout_5.addWidget(self.textBrowser)
         self.frame_5 = QtWidgets.QFrame(self.frame_2)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(100)
+        sizePolicy.setVerticalStretch(10)
         sizePolicy.setHeightForWidth(self.frame_5.sizePolicy().hasHeightForWidth())
         self.frame_5.setSizePolicy(sizePolicy)
         self.frame_5.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -334,7 +345,7 @@ class Ui_MainWindow(object):
         self.frame_controll = QtWidgets.QFrame(self.frame)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(100)
+        sizePolicy.setVerticalStretch(50)
         sizePolicy.setHeightForWidth(self.frame_controll.sizePolicy().hasHeightForWidth())
         self.frame_controll.setSizePolicy(sizePolicy)
         self.frame_controll.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -354,36 +365,6 @@ class Ui_MainWindow(object):
         self.pb_up.setText("")
         self.pb_up.setObjectName("pb_up")
         self.gridLayout.addWidget(self.pb_up, 0, 1, 1, 1)
-        self.pb_left = QtWidgets.QPushButton(self.frame_controll)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.pb_left.sizePolicy().hasHeightForWidth())
-        self.pb_left.setSizePolicy(sizePolicy)
-        self.pb_left.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.pb_left.setText("")
-        self.pb_left.setObjectName("pb_left")
-        self.gridLayout.addWidget(self.pb_left, 1, 0, 1, 1)
-        self.pb_center = QtWidgets.QPushButton(self.frame_controll)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.pb_center.sizePolicy().hasHeightForWidth())
-        self.pb_center.setSizePolicy(sizePolicy)
-        self.pb_center.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.pb_center.setText("")
-        self.pb_center.setObjectName("pb_center")
-        self.gridLayout.addWidget(self.pb_center, 1, 1, 1, 1)
-        self.pb_right = QtWidgets.QPushButton(self.frame_controll)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.pb_right.sizePolicy().hasHeightForWidth())
-        self.pb_right.setSizePolicy(sizePolicy)
-        self.pb_right.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.pb_right.setText("")
-        self.pb_right.setObjectName("pb_right")
-        self.gridLayout.addWidget(self.pb_right, 1, 2, 1, 1)
         self.pb_down = QtWidgets.QPushButton(self.frame_controll)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -394,12 +375,42 @@ class Ui_MainWindow(object):
         self.pb_down.setText("")
         self.pb_down.setObjectName("pb_down")
         self.gridLayout.addWidget(self.pb_down, 2, 1, 1, 1)
+        self.pb_left = QtWidgets.QPushButton(self.frame_controll)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.pb_left.sizePolicy().hasHeightForWidth())
+        self.pb_left.setSizePolicy(sizePolicy)
+        self.pb_left.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.pb_left.setText("")
+        self.pb_left.setObjectName("pb_left")
+        self.gridLayout.addWidget(self.pb_left, 1, 0, 1, 1)
+        self.pb_right = QtWidgets.QPushButton(self.frame_controll)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.pb_right.sizePolicy().hasHeightForWidth())
+        self.pb_right.setSizePolicy(sizePolicy)
+        self.pb_right.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.pb_right.setText("")
+        self.pb_right.setObjectName("pb_right")
+        self.gridLayout.addWidget(self.pb_right, 1, 2, 1, 1)
+        self.pb_center = QtWidgets.QPushButton(self.frame_controll)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.pb_center.sizePolicy().hasHeightForWidth())
+        self.pb_center.setSizePolicy(sizePolicy)
+        self.pb_center.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.pb_center.setText("")
+        self.pb_center.setObjectName("pb_center")
+        self.gridLayout.addWidget(self.pb_center, 1, 1, 1, 1)
         self.verticalLayout_4.addWidget(self.frame_controll)
         self.verticalLayout.addWidget(self.frame)
         self.horizontalLayout.addWidget(self.frame_left)
         self.frame_right = QtWidgets.QFrame(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setHorizontalStretch(100)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.frame_right.sizePolicy().hasHeightForWidth())
         self.frame_right.setSizePolicy(sizePolicy)
@@ -440,7 +451,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addWidget(self.frame_right)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1000, 26))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 811, 23))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
@@ -455,11 +466,11 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.lb_title.setText(_translate("MainWindow", "JetBot 客户端"))
         self.label_6.setText(_translate("MainWindow", "JetBot IP"))
-        self.label_4.setText(_translate("MainWindow", "本机端口"))
-        self.label_3.setText(_translate("MainWindow", "JetBot端口"))
+        self.label_3.setText(_translate("MainWindow", "本机端口"))
         self.lb_jetbot_port.setText(_translate("MainWindow", "12345"))
         self.label_8.setText(_translate("MainWindow", "连接状态"))
         self.lb_status.setText(_translate("MainWindow", "未连接"))
+        self.pb_connect.setText(_translate("MainWindow", "连接"))
         self.label_9.setText(_translate("MainWindow", "任务内容"))
         self.pb_launch.setText(_translate("MainWindow", "运行"))
         self.pb_stop.setText(_translate("MainWindow", "停止"))
