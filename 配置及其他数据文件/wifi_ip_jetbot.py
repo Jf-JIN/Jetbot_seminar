@@ -3,10 +3,10 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import socket
 import datetime
-import time
 import requests
 import platform
 import subprocess
+import time
 
 
 def get_wifi_ssid_windows():
@@ -58,22 +58,6 @@ def get_local_ip():
         s.close()
     return local_ip
 
-def check_network_connection():
-    try:
-        # 尝试进行HTTP请求
-        response = requests.get("http://www.google.com", timeout=5)
-        # 检查响应状态码
-        return response.status_code == 200
-    except (requests.ConnectionError, requests.Timeout):
-        return False
-
-# 使用示例
-if check_network_connection():
-    print("Network is connected")
-else:
-    print("No network connection")
-
-
 def send_anonymous_email(to_email, subject, body):
 
     smtp_server = 'smtp.office365.com'  # SMTP服务器
@@ -102,13 +86,22 @@ def send_anonymous_email(to_email, subject, body):
         print(f"Failed to send email: {e}")
     finally:
         server.quit()
+
+
+while 1:
+    try:
+        # 尝试进行HTTP请求
+        response = requests.get("http://www.google.com", timeout=5)
+        # 检查响应状态码
+        if response.status_code == 200:
+            break
+        else:
+            time.sleep(1)
+    except (requests.ConnectionError, requests.Timeout):
+        time.sleep(1)
         
 wifi = get_wifi_ssid()
 text ='当前时间:\t\t' + str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")) +\
     '\n当前WIFI:\t\t' + str(wifi) + \
     '\nip-Address:\t' + get_local_ip()
-# print(text)
-while not check_network_connection():
-    time.sleep(1)
-    
 send_anonymous_email('jetbotG7@outlook.com', 'Jetbot-Ip-Address', text)
