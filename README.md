@@ -1,9 +1,9 @@
 # Jetbot_seminar
 
 - [简述](https://github.com/Jf-JIN/Jetbot_seminar?tab=readme-ov-file#%E7%AE%80%E8%BF%B0)
-- [具体流程](##具体流程)
-- [任务分配](##任务分配)
-- [代码规则](##代码规则)
+- [具体流程](https://github.com/Jf-JIN/Jetbot_seminar?tab=readme-ov-file#%E5%85%B7%E4%BD%93%E6%B5%81%E7%A8%8B)
+- [任务分配](https://github.com/Jf-JIN/Jetbot_seminar?tab=readme-ov-file#%E4%BB%BB%E5%8A%A1%E5%88%86%E9%85%8D)
+- [代码规则](https://github.com/Jf-JIN/Jetbot_seminar?tab=readme-ov-file#%E4%BB%A3%E7%A0%81%E8%A7%84%E5%88%99)
 - [项目进度](https://github.com/Jf-JIN/Jetbot_seminar?tab=readme-ov-file#%E9%A1%B9%E7%9B%AE%E8%BF%9B%E5%BA%A6)
 - [None](##None)
 ## 简述
