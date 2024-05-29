@@ -1,16 +1,9 @@
 # Jetbot_seminar
 
-- [简述](##简述)
+- [简述](https://github.com/Jf-JIN/Jetbot_seminar?tab=readme-ov-file#%E7%AE%80%E8%BF%B0)
 - [具体流程](##具体流程)
 - [任务分配](##任务分配)
 - [代码规则](##代码规则)
-  - [自定义的数据类的说明](### 自定义的数据类的说明)
-  - [写代码的建议](### 写代码的建议)
-    - [声明](### 声明)
-    - [注释](### 注释)
-    - [类](### 类)
-    - [方法](### 方法)
-    - [变量名/函数名/类名](### 变量名/函数名/类名)
 - [项目进度](https://github.com/Jf-JIN/Jetbot_seminar?tab=readme-ov-file#%E9%A1%B9%E7%9B%AE%E8%BF%9B%E5%BA%A6)
 - [None](##None)
 ## 简述
