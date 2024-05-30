@@ -87,11 +87,9 @@ class JCoordinate():
         return self.__z
 
 
-
 # 距离信息类
 class JDistance(JCoordinate):
     pass
-
 
 
 # 方向信息类
@@ -99,11 +97,9 @@ class JOrientation(JCoordinate):
     pass
 
 
-
 # 从Imu传感器获取的速度类
 class JImu_Velocity(JCoordinate):
     pass
-
 
 
 # 从Imu传感器获取的角速度类
@@ -111,17 +107,20 @@ class JImu_Angular_Velocity(JCoordinate):
     pass
 
 
-
 # 从Imu传感器获取的加速度类
 class JImu_Acceleration(JCoordinate):
     pass
-
 
 
 # 从Imu传感器获取的加速度类
 class JImu_Angular_Acceleration(JCoordinate):
     pass
 
+# 从Imu传感器获取的加速度类
+
+
+class JImu_Magnetic_Field(JCoordinate):
+    pass
 
 
 # Apriltag信息类
@@ -129,6 +128,7 @@ class JApril_Tag_Info():
     def __init__(self):
         self.__distance = JDistance()
         self.__orientation = JOrientation()
+        self.__id = None
 
     # 获取距离信息
     @property
@@ -139,6 +139,10 @@ class JApril_Tag_Info():
     @property
     def orientation(self) -> JOrientation:
         return self.__orientation
+
+    @property
+    def id(self) -> JOrientation:
+        return self.__id
 
     # 赋值距离参数
     def set_distance(self, distance_list: list | tuple) -> None:
@@ -164,6 +168,13 @@ class JApril_Tag_Info():
         self.__orientation.set_y(orientation_list[1])
         self.__orientation.set_z(orientation_list[2])
 
+    # 赋值id参数
+    def set_id(self, id: int) -> None:
+        # 如果输入不是元组或是列表，亦或元组/列表中的元素不是浮点数或整数，亦或其元素个数不为3，即非(x,y,z)，则触发报错
+        if not isinstance(id, int):
+            raise ValueError(
+                '在 JApril_Tag 中, 方法 set_id 的参数必须为整数')
+        self.__id = id
 
 
 # Imu信息类
@@ -173,6 +184,7 @@ class JImu_Info():
         self.__imu_angular_velocity = JImu_Angular_Velocity()
         self.__imu_acceleration = JImu_Acceleration()
         self.__imu_angular_acceleration = JImu_Angular_Acceleration()
+        self.__magnetic_field = JImu_Magnetic_Field()
 
     # 获取速度
     @property
@@ -193,6 +205,11 @@ class JImu_Info():
     @property
     def angular_acceleration(self) -> JImu_Angular_Acceleration:
         return self.__imu_angular_acceleration
+
+    # 获取磁场
+    @property
+    def magnetic_field(self) -> JImu_Magnetic_Field:
+        return self.__magnetic_field
 
     # 赋值速度参数
     def set_velocity(self, velocity_list: list | tuple) -> None:
@@ -238,6 +255,16 @@ class JImu_Info():
         self.__imu_angular_acceleration.set_y(angular_acceleration_list[1])
         self.__imu_angular_acceleration.set_z(angular_acceleration_list[2])
 
+    # 赋值磁场参数
+    def set_magnetic_field(self, magnetic_field_list: list | tuple) -> None:
+        if not isinstance(magnetic_field_list, (list, tuple)) or \
+                not all([isinstance(i, (float, int)) for i in magnetic_field_list]) or \
+                len(magnetic_field_list) != 3:
+            raise ValueError(
+                '在 JImu_Info 中, 方法 set_magnetic_field 的参数必须为元组或列表, 且其中元素必须为浮点数或整数, 且长度必须为3, 即(x, y, z) !')
+        self.__magnetic_field.set_x(magnetic_field_list[0])
+        self.__magnetic_field.set_y(magnetic_field_list[1])
+        self.__magnetic_field.set_z(magnetic_field_list[2])
 
 
 # 位置信息类
