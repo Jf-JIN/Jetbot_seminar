@@ -1,0 +1,161 @@
+# 安装gparted，以扩展存储空间
+sudo apt update
+sudo apt upgrade -y
+sudo apt install gparted
+gparted
+
+
+# 安装Oled脚本环境
+
+sudo apt update
+sudo apt upgrade -y
+sudo apt install -y python3 python3-pip -y
+sudo pip3 install Adafruit-SSD1306
+sudo pip3 install Pillow
+sudo pip3 install netifaces
+sudo apt install -y i2c-tools -y
+sudo apt install -y python3-smbus -y
+
+
+# 安装Jupyter-Lab
+
+sudo apt install -y nodejs npm
+pip3 install jupyter jupyterlab
+jupyter-lab --generate-config
+
+
+# 编辑配置文件
+
+gedit /home/jetson/.jupyter/jupyter_lab_config.py
+c.ServerApp.allow_origin = '*'
+c.ServerApp.ip = '0.0.0.0'
+jupyter-lab password
+
+
+# 安装ROS
+
+sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+sudo apt install -y curl
+curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
+sudo apt update
+sudo apt install -y ros-noetic-desktop-full
+echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
+sudo apt install -y python3-rosdep python3-rosinstall python3-rosinstall-generator python3-wstool build-essential
+sudo apt install -y python3-rosdep
+sudo rosdep init
+rosdep update
+
+
+#安装Catkin
+
+sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu `lsb_release -sc` main" > /etc/apt/sources.list.d/ros-latest.list'
+wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
+sudo apt-get update
+sudo apt-get install -y python3-catkin-tools
+
+
+# 配置文件夹
+
+mkdir workspace
+cd workspace
+mkdir catkin_ws
+cd catkin_ws
+mkdir src
+echo "source ~/workspace/catkin_ws/devel/setup.bash" >> ~/.bashrc
+catkin init
+catkin build
+
+
+# 如果文件夹未成功建立
+mkdir logs
+mkdir build
+mkdir devel
+
+
+# 回到catkin_ws文件夹
+# 安装jetson-inference
+
+sudo apt-get update
+sudo apt-get install -y git cmake libpython3-dev python3-numpy
+git clone --recursive --depth=1 https://github.com/dusty-nv/jetson-inference
+cd jetson-inference
+mkdir build
+cd build
+cmake ../
+make -j$(nproc)
+sudo make install
+sudo ldconfig
+
+
+# 回到catkin_ws文件夹
+# 安装2JetsonGPIO
+
+git clone https://github.com/pjueon/JetsonGPIO
+cd JetsonGPIO
+mkdir build && cd build
+cmake ..
+sudo cmake --build . --target install
+cmake .. -DBUILD_EXAMPLES=ON
+cmake --build . --target examples 
+
+
+# 安装其他包
+
+sudo pip3 install adafruit-circuitpython-bno08x
+sudo pip install Adafruit_MotorHAT
+sudo apt install -y ros-noetic-apriltag-ros
+sudo apt install -y ros-noetic-imu-filter-madgwick
+sudo apt install -y ros-noetic-image-pipeline
+catkin build
+
+# 测试
+
+roscore
+
+# 测试电机
+
+rosrun demo motor_driver.py
+rosrun demo teleop_keyboard.py
+
+# 相机
+
+rosrun demo camera.py
+rqt
+
+# IMU
+
+rosrun demo imu_publisher.py
+
+# Apriltag
+
+rosrun demo camera.py
+roslaunch camera mono_cam_rect.launch
+roslaunch apriltag_ros continuous_detection.launch
+
+# 安装Python3.11
+sudo apt update
+sudo apt install -y software-properties-common
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt update
+sudo apt install -y python3.11
+
+覆盖数据文件
+continuous_detection.launch
+ost_mono.yaml
+settings.yaml
+tags.yaml
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
