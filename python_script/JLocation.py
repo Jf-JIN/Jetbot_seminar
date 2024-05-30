@@ -20,19 +20,23 @@ JImu_Info:          用于存储IMU信息
         angular_velocity            角速度
         acceleration                加速度
         angular_acceleration        角加速度
+        magnetic_field              磁场
     写入:  
         set_velocity()              写入速度
         set_angular_velocity()      写入角速度
         set_acceleration()          写入加速度
         set_angular_acceleration()  写入角加速度
+        set_magnetic_field()        写入磁场
 
 JApril_Tag_Info:    用于存储Apriltag信息
     读取: 
         distance            距离
         orientation         方向
+        id                  id
     写入: 
         set_distance()      写入距离
-        set_orientation()   写入方向
+        set_orientation()   写入方向3
+        set_id()   写入id
 
 以上的所有信息的最终访问参数x,y,z, 必须使用方法x(), y(), z()
 
