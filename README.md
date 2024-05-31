@@ -85,7 +85,15 @@ def function(a: int = 0, b: str | int = 0, c: None)->list[int | str]:
    **类名**  使用 **_单词首字母大写，其余时候小写_**  +  `_`
 
    如果类在实例时和变量名相同，则推荐在类名后加 `_def`  
-   
+
+6. #### 文件名的命名
+
+    由于可能存在文件寻路径的问题，本项目不建子文件夹
+
+    * 文件命名应为 模块名 + 自己文件名称, 中间以下划线连接，例如：JAlgorithm_JWall_Const.py， JAlgorithm 是模块名称， JWall 是自己起的名称，Const 是附属于 JWall 的。
+
+    * 模块的主文件应命名为 模块名 + _main， 如： JAlgorithm_main.py
+
 
 ## 项目进度
 
