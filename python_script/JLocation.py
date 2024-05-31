@@ -4,41 +4,41 @@
 主要接口: 
 JLocation:          用于存储Apriltag信息和IMU信息
     读取: 
-        left_list       左侧Apriltag数据
-        right_list      右侧Apriltag数据
-        front           正前Apriltag数据
-        imu             IMU数据
+        left_list   -> list[JApril_Tag_Info]        左侧Apriltag数据
+        right_list  -> list[JApril_Tag_Info]        右侧Apriltag数据
+        front       -> JApril_Tag_Info              正前Apriltag数据
+        imu         -> JImu_Info                    IMU数据
     写入: 
-        set_left_list()   写入左侧Apriltag数据
-        set_right_list()  写入右侧Apriltag数据
-        set_front()       写入正前Apriltag数据
-        set_imu()         写入IMU数据
+        set_left_list(left_list: list | tuple)    写入左侧Apriltag数据
+        set_right_list(right_list: list | tuple)  写入右侧Apriltag数据
+        set_front(front: JApril_Tag_Info)         写入正前Apriltag数据
+        set_imu(imu: JImu_Info)                   写入IMU数据
 
 JImu_Info:          用于存储IMU信息
     读取:   
-        velocity                    速度
-        angular_velocity            角速度
-        acceleration                加速度
-        angular_acceleration        角加速度
-        magnetic_field              磁场
+        velocity               -> JImu_Velocity                 速度
+        angular_velocity       -> JImu_Angular_Velocity         角速度
+        acceleration           -> JImu_Acceleration             加速度
+        angular_acceleration   -> JImu_Angular_Acceleration     角加速度
+        magnetic_field         -> JImu_Magnetic_Field           磁场
     写入:  
-        set_velocity()              写入速度
-        set_angular_velocity()      写入角速度
-        set_acceleration()          写入加速度
-        set_angular_acceleration()  写入角加速度
-        set_magnetic_field()        写入磁场
+        set_velocity(velocity_list: list | tuple)                           写入速度
+        set_angular_velocity(angular_velocity_list: list | tuple)           写入角速度
+        set_acceleration(acceleration_list: list | tuple)                   写入加速度
+        set_angular_acceleration(angular_acceleration_list: list | tuple)   写入角加速度
+        set_magnetic_field(magnetic_field_list: list | tuple)               写入磁场
 
 JApril_Tag_Info:    用于存储Apriltag信息
     读取: 
-        distance            距离
-        orientation         方向
-        id                  id
+        distance       -> JDistance     距离
+        orientation    -> JOrientation  方向
+        id             -> int           id
     写入: 
-        set_distance()      写入距离
-        set_orientation()   写入方向3
-        set_id()   写入id
+        set_distance(distance_list: list | tuple)           写入距离
+        set_orientation(orientation_list: list | tuple)     写入方向3
+        set_id(id: int)                                     写入id
 
-以上的所有信息的最终访问参数x,y,z, 必须使用方法x(), y(), z()
+重要:  以上的所有信息的最终访问参数x,y,z, 必须使用方法x(), y(), z()
 
 调用示例：
 a = JLocation()                     实例化数据类
@@ -145,7 +145,7 @@ class JApril_Tag_Info():
         return self.__orientation
 
     @property
-    def id(self) -> JOrientation:
+    def id(self) -> int:
         return self.__id
 
     # 赋值距离参数
