@@ -108,7 +108,13 @@ class JWall():
         self.__orientation__: str = ''
         self.__middle__ = JApriltag_Position()
         self.__id_list__: list = []
-
+        self.___width__ = 0.250  # m
+        self.__width__: float = 0.250  # m
+        self.__height__: float = 0.170  # m
+        self.thickness__: float = 0.003  # m
+        self.big_tag_size__: float = 0.140  # m
+        self.__small_tag_size__: float = 0.028  # m
+        
     @property
     def main_0(self) -> JApril_Code:
         return self.__main_0__
@@ -174,17 +180,28 @@ class JWall():
             self.__orientation__ = 'H'
         else:
             self.__orientation__ = 'V'
+        # 如果存在4个 Apriltag 码：
         if self.main_0.pos.x and self.sub_0.pos.x:
             self.middle.set_x((self.main_0.pos.x + self.sub_0.pos.x) / 2)
             self.middle.set_y((self.main_0.pos.y + self.sub_0.pos.y) / 2)
             self.middle.set_z((self.main_0.pos.z + self.sub_0.pos.z) / 2)
+        # 如果只有 主Apriltag码：
         elif self.main_0.pos.x:
-            self.middle.set_x(self.main_0.pos.x)
-            self.middle.set_y(self.main_0.pos.y)
+            if self.__orientation__ == 'H':
+                self.middle.set_x(self.main_0.pos.x)
+                self.middle.set_y(self.main_0.pos.y+0.0015)
+            else:
+                self.middle.set_x(self.main_0.pos.x+0.0015)
+                self.middle.set_y(self.main_0.pos.y)
             self.middle.set_z(self.main_0.pos.z)
+        # 如果只有 副Apriltag码:
         elif self.sub_0.pos.x:
-            self.middle.set_x(self.sub_0.pos.x)
-            self.middle.set_y(self.sub_0.pos.y)
+            if self.__orientation__ == 'H':
+                self.middle.set_x(self.sub_0.pos.x)
+                self.middle.set_y(self.sub_0.pos.y+0.0015)
+            else:
+                self.middle.set_x(self.sub_0.pos.x+0.0015)
+                self.middle.set_y(self.sub_0.pos.y)
             self.middle.set_z(self.sub_0.pos.z)
         else:
             raise ValueError('没有中心点，两侧都没有码')
