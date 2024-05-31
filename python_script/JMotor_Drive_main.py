@@ -30,4 +30,4 @@ class JFilter():
 # 电机驱动主算法 (外部可调用)
 class JMotor_Drive():
     def __init__(self, input) -> None: # 这里写类的输入(input)
-        pass
+        self.left_whell = None
