@@ -1,91 +1,117 @@
 from JAlgorithm_JWall_Const import *
 import yaml
 
+'''
+接口：
+JWall:
+    读取：
+        main_0          -> JApril_Code          正面大码, id 可被4整除
+        main_1          -> JApril_Code          正面小码, id 除4余1
+        sub_0           -> JApril_Code          背面大码, id 除4余2
+        sub_1           -> JApril_Code          背面小码, id 除4余3
+        orientation     ->'H' 或 'V'            墙的方向, 'H' 为水平, 即平行于Y轴 'V'为垂直, 即平行于X轴
+        middle          -> JApriltag_Position   墙的中心点
+        id_list         -> list                 墙的所有码的 id 列表
+        width           -> list                 墙的宽度
+        height          -> list                 墙的高度
+        thickness       -> list                 墙的厚度
+        big_tag_size    -> list                 墙的大码大小
+        small_tag_size  -> list                 墙的小码大小
+        topleft         -> tuple                左上顶点
+        topright        -> tuple                右上顶点
+        bottomleft      -> tuple                左下顶点
+        bottomright     -> tuple                右下顶点
+        leftside        -> float                左边
+        rightside       -> float                右边
+        topside         -> float                上边
+        bottomside      -> float                下边
+        identifier      ->int|str               标识符, 用于算法区分墙与路径, 墙中心的本体
+        sub_indentifier ->int|str               标识符, 用于算法区分墙与路径, 墙的延伸, 包括连接
+JWalls:
+    写入：
+        build_JWall_list_from_yaml (yaml_data: yaml) -> list[JWall]
+        该方法为从yaml文件中读取所有的Code码信息, 将Code码分类, 并打包为JWall类, 
+        将信息记录在JWall中, 返回一个含有所有JWall类实体的列表
+'''
 
+# 基础类 Apriltag 的位置 注意 x y z 值只能使用方法调用
 class JApriltag_Position():
     def __init__(self) -> None:
-        self.__x__ = None
-        self.__y__ = None
-        self.__z__ = None
+        self.__x = None
+        self.__y = None
+        self.__z = None
 
-    @property
     def x(self) -> float:
-        return self.__x__
+        return self.__x
 
-    @property
     def y(self) -> float:
-        return self.__y__
+        return self.__y
 
-    @property
     def z(self) -> float:
-        return self.__z__
+        return self.__z
 
     def set_x(self, x: float) -> None:
-        self.__x__ = x
+        self.__x = x
 
     def set_y(self, y: float) -> None:
-        self.__y__ = y
+        self.__y = y
 
     def set_z(self, z: float) -> None:
-        self.__z__ = z
+        self.__z = z
 
-
+# 基础类 Apriltag 的方向 注意 qw qx qy qz 值只能使用方法调用
 class JApriltag_Orientation():
     def __init__(self) -> None:
-        self.__qw__ = None
-        self.__qx__ = None
-        self.__qy__ = None
-        self.__qz__ = None
+        self.__qw = None
+        self.__qx = None
+        self.__qy = None
+        self.__qz = None
 
-    @property
     def qw(self) -> float:
-        return self.__qw__
+        return self.__qw
 
-    @property
     def qx(self) -> float:
-        return self.__qx__
+        return self.__qx
 
-    @property
     def qy(self) -> float:
-        return self.__qy__
+        return self.__qy
 
-    @property
     def qz(self) -> float:
-        return self.__qz__
+        return self.__qz
 
     def set_qw(self, qw: float) -> None:
-        self.__qw__ = qw
+        self.__qw = qw
 
     def set_qx(self, qx: float) -> None:
-        self.__qx__ = qx
+        self.__qx = qx
 
     def set_qy(self, qy: float) -> None:
-        self.__qy__ = qy
+        self.__qy = qy
 
     def set_qz(self, qz: float) -> None:
-        self.__qz__ = qz
+        self.__qz = qz
 
-
+# JApril_Code 为基类 JApriltag_Position 与 JApriltag_Orientation 的扩展类
 class JApril_Code():
     def __init__(self) -> None:
-        self.__id__ = None
-        self.__pos__ = JApriltag_Position()
-        self.__ori__ = JApriltag_Orientation()
+        self.__id = None
+        self.__pos = JApriltag_Position()
+        self.__ori = JApriltag_Orientation()
 
     @property
     def id(self) -> int:
-        return self.__id__
+        return self.__id
 
     @property
     def pos(self) -> JApriltag_Position:
-        return self.__pos__
+        return self.__pos
 
     @property
     def ori(self) -> JApriltag_Orientation:
-        return self.__ori__
+        return self.__ori
 
     def set_id(self, id: int) -> None:
-        self.__id__ = id
+        self.__id = id
 
     def set_pos(self, xyz_list: list[float]) -> None:
         self.pos.set_x(xyz_list[0])
@@ -93,55 +119,125 @@ class JApril_Code():
         self.pos.set_z(xyz_list[2])
 
     def set_ori(self, wxyz_list: list[float]) -> None:
-        self.__ori__.set_qw(wxyz_list[0])
-        self.__ori__.set_qx(wxyz_list[1])
-        self.__ori__.set_qy(wxyz_list[2])
-        self.__ori__.set_qz(wxyz_list[3])
+        self.__ori.set_qw(wxyz_list[0])
+        self.__ori.set_qx(wxyz_list[1])
+        self.__ori.set_qy(wxyz_list[2])
+        self.__ori.set_qz(wxyz_list[3])
 
-
+# 主要调取类 JWall 内含4个 Apriltag 码, 是墙的类
 class JWall():
     def __init__(self):
-        self.__main_0__ = JApril_Code()
-        self.__main_1__ = JApril_Code()
-        self.__sub_0__ = JApril_Code()
-        self.__sub_1__ = JApril_Code()
-        self.__orientation__: str = ''
-        self.__middle__ = JApriltag_Position()
-        self.__id_list__: list = []
-        self.___width__ = 0.250  # m
-        self.__width__: float = 0.250  # m
-        self.__height__: float = 0.170  # m
-        self.thickness__: float = 0.003  # m
-        self.big_tag_size__: float = 0.140  # m
-        self.__small_tag_size__: float = 0.028  # m
-        
+        self.__main_0 = JApril_Code()
+        self.__main_1 = JApril_Code()
+        self.__sub_0 = JApril_Code()
+        self.__sub_1 = JApril_Code()
+        self.__orientation: str = ''
+        self.__middle = JApriltag_Position()
+        self.__id_list: list = []
+        self.__width: float = 0.250  # m
+        self.__height: float = 0.170  # m
+        self.__thickness: float = 0.003  # m
+        self.__big_tag_size: float = 0.140  # m
+        self.__small_tag_size: float = 0.028  # m
+        self.__topleft: tuple[float] = None
+        self.__topright: tuple[float] = None
+        self.__bottomleft: tuple[float] = None
+        self.__bottomright: tuple[float] = None
+        self.__leftside: float = None  # y 轴的值
+        self.__rightside: float = None  # y 轴的值
+        self.__topside: float = None  # x 轴的值
+        self.__bottomside: float = None  # x 轴的值
+        self.__identifier: int|str = 0  #标识符, 用于算法区分墙与路径, 墙中心的本体
+        self.__sub_indentifier: int|str = 0 #标识符, 用于算法区分墙与路径, 墙的延伸, 包括连接
+
     @property
     def main_0(self) -> JApril_Code:
-        return self.__main_0__
+        return self.__main_0
 
     @property
     def main_1(self) -> JApril_Code:
-        return self.__main_1__
+        return self.__main_1
 
     @property
     def sub_0(self) -> JApril_Code:
-        return self.__sub_0__
+        return self.__sub_0
 
     @property
     def sub_1(self) -> JApril_Code:
-        return self.__sub_1__
-
-    @property
-    def middle(self) -> JApriltag_Position:
-        return self.__middle__
-
-    @property
-    def id_list(self) -> list:
-        return self.__id_list__
+        return self.__sub_1
 
     @property
     def orientation(self) -> str:
-        return self.__orientation__
+        return self.__orientation
+
+    @property
+    def middle(self) -> JApriltag_Position:
+        return self.__middle
+
+    @property
+    def id_list(self) -> list:
+        return self.__id_list
+
+    @property
+    def width(self) -> list:
+        return self.__width
+
+    @property
+    def height(self) -> list:
+        return self.__height
+
+    @property
+    def thickness(self) -> list:
+        return self.__thickness
+
+    @property
+    def big_tag_size(self) -> list:
+        return self.__big_tag_size
+
+    @property
+    def small_tag_size(self) -> list:
+        return self.__small_tag_size
+
+    @property
+    def topleft(self) -> tuple:
+        return self.__topleft
+
+    @property
+    def topright(self) -> tuple:
+        return self.__topright
+
+    @property
+    def bottomleft(self) -> tuple:
+        return self.__bottomleft
+
+    @property
+    def bottomright(self) -> tuple:
+        return self.__bottomright
+
+    @property
+    def leftside(self) -> float:
+        return self.__leftside
+
+    @property
+    def rightside(self) -> float:
+        return self.__rightside
+
+    @property
+    def topside(self) -> float:
+        return self.__topside
+
+    @property
+    def bottomside(self) -> float:
+        return self.__bottomside
+    
+    @property
+    def identifier(self) -> int|str:
+        return self.__identifier
+    
+    @property
+    def sub_identifier(self) -> int|str:
+        return self.__sub_indentifier
+    
 
     def set_main_0(self, code_dict) -> None:
         if code_dict:
@@ -176,39 +272,52 @@ class JWall():
                 [code_dict['qw'], code_dict['qx'], code_dict['qy'], code_dict['qz']])
 
     def set_middle(self):
-        if self.main_0.ori.qx == 0.5:
-            self.__orientation__ = 'H'
+        if self.main_0.ori.qx() == 0.5:
+            self.__orientation = 'H'
         else:
-            self.__orientation__ = 'V'
+            self.__orientation = 'V'
         # 如果存在4个 Apriltag 码：
-        if self.main_0.pos.x and self.sub_0.pos.x:
-            self.middle.set_x((self.main_0.pos.x + self.sub_0.pos.x) / 2)
-            self.middle.set_y((self.main_0.pos.y + self.sub_0.pos.y) / 2)
-            self.middle.set_z((self.main_0.pos.z + self.sub_0.pos.z) / 2)
+        if self.main_0.pos.x() and self.sub_0.pos.x():
+            self.middle.set_x((self.main_0.pos.x() + self.sub_0.pos.x()) / 2)
+            self.middle.set_y((self.main_0.pos.y() + self.sub_0.pos.y()) / 2)
+            self.middle.set_z((self.main_0.pos.z() + self.sub_0.pos.z()) / 2)
         # 如果只有 主Apriltag码：
-        elif self.main_0.pos.x:
-            if self.__orientation__ == 'H':
-                self.middle.set_x(self.main_0.pos.x)
-                self.middle.set_y(self.main_0.pos.y+0.0015)
+        elif self.main_0.pos.x():
+            if self.__orientation == 'H':
+                self.middle.set_x(self.main_0.pos.x()+0.0015)
+                self.middle.set_y(self.main_0.pos.y())
             else:
-                self.middle.set_x(self.main_0.pos.x+0.0015)
-                self.middle.set_y(self.main_0.pos.y)
-            self.middle.set_z(self.main_0.pos.z)
+                self.middle.set_x(self.main_0.pos.x())
+                self.middle.set_y(self.main_0.pos.y()+0.0015)
+            self.middle.set_z(self.main_0.pos.z())
         # 如果只有 副Apriltag码:
-        elif self.sub_0.pos.x:
-            if self.__orientation__ == 'H':
-                self.middle.set_x(self.sub_0.pos.x)
-                self.middle.set_y(self.sub_0.pos.y+0.0015)
+        elif self.sub_0.pos.x():
+            if self.__orientation == 'H':
+                self.middle.set_x(self.sub_0.pos.x())
+                self.middle.set_y(self.sub_0.pos.y()+0.0015)
             else:
-                self.middle.set_x(self.sub_0.pos.x+0.0015)
-                self.middle.set_y(self.sub_0.pos.y)
-            self.middle.set_z(self.sub_0.pos.z)
+                self.middle.set_x(self.sub_0.pos.x()+0.0015)
+                self.middle.set_y(self.sub_0.pos.y())
+            self.middle.set_z(self.sub_0.pos.z())
         else:
-            raise ValueError('没有中心点，两侧都没有码')
+            raise ValueError('没有中心点, 两侧都没有码')
 
     def set_id_list(self, id0, id1, id2, id3):
-        self.__id_list__ = [id0, id1, id2, id3]
+        self.__id_list = [id0, id1, id2, id3]
 
+    def set_edge(self):
+        self.__leftside = self.__middle.y() - self.__thickness / 2
+        self.__rightside = self.__middle.y() + self.__thickness / 2
+        self.__topside = self.middle.x() - self.__thickness / 2
+        self.__bottomside = self.middle.x() - self.__thickness / 2
+
+    def set_vertex(self):
+        self.__topleft = (self.__leftside, self.__topside)
+        self.__topright = (self.__rightside, self.__topside)
+        self.__bottomleft = (self.__leftside, self.__bottomside)
+        self.__bottomright = (self.__rightside, self.__bottomside)
+
+    # 主要入口
     def set_wall(self, code_list_dict):
         for i in code_list_dict:
             if i['id'] % 4 == 0:
@@ -221,29 +330,53 @@ class JWall():
                 self.set_sub_1(i)
             else:
                 print(i)
-                raise ValueError('方法 set_wall 输入错误，请检查code_list_dict')
+                raise ValueError('方法 set_wall 输入错误, 请检查code_list_dict')
         self.set_id_list(self.main_0.id, self.main_1.id,
                          self.sub_0.id, self.sub_1.id)
         self.set_middle()
+        self.set_edge()
+        self.set_vertex()
 
-
+# 用于读取yaml文件, 并返回含有所有墙的列表
 class JWalls():
     def __init__(self) -> None:
-        pass
+        self.JWall_list:list = []
+        self.range_Maze_x:int = []
+        self.range_Maze_y:int = []
+        self.max_middle_x:float = None
+        self.max_middle_y:float = None
 
     def build_JWall_list_from_yaml(self, yaml_data: yaml) -> list[JWall]:
         list_dict = yaml_data['tag_bundles'][0]['layout']
         code_list_dict = self._code_sort(list_dict)
         wall_list = self._build_in_JWall_from_code_list(code_list_dict)
+        self.JWall_list = wall_list
+        self.range_Maze_x = round((self.max_middle_x-0.128) / 0.253 + 1)
+        self.range_Maze_y = round((self.max_middle_y-0.128) / 0.253 + 1)
         return wall_list
 
     def _build_in_JWall_from_code_list(self, code_list_dict: list) -> list[JWall]:
         temp_JWalls_list = []
-        for i in code_list_dict:  # i 是个列表，里面是四个 code 的字典
+        for i in code_list_dict:  # i 是个列表, 里面是四个 code 的字典
             temp_wall = JWall()
             temp_wall.set_wall(i)
+            self.set_update_max_middle_x_y(temp_wall)
             temp_JWalls_list.append(temp_wall)
         return temp_JWalls_list
+    
+    def set_update_max_middle_x_y(self, wall:JWall) -> None:
+        if wall.orientation == 'V':
+            if self.max_middle_x:
+                if wall.middle.x() > self.max_middle_x:
+                    self.max_middle_x = wall.middle.x()
+            else:
+                self.max_middle_x = wall.middle.x()
+        else:
+            if self.max_middle_y:
+                if wall.middle.y() > self.max_middle_y:
+                    self.max_middle_y = wall.middle.y()
+            else:
+                self.max_middle_y = wall.middle.y()
 
     def _code_sort(self, ori_list: list[dict]) -> list[list[dict]]:
         temp_JWall_list = []
