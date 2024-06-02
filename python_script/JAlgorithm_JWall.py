@@ -293,11 +293,11 @@ class JWall():
         # 如果只有 副Apriltag码:
         elif self.sub_0.pos.x():
             if self.__orientation == 'H':
-                self.middle.set_x(self.sub_0.pos.x())
-                self.middle.set_y(self.sub_0.pos.y()+0.0015)
-            else:
                 self.middle.set_x(self.sub_0.pos.x()+0.0015)
                 self.middle.set_y(self.sub_0.pos.y())
+            else:
+                self.middle.set_x(self.sub_0.pos.x())
+                self.middle.set_y(self.sub_0.pos.y()+0.0015)
             self.middle.set_z(self.sub_0.pos.z())
         else:
             raise ValueError('没有中心点, 两侧都没有码')
@@ -351,8 +351,8 @@ class JWalls():
         code_list_dict = self._code_sort(list_dict)
         wall_list = self._build_in_JWall_from_code_list(code_list_dict)
         self.JWall_list = wall_list
-        self.range_Maze_x = round((self.max_middle_x-0.128) / 0.253 + 1)
-        self.range_Maze_y = round((self.max_middle_y-0.128) / 0.253 + 1)
+        self.range_Maze_x = int((self.max_middle_x-0.128) / 0.253 + 1)  # 最大中点位置 = (0.25 + 0.003) * (n - 1) + (0.125 + 0.003)
+        self.range_Maze_y = int((self.max_middle_y-0.128) / 0.253 + 1)
         return wall_list
 
     def _build_in_JWall_from_code_list(self, code_list_dict: list) -> list[JWall]:
