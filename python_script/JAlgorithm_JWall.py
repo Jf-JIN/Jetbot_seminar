@@ -278,6 +278,7 @@ class JWall():
             self.__orientation = 'V'
         # 如果存在4个 Apriltag 码：
         if self.main_0.pos.x() and self.sub_0.pos.x():
+            # print(self.main_0.pos.y() , self.sub_0.pos.y())
             self.middle.set_x((self.main_0.pos.x() + self.sub_0.pos.x()) / 2)
             self.middle.set_y((self.main_0.pos.y() + self.sub_0.pos.y()) / 2)
             self.middle.set_z((self.main_0.pos.z() + self.sub_0.pos.z()) / 2)
@@ -306,10 +307,10 @@ class JWall():
         self.__id_list = [id0, id1, id2, id3]
 
     def set_edge(self):
-        self.__leftside = self.__middle.y() - self.__thickness / 2
-        self.__rightside = self.__middle.y() + self.__thickness / 2
-        self.__topside = self.middle.x() - self.__thickness / 2
-        self.__bottomside = self.middle.x() - self.__thickness / 2
+        self.__leftside = self.__middle.y() - self.__width / 2
+        self.__rightside = self.__middle.y() + self.__width / 2
+        self.__topside = self.middle.x() - self.__width / 2
+        self.__bottomside = self.middle.x() + self.__width / 2
 
     def set_vertex(self):
         self.__topleft = (self.__leftside, self.__topside)
