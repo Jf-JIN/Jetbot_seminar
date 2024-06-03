@@ -1,6 +1,3 @@
-from JAlgorithm_JWall_Const import *
-import yaml
-
 '''
 接口：
 JWall:
@@ -33,6 +30,9 @@ JWalls:
         该方法为从yaml文件中读取所有的Code码信息, 将Code码分类, 并打包为JWall类, 
         将信息记录在JWall中, 返回一个含有所有JWall类实体的列表
 '''
+
+from JAlgorithm_JWall_Const import *
+import yaml
 
 # 基础类 Apriltag 的位置 注意 x y z 值只能使用方法调用
 class JApriltag_Position():
