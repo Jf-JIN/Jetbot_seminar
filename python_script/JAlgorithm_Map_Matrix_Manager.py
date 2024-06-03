@@ -25,7 +25,7 @@ class JMap_Grid_Matrix_From_Yaml():
         temp_obj_matrix = [[None for _ in range(JWall_list.range_Maze_y * 2 + 1)] for _ in range(JWall_list.range_Maze_x * 2 + 1)]
         for _, wall in enumerate(JWall_list.JWall_list):
             wall:JWall
-            x_index = int((wall.middle.x() - 0.0015) / 0.1265) #  索引坐标(以中点计算) = 1.5 + (125 + 1.5) * n
+            x_index = int((wall.middle.x() - 0.0015) / 0.1265) #  索引坐标(以中点计算) = 1.5 + (125 + 1.5) * 索引值 n
             y_index = int((wall.middle.y() - 0.0015) / 0.1265)
             temp_obj_matrix[x_index][y_index] = wall
         self.__map_obj_matrix = temp_obj_matrix
