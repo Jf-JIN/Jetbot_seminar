@@ -132,7 +132,7 @@ class JApril_Tag_Info():
     def __init__(self):
         self.__distance = JDistance()
         self.__orientation = JOrientation()
-        self.__id = None
+        self.__id = []
 
     # 获取距离信息
     @property
@@ -145,7 +145,7 @@ class JApril_Tag_Info():
         return self.__orientation
 
     @property
-    def id(self) -> int:
+    def id(self) -> list:
         return self.__id
 
     # 赋值距离参数
@@ -173,11 +173,11 @@ class JApril_Tag_Info():
         self.__orientation.set_z(orientation_list[2])
 
     # 赋值id参数
-    def set_id(self, id: int) -> None:
+    def set_id(self, id: list) -> None:
         # 如果输入不是元组或是列表，亦或元组/列表中的元素不是浮点数或整数，亦或其元素个数不为3，即非(x,y,z)，则触发报错
-        if not isinstance(id, int):
+        if not isinstance(id, list[int]):
             raise ValueError(
-                '在 JApril_Tag 中, 方法 set_id 的参数必须为整数')
+                '在 JApril_Tag 中, 方法 set_id 的参数必须为列表, 且列表内必须为整数')
         self.__id = id
 
 
@@ -270,13 +270,50 @@ class JImu_Info():
         self.__magnetic_field.set_y(magnetic_field_list[1])
         self.__magnetic_field.set_z(magnetic_field_list[2])
 
+# front类
+
+
+class JFront():
+    def __init__(self) -> None:
+        self.__front = JApril_Tag_Info()
+        self.__left = JApril_Tag_Info()
+        self.__right = JApril_Tag_Info()
+
+    # 获取正前方位置信息
+    @property
+    def front(self) -> JApril_Tag_Info:
+        return self.__front
+
+    # 获取前方最近左侧横版位置信息
+    @property
+    def left(self) -> JApril_Tag_Info:
+        return self.__left
+
+    # 获取前方最近右侧横版位置信息
+    @property
+    def right(self) -> JApril_Tag_Info:
+        return self.__right
+
+    # 赋值前方位置信息
+    def set_front(self, front: JApril_Tag_Info) -> None:
+        self.__front = front
+
+    # 赋值前方最近左侧横版位置信息
+    def set_left(self, left: JApril_Tag_Info) -> None:
+        self.__left = left
+
+    # 赋值前方最近右侧横版位置信息
+    def set_right(self, right: JApril_Tag_Info) -> None:
+        self.__right = right
 
 # 位置信息类
+
+
 class JLocation():
     def __init__(self) -> None:
         self.__left_list = []
         self.__right_list = []
-        self.__front = JApril_Tag_Info()
+        self.__front = JFront()
         self.__imu = JImu_Info()
 
     # 获取左侧位置信息
@@ -316,15 +353,15 @@ class JLocation():
         self.__right_list = right_list
 
     # 赋值前方位置信息
-    def set_front(self, front: JApril_Tag_Info) -> None:
-        if not isinstance(front, JApril_Tag_Info):
+    def set_front(self, front: JFront) -> None:
+        if not isinstance(front, JFront):
             raise ValueError(
-                '在 JLocation 中, 方法 set_front 的参数必须为 JApril_Tag_Info !')
+                '在 JLocation 中, 方法 set_front 的参数必须为 JFront !')
         self.__front = front
 
     # 赋值Imu信息
     def set_imu(self, imu: JImu_Info) -> None:
         if not isinstance(imu, JImu_Info):
             raise ValueError(
-                '在 JLocation 中, 方法 set_imu 的参数必须为 JApril_Tag_Info !')
+                '在 JLocation 中, 方法 set_imu 的参数必须为 JImu_Info !')
         self.__imu = imu
