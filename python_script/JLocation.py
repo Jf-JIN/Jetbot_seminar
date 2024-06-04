@@ -14,6 +14,16 @@ JLocation:          用于存储Apriltag信息和IMU信息
         set_front(front: JApril_Tag_Info)         写入正前Apriltag数据
         set_imu(imu: JImu_Info)                   写入IMU数据
 
+JFront: 
+    读取:
+        front()     -> JApril_Tag_Info  正前方位置信息
+        left()      -> JApril_Tag_Info  前方最近左侧横版位置信息
+        right()     -> JApril_Tag_Info  前方最近右侧横版位置信息
+    写入: 
+        set_front(front: JApril_Tag_Info)   写入正前方位置信息
+        set_left(left: JApril_Tag_Info)     写入前方最近左侧横版位置信息
+        set_right(right: JApril_Tag_Info)   写入前方最近右侧横版位置信息
+
 JImu_Info:          用于存储IMU信息
     读取:   
         velocity               -> JImu_Velocity                 速度
