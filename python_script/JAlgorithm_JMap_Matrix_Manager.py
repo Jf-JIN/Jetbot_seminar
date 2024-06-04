@@ -1,4 +1,11 @@
-
+'''
+JMap_Grid_Matrix_From_Yaml
+    读取: 
+        map_obj_matrix          对象地图矩阵, 矩阵中是Jwall对象, 即含有墙的信息
+        map_abstract_matrix     抽象地图矩阵, 矩阵中只含有Jwall的墙体标记, 底层矩阵为全是 1 的矩阵
+    主要方法: 
+        JMap_generator (yaml_data: yaml) -> None    将Yaml文件转换为地图矩阵, 并存入属性中
+'''
 from JAlgorithm_JWall import *
 
 class JMap_Grid_Matrix_From_Yaml():
@@ -15,13 +22,13 @@ class JMap_Grid_Matrix_From_Yaml():
     def map_abstract_matrix(self):
         return self.__map_abstract_matrix
     
-    def JMap_generator(self, yaml_data: yaml):
+    def JMap_generator(self, yaml_data: yaml) -> None:
         JWalls_obj = JWalls()
         JWalls_obj.build_JWall_list_from_yaml(yaml_data)
         self._from_JWall_list_generate_map(JWalls_obj)
         
     # 获取含有对象的矩阵
-    def _from_JWall_list_generate_map(self, JWall_list:JWalls) -> list[list[JWall]]:
+    def _from_JWall_list_generate_map(self, JWall_list:JWalls) -> None:
         temp_obj_matrix = [[None for _ in range(JWall_list.range_Maze_y * 2 + 1)] for _ in range(JWall_list.range_Maze_x * 2 + 1)]
         for _, wall in enumerate(JWall_list.JWall_list):
             wall:JWall
@@ -32,7 +39,7 @@ class JMap_Grid_Matrix_From_Yaml():
         self._from_map_obj_to_abstract_matrix()
     
     # 获取抽象矩阵
-    def _from_map_obj_to_abstract_matrix(self):
+    def _from_map_obj_to_abstract_matrix(self) -> None:
         temp_abstract_matrix = [[1 for _ in range(len(self.__map_obj_matrix))] for _ in range(len(self.__map_obj_matrix))]
         for x_index, wall_list in enumerate(self.__map_obj_matrix):
             for y_index, wall in enumerate(wall_list):
