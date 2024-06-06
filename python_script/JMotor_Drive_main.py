@@ -3,6 +3,7 @@
 '''
 
 from JData_Collect_main import *
+from motor_driver import set_speed
 
 
 
@@ -20,22 +21,27 @@ class JMotor_Controller():
             def forward(self, speed=1.0):
                 self.left = speed
                 self.right = speed
+                set_speed(left,right)
 
             def backward(self, speed=1.0):
                 self.left = -speed
                 self.right = -speed
+                set_speed(left,right)
 
             def left(self, speed=1.0):
                 self.left = -speed
                 self.right = speed
+                set_speed(left,right)
 
             def right(self, speed=1.0):
                 self.left = speed
                 self.right= -speed
+                set_speed(left,right)
 
             def stop(self):
                 self.left = 0
                 self.right = 0
+                set_speed(left,right)
         pass
 
 
