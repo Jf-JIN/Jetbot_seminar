@@ -16,6 +16,26 @@ class JPose_Correction():
 # 电机控制算法 (内部引用)
 class JMotor_Controller():
     def __init__(self) -> None:
+        
+            def forward(self, speed=1.0):
+                self.left = speed
+                self.right = speed
+
+            def backward(self, speed=1.0):
+                self.left = -speed
+                self.right = -speed
+
+            def left(self, speed=1.0):
+                self.left = -speed
+                self.right = speed
+
+            def right(self, speed=1.0):
+                self.left = speed
+                self.right= -speed
+
+            def stop(self):
+                self.left = 0
+                self.right = 0
         pass
 
 
