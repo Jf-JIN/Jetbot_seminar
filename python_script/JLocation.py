@@ -338,7 +338,7 @@ class JLocation():
 
     # 获取前方信息
     @property
-    def front(self) -> JApril_Tag_Info:
+    def front(self) -> JFront:
         return self.__front
 
     # 获取IMU信息
