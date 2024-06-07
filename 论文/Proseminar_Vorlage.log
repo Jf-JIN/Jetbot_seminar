@@ -1,0 +1,603 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.6.6)  7 JUN 2024 14:28
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**Proseminar_Vorlage.tex
+(./Proseminar_Vorlage.tex
+LaTeX2e <2024-06-01>
+L3 programming layer <2024-05-27>
+(./PS_de.cls
+
+LaTeX Warning: You have requested document class `PS_de',
+               but the document class provides `PS'.
+
+Document Class: PS 2005/09/13 revision V1.6c by Michael Shell
+-- See the "IEEEtran_HOWTO" manual for usage information.
+-- The source comments contain changelog notes.
+\@IEEEtrantmpdimenA=\dimen141
+\@IEEEtrantmpdimenB=\dimen142
+\@IEEEtrantmpcountA=\count194
+\@IEEEtrantmpcountB=\count195
+\@IEEEtrantmptoksA=\toks17
+LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 7
+87.
+(c:/texlive/2024/texmf-dist/tex/latex/psnfss/ot1ptm.fd
+File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
+)
+\@IEEEnormalsizefontbaselineskip=\skip49
+
+-- This is a 10 point document.
+\normalsizebaselineskip=\skip50
+\normaljot=\skip51
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <5> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1106.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <5> not available
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1106.
+
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1106.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <7> not available
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1106.
+
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <8> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1106.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <8> not available
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1106.
+
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1106.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <9> not available
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1106.
+
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1106.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <10> not available
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1106.
+
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <11> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1106.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <11> not available
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1106.
+
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1106.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <12> not available
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1106.
+
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <17> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1106.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <17> not available
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1106.
+
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <20> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1106.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <20> not available
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1106.
+
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <24> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1106.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <24> not available
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 1106.
+
+\IEEEilabelindentA=\dimen143
+\IEEEilabelindentB=\dimen144
+\IEEEilabelindent=\dimen145
+\IEEEelabelindent=\dimen146
+\IEEEdlabelindent=\dimen147
+\labelindent=\dimen148
+\IEEEiednormlabelsep=\dimen149
+\IEEEiedmathlabelsep=\dimen150
+\IEEEiedtopsep=\skip52
+\c@section=\count196
+\c@subsection=\count197
+\c@subsubsection=\count198
+\c@paragraph=\count199
+\c@IEEEsubequation=\count266
+\abovecaptionskip=\skip53
+\belowcaptionskip=\skip54
+\c@figure=\count267
+\c@table=\count268
+\@IEEEeqnnumcols=\count269
+\@IEEEeqncolcnt=\count270
+\@IEEEtmpitemindent=\dimen151
+\c@biography=\count271
+\@IEEEtranrubishbin=\box52
+) (./PS_de.sty (c:/texlive/2024/texmf-dist/tex/generic/german/ngerman.sty
+v2.5e 1998-07-08
+Package: ngerman 1998/07/08 v2.5e Support for writing german texts (br)
+\grmnU@D=\dimen152
+ngerman -- \language number for naustrian undefined, default 36 used.
+) (c:/texlive/2024/texmf-dist/tex/latex/cite/cite.sty
+LaTeX Info: Redefining \cite on input line 302.
+LaTeX Info: Redefining \nocite on input line 332.
+Package: cite 2015/02/27  v 5.5
+)
+(c:/texlive/2024/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 2021/09/16 v1.2d Enhanced LaTeX Graphics (DPC,SPQR)
+
+(c:/texlive/2024/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
+\KV@toks@=\toks18
+)
+(c:/texlive/2024/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2024/05/23 v1.4g Standard LaTeX Graphics (DPC,SPQR)
+
+(c:/texlive/2024/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 2023/12/02 v1.11 sin cos tan (DPC)
+)
+(c:/texlive/2024/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 106.
+
+(c:/texlive/2024/texmf-dist/tex/latex/graphics-def/pdftex.def
+File: pdftex.def 2024/04/13 v1.2c Graphics/color driver for pdftex
+))
+\Gin@req@height=\dimen153
+\Gin@req@width=\dimen154
+)
+(c:/texlive/2024/texmf-dist/tex/latex/psfrag/psfrag.sty
+Package: psfrag 1998/04/11 v3.04 PSfrag (MCG)
+\pfg@pcount=\count272
+\pfg@scount=\count273
+\pfg@temp=\write3
+)
+(c:/texlive/2024/texmf-dist/tex/latex/subfigure/subfigure.sty
+Package: subfigure 2002/03/15 v2.1.5 subfigure package
+\subfigtopskip=\skip55
+\subfigcapskip=\skip56
+\subfigcaptopadj=\dimen155
+\subfigbottomskip=\skip57
+\subfigcapmargin=\dimen156
+\subfiglabelskip=\skip58
+\c@subfigure=\count274
+\c@lofdepth=\count275
+\c@subtable=\count276
+\c@lotdepth=\count277
+
+****************************************
+* Local config file subfigure.cfg used *
+****************************************
+(c:/texlive/2024/texmf-dist/tex/latex/subfigure/subfigure.cfg)
+\subfig@top=\skip59
+\subfig@bottom=\skip60
+)
+(c:/texlive/2024/texmf-dist/tex/latex/url/url.sty
+\Urlmuskip=\muskip17
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)
+(c:/texlive/2024/texmf-dist/tex/latex/amsmath/amsmath.sty
+Package: amsmath 2024/05/23 v2.17q AMS math features
+\@mathmargin=\skip61
+
+For additional information on amsmath, use the `?' option.
+(c:/texlive/2024/texmf-dist/tex/latex/amsmath/amstext.sty
+Package: amstext 2021/08/26 v2.01 AMS text
+
+(c:/texlive/2024/texmf-dist/tex/latex/amsmath/amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0 generic functions
+\@emptytoks=\toks19
+\ex@=\dimen157
+))
+(c:/texlive/2024/texmf-dist/tex/latex/amsmath/amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d Bold Symbols
+\pmbraise@=\dimen158
+)
+(c:/texlive/2024/texmf-dist/tex/latex/amsmath/amsopn.sty
+Package: amsopn 2022/04/08 v2.04 operator names
+)
+\inf@bad=\count278
+LaTeX Info: Redefining \frac on input line 233.
+\uproot@=\count279
+\leftroot@=\count280
+LaTeX Info: Redefining \overline on input line 398.
+LaTeX Info: Redefining \colon on input line 409.
+\classnum@=\count281
+\DOTSCASE@=\count282
+LaTeX Info: Redefining \ldots on input line 495.
+LaTeX Info: Redefining \dots on input line 498.
+LaTeX Info: Redefining \cdots on input line 619.
+\Mathstrutbox@=\box53
+\strutbox@=\box54
+LaTeX Info: Redefining \big on input line 721.
+LaTeX Info: Redefining \Big on input line 722.
+LaTeX Info: Redefining \bigg on input line 723.
+LaTeX Info: Redefining \Bigg on input line 724.
+\big@size=\dimen159
+LaTeX Font Info:    Redeclaring font encoding OML on input line 742.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 743.
+\macc@depth=\count283
+LaTeX Info: Redefining \bmod on input line 904.
+LaTeX Info: Redefining \pmod on input line 909.
+LaTeX Info: Redefining \smash on input line 939.
+LaTeX Info: Redefining \relbar on input line 969.
+LaTeX Info: Redefining \Relbar on input line 970.
+\c@MaxMatrixCols=\count284
+\dotsspace@=\muskip18
+\c@parentequation=\count285
+\dspbrk@lvl=\count286
+\tag@help=\toks20
+\row@=\count287
+\column@=\count288
+\maxfields@=\count289
+\andhelp@=\toks21
+\eqnshift@=\dimen160
+\alignsep@=\dimen161
+\tagshift@=\dimen162
+\tagwidth@=\dimen163
+\totwidth@=\dimen164
+\lineht@=\dimen165
+\@envbody=\toks22
+\multlinegap=\skip62
+\multlinetaggap=\skip63
+\mathdisplay@stack=\toks23
+LaTeX Info: Redefining \[ on input line 2953.
+LaTeX Info: Redefining \] on input line 2954.
+)
+(c:/texlive/2024/texmf-dist/tex/latex/tools/array.sty
+Package: array 2024/05/23 v2.6c Tabular extension package (FMi)
+\col@sep=\dimen166
+\ar@mcellbox=\box55
+\extrarowheight=\dimen167
+\NC@list=\toks24
+\extratabsurround=\skip64
+\backup@length=\skip65
+\ar@cellbox=\box56
+))
+(c:/texlive/2024/texmf-dist/tex/latex/base/fontenc.sty
+Package: fontenc 2021/04/29 v2.0v Standard LaTeX package
+LaTeX Font Info:    Trying to load font information for T1+ptm on input line 11
+6.
+
+(c:/texlive/2024/texmf-dist/tex/latex/psnfss/t1ptm.fd
+File: t1ptm.fd 2001/06/04 font definitions for T1/ptm.
+))
+(c:/texlive/2024/texmf-dist/tex/latex/base/inputenc.sty
+Package: inputenc 2024/02/08 v1.3d Input encoding file
+\inpenc@prehook=\toks25
+\inpenc@posthook=\toks26
+
+(c:/texlive/2024/texmf-dist/tex/latex/base/latin1.def
+File: latin1.def 2024/02/08 v1.3d Input encoding file
+))
+(c:/texlive/2024/texmf-dist/tex/latex/blindtext/blindtext.sty
+Package: blindtext 2012/01/06 V2.0 blindtext-Package
+
+(c:/texlive/2024/texmf-dist/tex/latex/tools/xspace.sty
+Package: xspace 2014/10/28 v1.13 Space after command names (DPC,MH)
+)
+\c@blindtext=\count290
+\c@Blindtext=\count291
+\c@blind@countparstart=\count292
+\blind@countxx=\count293
+\blindtext@numBlindtext=\count294
+\blind@countyy=\count295
+\c@blindlist=\count296
+\c@blindlistlevel=\count297
+\c@blindlist@level=\count298
+\blind@listitem=\count299
+\c@blind@listcount=\count300
+\c@blind@levelcount=\count301
+\blind@mathformula=\count302
+\blind@Mathformula=\count303
+\c@blind@randomcount=\count304
+\c@blind@randommax=\count305
+\c@blind@pangramcount=\count306
+\c@blind@pangrammax=\count307
+)
+(c:/texlive/2024/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
+File: l3backend-pdftex.def 2024-05-08 L3 backend support: PDF output (pdfTeX)
+\l__color_backend_stack_int=\count308
+\l__pdf_internal_box=\box57
+)
+(./Proseminar_Vorlage.aux)
+\openout1 = `Proseminar_Vorlage.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+
+(c:/texlive/2024/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count309
+\scratchdimen=\dimen168
+\scratchbox=\box58
+\nofMPsegments=\count310
+\nofMParguments=\count311
+\everyMPshowfont=\toks27
+\MPscratchCnt=\count312
+\MPscratchDim=\dimen169
+\MPnumerator=\count313
+\makeMPintoPDFobject=\count314
+\everyMPtoPDFconversion=\toks28
+) (c:/texlive/2024/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
+Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+85.
+
+(c:/texlive/2024/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
+e
+))
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 70--71
+[]\T1/ptm/m/n/10 A*-Algorithmus ist ei-ne Er-wei-tungs-al-go-rith-mus von
+ []
+
+
+Underfull \hbox (badness 1852) in paragraph at lines 70--71
+\T1/ptm/m/n/10 heu-ris-ti-sche Funk-ti-on h(x) und Kost-Funktion g(x). Die
+ []
+
+
+
+Package epstopdf Info: Source file: <./pics/rmr.eps>
+(epstopdf)                    date: 2023-04-17 09:47:22
+(epstopdf)                    size: 12141 bytes
+(epstopdf)             Output file: <./pics/rmr-eps-converted-to.pdf>
+(epstopdf)                    date: 2023-04-17 09:47:28
+(epstopdf)                    size: 6718 bytes
+(epstopdf)             Command: <repstopdf --outfile=./pics/rmr-eps-converted-t
+o.pdf ./pics/rmr.eps>
+(epstopdf)             \includegraphics on input line 87.
+Package epstopdf Info: Output file is already uptodate.
+
+
+pdfTeX warning: pdflatex.exe (file ./pics/rmr-eps-converted-to.pdf): PDF inclus
+ion: found PDF version <1.7>, but at most version <1.5> allowed
+<./pics/rmr-eps-converted-to.pdf, id=1, 3077.4975pt x 91.34125pt>
+File: ./pics/rmr-eps-converted-to.pdf Graphic file (type pdf)
+<use ./pics/rmr-eps-converted-to.pdf>
+Package pdftex.def Info: ./pics/rmr-eps-converted-to.pdf  used on input line 87
+.
+(pdftex.def)             Requested size: 516.0pt x 15.31456pt.
+
+Underfull \hbox (badness 10000) has occurred while \output is active
+
+ []
+
+
+Overfull \hbox (3.21994pt too wide) has occurred while \output is active
+[] []  
+ []
+
+[1
+Non-PDF special ignored!
+<special> header=psfrag.pro
+{c:/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{c:/texlive/2024/
+texmf-dist/fonts/enc/dvips/base/8r.enc}
+
+
+ <./pics/rmr-eps-converted-to.pdf>]
+<./pics/Frame.png, id=18, 879.285pt x 388.45125pt>
+File: ./pics/Frame.png Graphic file (type png)
+<use ./pics/Frame.png>
+Package pdftex.def Info: ./pics/Frame.png  used on input line 91.
+(pdftex.def)             Requested size: 199.16928pt x 87.98456pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 107--108
+[]\T1/ptm/m/n/10 Der Pfad-fin-dungs-al-go-rith-mus ver-wen-det den A*-
+ []
+
+
+Underfull \hbox (badness 4060) in paragraph at lines 107--108
+\T1/ptm/m/n/10 Algorithmus. Zu-erst wird die Kar-ten-da-tei (Yaml-Datei)
+ []
+
+
+
+<./pics/8-AStar.png, id=20, 462.528pt x 346.896pt>
+File: ./pics/8-AStar.png Graphic file (type png)
+<use ./pics/8-AStar.png>
+Package pdftex.def Info: ./pics/8-AStar.png  used on input line 120.
+(pdftex.def)             Requested size: 199.16928pt x 149.37938pt.
+<./pics/4-AStar.png, id=21, 462.528pt x 346.896pt>
+File: ./pics/4-AStar.png Graphic file (type png)
+<use ./pics/4-AStar.png>
+Package pdftex.def Info: ./pics/4-AStar.png  used on input line 127.
+(pdftex.def)             Requested size: 199.16928pt x 149.37938pt.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+
+Package epstopdf Info: Source file: <./pics/rmr2.eps>
+(epstopdf)                    date: 2023-04-17 08:10:28
+(epstopdf)                    size: 18549 bytes
+(epstopdf)             Output file: <./pics/rmr2-eps-converted-to.pdf>
+(epstopdf)                    date: 2023-04-17 08:10:28
+(epstopdf)                    size: 4057 bytes
+(epstopdf)             Command: <repstopdf --outfile=./pics/rmr2-eps-converted-
+to.pdf ./pics/rmr2.eps>
+(epstopdf)             \includegraphics on input line 133.
+Package epstopdf Info: Output file is already uptodate.
+<./pics/rmr2-eps-converted-to.pdf, id=22, 3078.50125pt x 91.34125pt>
+File: ./pics/rmr2-eps-converted-to.pdf Graphic file (type pdf)
+<use ./pics/rmr2-eps-converted-to.pdf>
+Package pdftex.def Info: ./pics/rmr2-eps-converted-to.pdf  used on input line 1
+33.
+(pdftex.def)             Requested size: 516.0pt x 15.30898pt.
+
+Underfull \hbox (badness 10000) has occurred while \output is active
+
+ []
+
+
+Overfull \hbox (3.21994pt too wide) has occurred while \output is active
+  [] 
+ []
+
+[2 <./pics/rmr2-eps-converted-to.pdf> <./pics/Frame.png> <./pics/8-AStar.png>]
+(./Proseminar_Vorlage.bbl)
+<./pics/JIN.png, id=35, 408.02437pt x 292.09125pt>
+File: ./pics/JIN.png Graphic file (type png)
+<use ./pics/JIN.png>
+Package pdftex.def Info: ./pics/JIN.png  used on input line 202.
+(pdftex.def)             Requested size: 72.27074pt x 51.73624pt.
+File: ./pics/JIN.png Graphic file (type png)
+<use ./pics/JIN.png>
+Package pdftex.def Info: ./pics/JIN.png  used on input line 202.
+(pdftex.def)             Requested size: 72.27074pt x 51.73624pt.
+
+
+Package epstopdf Info: Source file: <./pics/ComicKopf.eps>
+(epstopdf)                    date: 2023-04-17 08:10:28
+(epstopdf)                    size: 27821 bytes
+(epstopdf)             Output file: <./pics/ComicKopf-eps-converted-to.pdf>
+(epstopdf)                    date: 2023-04-17 08:10:28
+(epstopdf)                    size: 4967 bytes
+(epstopdf)             Command: <repstopdf --outfile=./pics/ComicKopf-eps-conve
+rted-to.pdf ./pics/ComicKopf.eps>
+(epstopdf)             \includegraphics on input line 207.
+Package epstopdf Info: Output file is already uptodate.
+<./pics/ComicKopf-eps-converted-to.pdf, id=38, 81.30376pt x 69.25874pt>
+File: ./pics/ComicKopf-eps-converted-to.pdf Graphic file (type pdf)
+<use ./pics/ComicKopf-eps-converted-to.pdf>
+Package pdftex.def Info: ./pics/ComicKopf-eps-converted-to.pdf  used on input l
+ine 207.
+(pdftex.def)             Requested size: 72.27574pt x 61.5682pt.
+Package epstopdf Info: Source file: <./pics/ComicKopf.eps>
+(epstopdf)                    date: 2023-04-17 08:10:28
+(epstopdf)                    size: 27821 bytes
+(epstopdf)             Output file: <./pics/ComicKopf-eps-converted-to.pdf>
+(epstopdf)                    date: 2023-04-17 08:10:28
+(epstopdf)                    size: 4967 bytes
+(epstopdf)             Command: <repstopdf --outfile=./pics/ComicKopf-eps-conve
+rted-to.pdf ./pics/ComicKopf.eps>
+(epstopdf)             \includegraphics on input line 207.
+Package epstopdf Info: Output file is already uptodate.
+File: ./pics/ComicKopf-eps-converted-to.pdf Graphic file (type pdf)
+<use ./pics/ComicKopf-eps-converted-to.pdf>
+Package pdftex.def Info: ./pics/ComicKopf-eps-converted-to.pdf  used on input l
+ine 207.
+(pdftex.def)             Requested size: 72.27574pt x 61.5682pt.
+Package epstopdf Info: Source file: <./pics/ComicKopf.eps>
+(epstopdf)                    date: 2023-04-17 08:10:28
+(epstopdf)                    size: 27821 bytes
+(epstopdf)             Output file: <./pics/ComicKopf-eps-converted-to.pdf>
+(epstopdf)                    date: 2023-04-17 08:10:28
+(epstopdf)                    size: 4967 bytes
+(epstopdf)             Command: <repstopdf --outfile=./pics/ComicKopf-eps-conve
+rted-to.pdf ./pics/ComicKopf.eps>
+(epstopdf)             \includegraphics on input line 212.
+Package epstopdf Info: Output file is already uptodate.
+File: ./pics/ComicKopf-eps-converted-to.pdf Graphic file (type pdf)
+<use ./pics/ComicKopf-eps-converted-to.pdf>
+Package pdftex.def Info: ./pics/ComicKopf-eps-converted-to.pdf  used on input l
+ine 212.
+(pdftex.def)             Requested size: 72.27574pt x 61.5682pt.
+Package epstopdf Info: Source file: <./pics/ComicKopf.eps>
+(epstopdf)                    date: 2023-04-17 08:10:28
+(epstopdf)                    size: 27821 bytes
+(epstopdf)             Output file: <./pics/ComicKopf-eps-converted-to.pdf>
+(epstopdf)                    date: 2023-04-17 08:10:28
+(epstopdf)                    size: 4967 bytes
+(epstopdf)             Command: <repstopdf --outfile=./pics/ComicKopf-eps-conve
+rted-to.pdf ./pics/ComicKopf.eps>
+(epstopdf)             \includegraphics on input line 212.
+Package epstopdf Info: Output file is already uptodate.
+File: ./pics/ComicKopf-eps-converted-to.pdf Graphic file (type pdf)
+<use ./pics/ComicKopf-eps-converted-to.pdf>
+Package pdftex.def Info: ./pics/ComicKopf-eps-converted-to.pdf  used on input l
+ine 212.
+(pdftex.def)             Requested size: 72.27574pt x 61.5682pt.
+Package epstopdf Info: Source file: <./pics/ComicKopf.eps>
+(epstopdf)                    date: 2023-04-17 08:10:28
+(epstopdf)                    size: 27821 bytes
+(epstopdf)             Output file: <./pics/ComicKopf-eps-converted-to.pdf>
+(epstopdf)                    date: 2023-04-17 08:10:28
+(epstopdf)                    size: 4967 bytes
+(epstopdf)             Command: <repstopdf --outfile=./pics/ComicKopf-eps-conve
+rted-to.pdf ./pics/ComicKopf.eps>
+(epstopdf)             \includegraphics on input line 217.
+Package epstopdf Info: Output file is already uptodate.
+File: ./pics/ComicKopf-eps-converted-to.pdf Graphic file (type pdf)
+<use ./pics/ComicKopf-eps-converted-to.pdf>
+Package pdftex.def Info: ./pics/ComicKopf-eps-converted-to.pdf  used on input l
+ine 217.
+(pdftex.def)             Requested size: 72.27574pt x 61.5682pt.
+Package epstopdf Info: Source file: <./pics/ComicKopf.eps>
+(epstopdf)                    date: 2023-04-17 08:10:28
+(epstopdf)                    size: 27821 bytes
+(epstopdf)             Output file: <./pics/ComicKopf-eps-converted-to.pdf>
+(epstopdf)                    date: 2023-04-17 08:10:28
+(epstopdf)                    size: 4967 bytes
+(epstopdf)             Command: <repstopdf --outfile=./pics/ComicKopf-eps-conve
+rted-to.pdf ./pics/ComicKopf.eps>
+(epstopdf)             \includegraphics on input line 217.
+Package epstopdf Info: Output file is already uptodate.
+File: ./pics/ComicKopf-eps-converted-to.pdf Graphic file (type pdf)
+<use ./pics/ComicKopf-eps-converted-to.pdf>
+Package pdftex.def Info: ./pics/ComicKopf-eps-converted-to.pdf  used on input l
+ine 217.
+(pdftex.def)             Requested size: 72.27574pt x 61.5682pt.
+
+
+Package epstopdf Info: Source file: <./pics/rmr.eps>
+(epstopdf)                    date: 2023-04-17 09:47:22
+(epstopdf)                    size: 12141 bytes
+(epstopdf)             Output file: <./pics/rmr-eps-converted-to.pdf>
+(epstopdf)                    date: 2023-04-17 09:47:28
+(epstopdf)                    size: 6718 bytes
+(epstopdf)             Command: <repstopdf --outfile=./pics/rmr-eps-converted-t
+o.pdf ./pics/rmr.eps>
+(epstopdf)             \includegraphics on input line 231.
+Package epstopdf Info: Output file is already uptodate.
+File: ./pics/rmr-eps-converted-to.pdf Graphic file (type pdf)
+<use ./pics/rmr-eps-converted-to.pdf>
+Package pdftex.def Info: ./pics/rmr-eps-converted-to.pdf  used on input line 23
+1.
+(pdftex.def)             Requested size: 516.0pt x 15.31456pt.
+
+Underfull \hbox (badness 10000) has occurred while \output is active
+
+ []
+
+
+Overfull \hbox (1.60997pt too wide) has occurred while \output is active
+[] [] 
+ []
+
+[3 <./pics/4-AStar.png> <./pics/JIN.png> <./pics/ComicKopf-eps-converted-to.pdf
+>] (./Proseminar_Vorlage.aux)
+ ***********
+LaTeX2e <2024-06-01>
+L3 programming layer <2024-05-27>
+ ***********
+ ) 
+Here is how much of TeX's memory you used:
+ 3901 strings out of 473600
+ 60357 string characters out of 5732738
+ 1947894 words of memory out of 5000000
+ 26740 multiletter control sequences out of 15000+600000
+ 661943 words of font info for 129 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 72i,11n,79p,1589b,333s stack positions out of 10000i,1000n,20000p,200000b,200000s
+<c:/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/tex
+live/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/texlive/2024
+/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb><c:/texlive/2024/texmf-dis
+t/fonts/type1/public/amsfonts/cm/cmr10.pfb><c:/texlive/2024/texmf-dist/fonts/ty
+pe1/public/amsfonts/cm/cmr7.pfb><c:/texlive/2024/texmf-dist/fonts/type1/public/
+amsfonts/cm/cmsy10.pfb><c:/texlive/2024/texmf-dist/fonts/type1/urw/times/utmb8a
+.pfb><c:/texlive/2024/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb><c:/texlive/
+2024/texmf-dist/fonts/type1/urw/times/utmr8a.pfb><c:/texlive/2024/texmf-dist/fo
+nts/type1/urw/times/utmri8a.pfb>
+Output written on Proseminar_Vorlage.pdf (3 pages, 441072 bytes).
+PDF statistics:
+ 99 PDF objects out of 1000 (max. 8388607)
+ 51 compressed objects within 1 object stream
+ 0 named destinations out of 1000 (max. 500000)
+ 84 words of extra memory for PDF output out of 10000 (max. 10000000)
+

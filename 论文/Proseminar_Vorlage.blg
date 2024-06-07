@@ -1,0 +1,58 @@
+This is BibTeX, Version 0.99d (TeX Live 2024)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: Proseminar_Vorlage.aux
+The style file: IEEEtran.bst
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Database file #1: Literatur.bib
+-- IEEEtran.bst version 1.14 (2015/08/26) by Michael Shell.
+-- http://www.michaelshell.org/tex/ieeetran/bibtex/
+-- See the "IEEEtran_bst_HOWTO.pdf" manual for usage information.
+Warning--missing publisher in Robert.1971
+
+Done.
+You've used 1 entry,
+            4087 wiz_defined-function locations,
+            826 strings with 7399 characters,
+and the built_in function-call counts, 435 in all, are:
+= -- 21
+> -- 4
+< -- 0
++ -- 2
+- -- 1
+* -- 30
+:= -- 85
+add.period$ -- 1
+call.type$ -- 1
+change.case$ -- 0
+chr.to.int$ -- 0
+cite$ -- 2
+duplicate$ -- 26
+empty$ -- 45
+format.name$ -- 1
+if$ -- 80
+int.to.chr$ -- 0
+int.to.str$ -- 1
+missing$ -- 5
+newline$ -- 26
+num.names$ -- 1
+pop$ -- 15
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 2
+skip$ -- 32
+stack$ -- 0
+substring$ -- 0
+swap$ -- 14
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 5
+type$ -- 1
+warning$ -- 1
+while$ -- 1
+width$ -- 2
+write$ -- 29
+(There was 1 warning)

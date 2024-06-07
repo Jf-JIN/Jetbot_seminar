@@ -1,0 +1,231 @@
+\documentclass[journal,final,a4paper,twoside]{PS_de}
+% Compile: Latex, Biblatex, 2xLatex, dvips, ps2pdf
+% change 'PS_de' to 'PS_en' for english template! (changes to 'Fig.', 'TABLE', 'Appendix and' 'References')
+%\pdftextrue % diese Zeile aktivieren, wenn ihr PdfLaTeX verwendet!
+
+\usepackage{PS_de} % Alle Definitionen ï¿½ber den Seitenstil (auf keinen Fall editieren!!)
+% (change 'PS_de' to 'PS_en' for english template!)
+
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{blindtext}
+\usepackage{cite}
+\usepackage{graphicx}
+\def\lehrveranstaltung{Projektseminar Robotik und Computational Intelligence}
+\def\ausgabe{Vol.20,~SS~2021}
+
+%%% Ab hier kï¿½nnen Eintrï¿½ge von den Teilnehmern des Projektseminars gemacht werden,
+%%% wenn neben den LaTeX-Paketen aus der Datei PS.sty noch weitere gebraucht werden.
+
+\begin{document}
+\newcommand{\euertitel}{Labyrinthlösung, Erkundung und Mapping durch Jetbot}   % Titel hier eintragen!
+\newcommand{\betreuer}{Christoph Ziegler, M.Sc. }  % Betreuerdaten hier eintragen (mit einem Leerzeichen am Ende)!
+
+\headsep 40pt
+\title{\euertitel}
+% Autorennamen in der Form "Vorname Nachname" angeben, alphabetisch nach Nachname sortieren,
+% nach dem letzen Autor kein Komma setzen, sondern mit \thanks abschlieï¿½en
+\author{Junfan Jin, Yihao Wang, Yan Li, Fengyou Wan}
+
+\maketitle
+
+
+\begin{Zusammenfassung}
+TODO
+\end{Zusammenfassung}
+\vspace{6pt}
+
+\begin{abstract}
+TODO
+\end{abstract}
+
+
+\section{Einführung}
+\label{sec:Einführung}
+
+In dieser Abschnitt handelt es sich um Übersicht der Papier, das Ziel, Struktur.
+
+\subsection{Übersicht}
+Aufgrund der Entwicklung der Algorithmen von mobilen Roboter leisten Roboter einen steigenden Beitrag zu unserer Industrie und unserem Leben. Dazu werden die autonome mobile Roboter in vielen unterschiedlichen Situation eingesetzt, beispielsweise Hilfe bei der Frachtabfertigung in Lagern sowie Kehrroboter für Haushalt. Wegen der autonomen Eigenschaft können vielen Menschenkraft gespart werden. In der Papier wird es versucht, die automatischen Mapping und Pfadplanung der mobilen Roboter zu erklären und realisieren.
+
+\subsection{Ziel}
+Für die bekannte Karten gibt es viele Methode, um den Pfad zu planen, wie Depth-First Search (DFS), Breadth-First Search (BFS), Iterative Deepening Search, A* Search usw. In dieser Papier wird es versucht, mit Apriltag die Hindernisse zu identifizieren und DFS zur Mapping zu verwenden. Es wird auch A*-Algorithmus eingesetzt, um den Pfad so zu planen, dass der Roboter von einer beliebigen Position als Anfangspunkt einen bestimmten Endpunkt am kürzesten erreichen kann. 
+
+\subsection{Struktur}
+Die Struktur der Papier ist wie folgt: 
+Dieser Teil stellt den Übersicht und die Ziele der Papier vor. Im zweite Teil handelt sich um einen Überblick über die Motorsteuerungstheorie, die DFS- und A*-Algorithmus. Der Abschnitt 3 beschreibt die Roboter-Hardware, die fürs Experiment verwendet wird. Kapitel 4 erläutert die Realisierung von Software und Algorithmen sowie die Probleme und Lösungen, die wir dabei getroffen haben. Abschließend werden in Kapitel 5 die Zusammenfassung dargelegt.
+
+
+\section{Grundlagen}
+\label{sec:Grundlagen}
+Um den oben genannten Zweck zu erreichen, ist die folgende theoretische Grundlage erforderlich. In diesem Abschnitt wird es in drei Teile verteilt. Der erste Teil ist die Motorantriebssteuerung, der zweite Teil ist eine kurze Einführung in die DFS-Theorie und der dritte Teil wird kurz beschrieben der A*-Algorithmus.
+
+\subsection{Regelung der Motor}
+Subsection text.
+
+\subsection{Depth-First Search (DFS)}
+When selecting an edge to traverse, always choose an edge emanating from the vertex most recently reached which still has unexplored edges. A search which uses this rule is called a depth-first search.\cite{Robert.1971} DFS könnte in viele Situation eingesetzt werden, z. B. das Durchlaufen und Suchen in Binärbäumen. Das Prinzip der Algorithmus ist einfach und leicht zu implementieren. Aber der Pfad ist möglicherweise nicht der kürzeste. Wenn die Karte sehr groß ist, dann braucht diese Algorithmus mehr Zeit, um eine Lösung zu finden.
+
+\subsection{A* Search}
+A*-Algorithmus ist eine Erweitungsalgorithmus von Dijkstra-Algorithmus. Es besteht aus zwei Teilen, nämlich heuristische Funktion h(x) und Kost-Funktion g(x). Die Gesamtkosten lautet:
+\begin{align*}
+	f(x) = g(x) + h(x)
+\end{align*}
+Bei der heuristischen Funktion geht es hauptsächlich um die Schätzung der Entfernung zwischen der aktuellen Position und der Zielposition. 
+Die Kost-Funktion soll die Entfernungskosten vom Startpunkt zur aktuellen Position berechnen. 
+Für jeden Knoten sollten die Gesamtkosten berechnet werden.
+Im Vergleich zur DFS-Algorithmus kann A* in einer kürzen Zeit eine optimale Lösung finden. 
+Wenn es eine Lösung gibt, dann kann es durch A* unbedingt herausgefunden werden, wobei A* keine Endlosschleife verursachen wird.
+\section{Hardware}
+\label{sec:Hardware}
+Subsection text.
+
+\section{Software}
+\label{sec:Software}
+In diesem Absatz wird hauptsächlich die funktionale Implementierung der Software erläutert, die hauptsächlich in 5 Teile verteilt ist. Der erste Teil ist der Strukturrahmen des Codes. Der zweite Teil ist die Implementierung der Motorsteuerung, einschließlich PID-Steuerung und JetBot-Lagekorrektur. Der dritte Teil ist die Datenerfassung, hauptsächlich die Erfassung von Sensordaten, einschließlich Klassifizierung, Verpackung und Verarbeitung von Apriltag-Code und IMU-Daten. Der vierte Teil ist die Algorithmusimplementierung der Pfadplanung, die hauptsächlich den A*-Algorithmus im Code implementiert und die Knoten integriert und optimiert. Der fünfte Teil besteht darin, einen Kartenalgorithmus zu erstellen, hauptsächlich durch das Sammeln, Analysieren und Erstellen einer Karte durch die informationen der Apriltag-Code.
+
+\subsection{Rahmen der Software}
+Der Software-Rahmen ist in vier Teile verteilt: Sammlungsmodul des Sensorendatens, Modul des Motorantriebs und der Steuerung, Modul der Algorithmus und zentrale Verarbeitungsmodul. Im Datensammlungsmodul werden die Abstands- und Winkelinformationen des Apriltag-Codes sowie die von der IMU gemessenen, physikalischen Informationen als Datenpaket in die Datenklasse JLocation gepackt. Durch Zugriff auf das Datenerfassungsmodul kann die aktuellen Standortinformationen erhalten werden. Dann ruft das zentrale Verarbeitungsmodul die Lagekorrektur im Motorantriebsmodul auf, um die aktuelle Lage und Orientierung des Jetbots zu korrigieren, und ruft dann erneut ein neues Datenpaket vom Datenerfassungsmodul ab und sendet es Nachdem das Algorithmusmodul das Datenpaket empfangen hat, werden die optimierten Pfadknoten an das zentrale Verarbeitungsmodul zurückgegeben. Schließlich sendet das zentrale Verarbeitungsmodul Bewegungsanweisungen an den Motorantrieb. Das Steuermodul erhält Echtzeitinformationen über die Bewegung des Fahrzeugs, indem es kontinuierlich auf das Datenerfassungsmodul zugreift, sodass die Bewegung des Fahrzeugs durch negatives Feedback gesteuert wird. Bei diesem Prozess kann ein Server auf Jetbot aufgebaut werden. Ein Teil wird auf dem Server platziert und dient zum Senden von Anweisungen an das Motorantriebssteuermodul und können auf Benutzerseite nämlich Client verarbeitet werden. Kartenerstellung und Pfadplanungsberechnung. Dadurch kann der Verbrauch von Autoressourcen bis zu einem gewissen Grad reduziert werden.
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=7cm]{./pics/Frame.png}
+	\caption{Abbildung Software-Rahmen}
+	\label{fig:Software-Rahmen}
+\end{figure}
+
+\subsection{Motor-Regelung}
+Subsection text.
+\subsubsection{Dies ist ein Unter-Unterabschnitt}
+Subsubsection text.
+
+\subsection{Sensor und Data-Sammlung}
+Subsection text.
+\subsubsection{Dies ist ein Unter-Unterabschnitt}
+Subsubsection text.
+
+\subsection{Pfad-Planung}
+Der Pfadfindungsalgorithmus verwendet den A*-Algorithmus. Zuerst wird die Kartendatei (Yaml-Datei) verarbeitet und die Daten werden in einer Matrix gespeichert, eine davon ist die Objektmatrix die andere ist die abstrakte Matrix. Die Objektmatrix wird die Wand-Objekte erstellen, wobei der Mittelpunktposition jeder Wand basierend auf dem Matrixindexwert speichert werden. Die abstrakte Matrix enthält nur die Zahlen 1 und 0, wobei 1 eine befahrbare Route und 0 eine unpassierbare Route, also eine Hinderniswand, darstellt. Dann werden zwei Klassen erstellt, eine davon ist die Knotenklasse, die zum Aufzeichnen der Standortinformationen des Knotens, der Informationen zum übergeordneten Knoten und der Gesamtkosten im A*-Algorithmus verwendet wird. Die heuristische Funktion hat zwei verschiedene Algorithmen ausprobiert, einer ist euklidische Distanzalgorithmus, einer davon ist der Manhattan-Distanzalgorithmus.Der euklidische Distanzalgorithmus ist der direkte tatsächliche physikalische geradlinige Abstand zwischen zwei Punkten, der mit der Formel unten berechnet werden kann.
+\begin{align*}
+	\label{euklidisch_gleichung}
+	d_{euklidisch} &= \sqrt{(x_2 - x_1)^2 + (y_2 - y_1)^2}
+\end{align*}
+Unter diesen ist \(x_1\) die x-Koordinate des Startpunkts, \(x_2\) die x-Koordinate des aktuellen Punkts und in ähnlicher Weise sind \(y_1\) und \(y_2\) die y-Koordinaten des Startpunkts bzw. des aktuellen Punkts. d ist der euklidische Abstand.Die Manhattan-Distanz ist die Summe der Differenzen zwischen den Koordinaten zweier Punkte. Es lautet
+\begin{align*}
+%	\label{Mannhatten_gleichung}
+	d_{Manhattan} &= (x_2 - x_1) + (y_2 - y_1)
+\end{align*}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=7cm]{./pics/8-AStar.png}
+	\caption{Abbildung der A*-Algorithmus mit der Euklidischer Abstand}
+	\label{fig:Euklidischer}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=7cm]{./pics/4-AStar.png}
+	\caption{Abbildung der A*-Algorithmus mit der Manhattan-Metrik}
+	\label{fig:Manhattan}
+\end{figure}
+Die beiden obigen Bilder sind das Ergebnis der Berechnung mit der euklidischen Distanz Abb.\ref{fig:Euklidischer} bzw. der Berechnung mit der Manhattan-Distanz Abb.\ref{fig:Manhattan}. Bei Verwendung der euklidischen Distanz wird der aktuelle Knoten zum Erweitern um 8 Zellen verwendet, während die Manhattan-Entfernung zum Erweitern der Knoten in vier Richtungen verwendet wird, nämlich oben, unten, links und rechts.
+Zuerst werde den Startpunkt als ersten Knoten, dann wird der übergeordneten Knoten an None zugewiesen. Danach wird Knoten nach außen erweitet, dann alle Knoten nach dem Gesamtkostenwert sortiert, wird die Knoten mit dem kleinsten Kostenwert erweitet und der Vorgang wird die Sortierung und Erweiterung aller Knoten Knoten wiederholt, bis es schließlich zum Zielort erweitert wird, greift dann auf den übergeordneten Knoten bis zum letzten Knoten zu und sammelt den übergeordneten Knoten, um so Pfadinformationen zu erhalten, die alle Knoten enthalten. Auf dieser Grundlage muss man die Beziehung zwischen Knoten analysieren und Knoten mit derselben X- oder Y-Koordinate integrieren, sodass die Pfadinformationen nur Wendeknoten und Knoten an Gabelungen enthalten, wodurch der Bedarf an zentralen Verarbeitungseinheiten auf die Anzahl der Anweisungen für die Knoten reduziert wird Motorantriebssteuermodul.
+
+
+\subsection{Mapping und Erkundung}
+TODO
+
+\section{Zusammenfassung}
+\label{sec:zus}
+Hier die wichtigsten Ergebnisse der Arbeit in 5-10 Sätzen zusammenfassen. Dies sollte keine Wiederholung des Abstracts oder der Einführung sein. Insbesondere kann hier ein Ausblick auf zukünftige Arbeiten gegeben werden.
+
+
+%\appendices
+%\section{Optionaler Titel}
+%Anhang eins.
+%\section{}
+%Anhang zwei.
+%
+%
+%\section{Richtlinien fï¿½r das Verfassen wissenschaftlicher Arbeiten}
+%\label{sec:richtlinien}
+%Im Folgenden werden einige wichtige Richtlinien zusammengefasst. Die Aufzï¿½hlung ist allerdings nicht erschï¿½pfend.
+%
+%\begin{itemize}
+% \item Klare Darstellung, was der Eigenanteil ist und was schon vorhanden war.
+% \item Vorsicht vor Plagiaten: vollstï¿½ndige Quellenangaben, auch bei Bildern. Es sollte immer klar ersichtlich sein, was der Eigenanteil ist und was aus Quellen entnommen wurde.
+% \item Bilder nicht 1:1 aus Quellen kopieren.
+% \item Diskussion der Ergebnisse (Simulationen, Messungen, Rechnungen): Wurde das Ergebnis so erwartet? Wenn nein, was sind mï¿½gliche Grï¿½nde?
+% \item Autoren: Als Autor sollte jede Person in Betracht gezogen werden, die wesentlich zur Arbeit beigetragen hat (siehe auch die Empfehlungen der DFG diesbezï¿½glich, vgl.~\cite{DFG.1998}). Alle Personen mit kleinerem Beitrag (fachliche Hinweise, Beteiligung an Datensammlung etc.) kï¿½nnen in der Danksagung oder einer Fuï¿½note erwï¿½hnt werden.
+%\item Formeln in den Satz einbetten und alle Variablen bei der ersten Verwendung im Text einfï¿½hren. Beispiel:
+% Fï¿½r die Temperatur ergibt sich damit
+% \begin{align*}
+%  T(h) = K h^2,
+% \end{align*}
+% sie hï¿½ngt quadratisch von der Hï¿½he $h$ ab.
+%\end{itemize}
+%
+%\begin{figure}
+%	\centering
+%	\fbox{\parbox[c][2cm][c]{7cm}{\centering Abbildung (z.B. ein Plot)}}
+%	\caption{Gute Abbildungen unterstï¿½tzen das Verstï¿½ndnis.}
+%	\label{fig:example_start}
+%\end{figure}
+
+
+%\section{Hinweise zur Notation}
+%\label{sec:notation}
+%\begin{itemize}
+% \item Abkï¿½rzungen bei der ersten Verwendung erklï¿½ren, z.B.: ``DFG (Deutsche Forschungsgemeinschaft)''.
+% \item Formelzeichen konsistent benennen, nicht zwischen den Abschnitten umbenennen. Formelzeichen kursiv schreiben, z.B. Variable $a$.
+% \item Auf korrekte Dimensionen und Einheiten achten. Fï¿½r Einheiten das SI-System verwenden, z.B. das LaTeX-Paket \emph{units} oder \emph{SIunits}.
+% \item Zahlen: Im Deutschen Komma als Dezimaltrennzeichen, im Englischen Punkt.
+% \item Tabellen haben ï¿½berschriften, Diagramme haben Unterschriften.
+% \item Diagramme: Achsenbeschriftungen hinreichend groï¿½ (insbesondere die Zahlen).
+% \item Diagrammunterschriften sollen im Wesentlichen ausreichen, um das Diagramm zu verstehen.
+% \item Indizes werden \emph{kursiv} gesetzt, wenn sie die Bedeutung von Variablen haben, ansonsten \textbf{normal}. Beispiele: $V_k, \ k=1,2,\ldots$ und $V_\mathrm{input}$.
+%\end{itemize}
+%
+%
+% \section*{Danksagung}
+% Wenn ihr jemanden danken wollt, der Euch bei der Arbeit besonders
+% unterstï¿½tzt hat (Korrekturlesen, fachliche Hinweise,...), dann ist hier der dafï¿½r vorgesehene Platz.
+
+
+%%% Literatur (mit bibtex, Empfehlung) %%%
+\nocite{Robert.1971} % (nur Test, damit DSf-Eintrag in Literaturverzeichnis angezeigt wird)
+\bibliographystyle{IEEEtran}
+\bibliography{Literatur}
+
+\begin{biography}
+[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{./pics/JIN.png}}] % hier ein Foto einbinden
+{Autor Junfan Jin}
+Biographie Autor Junfan Jin
+\end{biography}
+\begin{biography}
+[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{./pics/ComicKopf.eps}}] % hier ein Foto einbinden
+{Yihao Wang}
+Biographie Autor Yihao Wang
+\end{biography}
+\begin{biography}
+[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{./pics/ComicKopf.eps}}] % hier ein Foto einbinden
+{Autor Yan Li}
+Biographie Autor Yan Li
+\end{biography}
+\begin{biography}
+[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{./pics/ComicKopf.eps}}] % hier ein Foto einbinden
+{Autor Fengyou Wan}
+Biographie Autor Fengyou Wan
+\end{biography}
+
+%%% Literatur (mit bibitem, alternativ) %%%
+%\begin{thebibliography}{1}
+%\bibitem{DFG.1998}
+%Deutsche Forschungsgemeinschaft, \emph{Vorschlï¿½ge zur Sicherung guter wissenschaftlicher Praxis}, Denkschrift, Weinheim: Wiley-VCH, 1998.
+%\bibitem{Kopka.1999}
+%H.~Kopka and P.~W. Daly, \emph{A Guide to LaTeX}, 3rd~ed. Harlow, England: Addison-Wesley, 1999.
+%\end{thebibliography}
+
+\vfill
+
+\end{document}
