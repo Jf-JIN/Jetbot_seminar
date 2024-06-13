@@ -14,10 +14,10 @@ BUFFER_SIZE = 1024  # 默认缓存大小
 
 class Client_Console_QThread(QThread):
     signal_data_console_recv = pyqtSignal(dict)     # 接收内容信号
-    # signal_data_console_send = pyqtSignal(dict)   # 发送内容信号
     signal_connected_flag = pyqtSignal(bool)        # 连接标签信号
     signal_connected_port = pyqtSignal(str)      # 端口号信号
     signal_error_output = pyqtSignal(str)            # 报错信号
+    signal_server_close = pyqtSignal()              # 服务端将关闭的信号
 
     def __init__(self, ip: str) -> None:
         super().__init__()
@@ -44,7 +44,6 @@ class Client_Console_QThread(QThread):
         except OSError as e:
             e = traceback.format_exc()
             self.client_socket.close()
-            # self.__init__(self.ip)
             return None
 
         except Exception as e:
@@ -77,9 +76,9 @@ class Client_Console_QThread(QThread):
                 print("[Client_Console]: 客户端端口: ", data["JPort"])
                 return None
             if 'server_close' in data:
+                print('[Client_Console-server_close]:', data)
                 print(f"[Client_Console]: 服务器将关闭 - {self.formatted_time}")
-                self.signal_connected_flag.emit(False)
-                self.flag_running = False
+                self.signal_server_close.emit()     # 发送服务器关闭时，与服务器断开连接的信号
                 return None
             return data
         except ConnectionRefusedError as e:     # [WinError 10061] 由于目标计算机积极拒绝，无法连接。
@@ -98,6 +97,7 @@ class Client_Console_QThread(QThread):
             e = traceback.format_exc()
             self.signal_error_output.emit(f"[Client_Console]: [接收] - {self.formatted_time} \n{e}")
             print(f"[Client_Console]: [接收] - {self.formatted_time} \n{e}")
+            self.flag_running = False
             self.signal_connected_flag.emit(False)  # 发送断开连接的信号
             return None
 
@@ -121,7 +121,11 @@ class Client_Console_QThread(QThread):
     # 终止线程
     def stop(self):
         self.flag_running = False
-        self.wait()
+        try:
+            self.client_socket.shutdown(socket.SHUT_RDWR)  # 关闭 socket 读写操作
+        except Exception as e:
+            print(f"[Client_Console]: [停止] - {self.formatted_time} 关闭 socket 出错: {e}")
+        self.quit()
 
     # 检查线程是否正在运行
     def isRunning(self):
@@ -130,11 +134,9 @@ class Client_Console_QThread(QThread):
 
 class Server_Console_QThread(QThread):
     signal_data_console_recv = pyqtSignal(dict)     # 接收命令行信号
-    # signal_data_console_send = pyqtSignal(object) # 发送命令行信号
     signal_connected_list = pyqtSignal(list)        # 连接设备列表信号
-    # signal_connected_port = pyqtSignal(str)       # 端口信号
     signal_error_output = pyqtSignal(str)           # 报错信号
-    signal_close_server = pyqtSignal(str)           # 关闭服务器信号
+    signal_final_close = pyqtSignal()           # 关闭服务器信号
 
     def __init__(self, ip: str) -> None:
         super().__init__()
@@ -143,6 +145,7 @@ class Server_Console_QThread(QThread):
         self.flag_running = True
         self.connections_allow_number = 10  # 可接受连接数
         self.clients_list = []
+        self.flag_close_server_by_client = False
 
         try:
             self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -166,11 +169,10 @@ class Server_Console_QThread(QThread):
             print(f"[Server_Console]: [发送] - {self.formatted_time} \n{e}")
 
     # 向所有设备发送信息
+    @pyqtSlot(dict)
     def send_all(self, text: dict) -> None:
-        print('send_all', self.clients_list)
+        # print('send_all', text, self.clients_list)
         for client_socket, client_address in self.clients_list:
-            print(client_socket, client_address)
-            # client_socket: socket.socket
             self.send(client_socket, text)
 
     # 删除clients_list中的元素
@@ -182,8 +184,15 @@ class Server_Console_QThread(QThread):
 
     # 不知道为啥，connect(信号.emit)，信号发送不出去
     # 用于向上中转信号
-    def signal_extend(self, obj, signal) -> None:
-        obj.emit(signal)
+    def signal_extend(self, obj, *args) -> None:
+        obj.emit(*args)
+
+    # 向所有客户端广播，服务器关闭，断开与服务器的连接，当没有客户端与服务器相连时，服务器执行关闭程序
+    def close_server_by_clients_command_send(self):
+        # print('[close_server_by_clients_command_send] ', len(self.clients_list), self.clients_list)
+        close_signal: dict[str, str] = {'server_close': 'Server will be closed'}
+        self.send_all(close_signal)
+        self.flag_close_server_by_client = True
 
     # 运行线程
     def run(self):
@@ -203,11 +212,11 @@ class Server_Console_QThread(QThread):
                     # 接收客户端信息
                     recv_thread = Server_Handle_Console_QThread(self, client_socket, client_address)
                     recv_thread.signal_remove_clients.connect(self.clients_list_remove)         # 从客户端列表中移除已断开连接的客户端
-                    recv_thread.signal_data_console_send.connect(self.send_all)                 # 向客户端发送关闭服务器的信号
                     recv_thread.signal_data_console_recv.connect(functools.partial(self.signal_extend, self.signal_data_console_recv))  # 转接客户端发来的命令行信号
                     recv_thread.signal_connected_list.connect(functools.partial(self.signal_extend, self.signal_connected_list))        # 转接已连接的客户端列表信号
                     recv_thread.signal_error_output.connect(functools.partial(self.signal_extend, self.signal_error_output))            # 转接报错信号
-                    recv_thread.signal_close_server.connect(functools.partial(self.signal_extend, self.signal_close_server))            # 转接关闭服务器的信号
+                    recv_thread.signal_final_close.connect(functools.partial(self.signal_extend, self.signal_final_close))
+                    recv_thread.signal_close_server_form_client.connect(self.close_server_by_clients_command_send)            # 处理由客户端发起的服务器关闭请求信号
                     recv_thread.start()
             except Exception as e:
                 e = traceback.format_exc()
@@ -226,17 +235,14 @@ class Server_Console_QThread(QThread):
 
 
 class Server_Handle_Console_QThread(QThread):
-    signal_data_console_send = pyqtSignal(dict)     # 发送服务器关闭的信号
     signal_data_console_recv = pyqtSignal(dict)     # 接收命令行信号
-    # signal_connected_port = pyqtSignal(str)
     signal_connected_list = pyqtSignal(list)        # 连接设备列表信号
     signal_remove_clients = pyqtSignal(list)        # 移除断开连接的客户端信号
     signal_error_output = pyqtSignal(str)           # 报错信号
-    signal_close_server = pyqtSignal(str)           # 关闭服务器信号
+    signal_close_server_form_client = pyqtSignal()           # 关闭服务器信号
+    signal_final_close = pyqtSignal()               # 最后一个客户端返回的信号，关闭服务器
 
-    def __init__(
-        self, parent, client_socket: socket.socket, client_address: tuple
-    ) -> None:
+    def __init__(self, parent, client_socket: socket.socket, client_address: tuple) -> None:
         super().__init__(parent)
         self.formatted_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time()))
         self.parent_obj: QThread = parent
@@ -273,11 +279,10 @@ class Server_Handle_Console_QThread(QThread):
                         print("[Server_Console]: 关闭")
                         break
                     elif 'server_close' in data:
-                        print("[Server_Console]: 服务器将关闭")
-                        self.signal_close_server.emit('server_close')
-                        close_signal = {'server_close': 'Server will be closed'}
-                        self.signal_data_console_send.emit(close_signal)
-                        break
+                        print(f"[Server_Console]: 由 {self.client_address} 发出关闭服务器的请求 - {self.formatted_time}")
+                        self.signal_close_server_form_client.emit()  # 向服务器主线程发送信号，向所有客户端广播
+                        print("[Server_Console]: 服务器请求所有客户端断开连接")
+
         except ConnectionResetError as e:
             e = traceback.format_exc()
             self.signal_error_output.emit(f"[Server_Console]: [线程子线程run] - {self.formatted_time} \n{e}")
@@ -288,4 +293,6 @@ class Server_Handle_Console_QThread(QThread):
             self.signal_connected_list.emit(self.parent_obj.clients_list)  # 发送该客户端断开连接后的客户端列表，用于实例化服务器主线程的进程获取列表数据
             print("[Server_Console]: 当前已连接客户端数量:", len(self.parent_obj.clients_list))
             print(f"[-] [Server_Console]: 与 {self.client_address} 的连接已关闭")
+            if len(self.parent_obj.clients_list) == 0 and self.parent_obj.flag_close_server_by_client:
+                self.signal_final_close.emit()
             self.client_socket.close()  # 断开与客户端socket连接
