@@ -78,7 +78,7 @@ class JClient_UI(Ui_MainWindow):
     def append_TB_text(self, text_content: str, textBrowser_object: QTextBrowser = None) -> None:
         if not textBrowser_object:
             textBrowser_object = self.tb_console
-        print(type(textBrowser_object))
+        # print(type(textBrowser_object))
         try:
             textBrowser_object.moveCursor(QTextCursor.End)
             textBrowser_object.insertPlainText(text_content + "\n")
