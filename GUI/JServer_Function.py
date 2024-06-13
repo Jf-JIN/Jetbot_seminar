@@ -45,14 +45,14 @@ class JServer_Function(QMainWindow):
         self.server_video = Server_Vedio_QThread(ip)
         self.server_video.signal_connected_list.connect(self.get_console_connected_list)    # 获取 Video 服务器中的客户端列表
         self.signal_data_video_send.connect(self.server_video.send_img_all)                 # 向所有客户端发送视频数据
-        self.server_video.signal_close_server.connect(self.close_server_by_client)          # 接收客户端传来的关闭信号
-        self.signal_close_server_send.connect(self.server_video.send_all)                   # 向所有客户端发送关闭客户端的信号
+        self.server_video.signal_final_close.connect(self.close_server_by_client)          # 接收客户端传来的关闭信号
+        # self.signal_close_server_send.connect(self.server_video.send_all)                   # 向所有客户端发送关闭客户端的信号
         self.server_video.start()
 
         self.server_console = Server_Console_QThread(ip)
         self.server_console.signal_data_console_recv.connect(self.console_unpacking)            # 获取客户端发送来的命令行信号
         self.server_console.signal_connected_list.connect(self.get_console_connected_list)      # 获取 Console 服务器中的客户端列表
-        self.server_console.signal_close_server.connect(self.close_server_by_client)            # 接收客户端传来的关闭信号
+        self.server_console.signal_final_close.connect(self.close_server_by_client)            # 接收客户端传来的关闭信号
         self.signal_close_server_send.connect(self.server_console.send_all)                     # 向所有客户端发送关闭服务端的信号
         self.server_console.start()
 
@@ -96,7 +96,7 @@ class JServer_Function(QMainWindow):
 
     # 结束命令行线程
     def thread_finish(self, key):
-        print('结束命令行线程')
+        print('[命令行线程] 结束命令行线程')
         sender_thrd = self.sender()
         print(f'[命令行线程][sender类型]: {type(sender_thrd)}')
         sender_thrd.wait()
@@ -121,21 +121,24 @@ class JServer_Function(QMainWindow):
 
     # 从客户端关闭服务器
     def close_server_by_client(self):
+        print('[Server] 关闭服务器')
         self.close_client_socket()
         # 此处关闭其他的线程
         sys.exit()
 
     # 关闭所有的客户端Socket
     def close_client_socket(self):
-        for vclient in self.video_clients_list:
-            vsocket: socket.socket = vclient[0]
-            vsocket.close()
-        for cclient in self.console_clients_list:
-            csocket: socket.socket = cclient[0]
-            csocket.close()
-        print('关闭客户socket')
+        if self.video_clients_list:
+            for vclient in self.video_clients_list:
+                vsocket: socket.socket = vclient[0]
+                vsocket.close()
+        if self.console_clients_list:
+            for cclient in self.console_clients_list:
+                csocket: socket.socket = cclient[0]
+                csocket.close()
+        print('[Server] 关闭客户socket')
 
     # 服务器关闭事件
     def closeEvent(self, event):
-        self.close_client_socket()
         super().closeEvent(event)
+        self.close_client_socket()
