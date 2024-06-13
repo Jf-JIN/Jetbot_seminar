@@ -43,28 +43,37 @@ class JClient_Function(JClient_UI):
             return
         # ==================================== Client_Video_QThread ====================================
         self.client_video = Client_Video_QThread(ip)
-        self.client_video.signal_connected_port.connect(functools.partial(self.load_jetbot_port, self.lb_video_port))       # 端口信号
+        self.client_video.signal_connected_port.connect(self.load_jetbot_video_port)       # 端口信号
         self.client_video.signal_connected_flag.connect(functools.partial(self.clear_port_display, self.lb_video_port))     # 断开连接信号
-        self.client_video.signal_error_output.connect(functools.partial(self.append_TB_text, self.tb_console))
+        # self.client_video.signal_error_output.connect(functools.partial(self.append_TB_text, self.tb_console))
         self.client_video.signal_data_video_recv.connect(self.video_update)     # 接收视频信号
+        self.client_video.signal_server_close.connect(self.send_close_signal)   # 向服务器回复断开连接的命令
 
         self.signal_data_close_client_send.connect(self.client_video.send)      # 发送客户端关闭信号
         self.signal_data_close_server_send.connect(self.client_video.send)      # 发送服务器关闭信号
         self.client_video.start()
         # ==================================== Client_Console_QThread ====================================
         self.client_console = Client_Console_QThread(ip)
-        self.client_console.signal_connected_port.connect(functools.partial(self.load_jetbot_port, self.lb_console_port))     # 端口信号
+        self.client_console.signal_connected_port.connect(self.load_jetbot_console_port)     # 端口信号
         self.client_console.signal_connected_flag.connect(functools.partial(self.clear_port_display, self.lb_console_port))     # 断开连接信号
         self.client_console.signal_data_console_recv.connect(self.console_in_tb_display)        # 接收命令提示符返回内容
+        self.client_console.signal_server_close.connect(self.send_close_signal)   # 向服务器回复断开连接的命令
+
         self.signal_data_console_send.connect(self.client_console.send)        # 发送信号
         self.signal_data_close_client_send.connect(self.client_console.send)   # 发送客户端关闭信号
         self.signal_data_close_server_send.connect(self.client_console.send)   # 发送服务器关闭信号
         self.client_console.start()
 
     # 加载端口
-    def load_jetbot_port(self, tag: QLabel, port: str):
-        print('load_jetbot_port \t', port)
-        tag.setText(port)
+    def load_jetbot_console_port(self, port: str):
+        print('load_jetbot_console_port \t', port)
+        self.lb_console_port.setText(port)
+        self.change_client_server_connection_display()
+    # 加载端口
+
+    def load_jetbot_video_port(self, port: str):
+        print('load_jetbot_video_port \t', port)
+        self.lb_video_port.setText(port)
         self.change_client_server_connection_display()
 
     # 断开连接时，清空端口显示
@@ -83,7 +92,23 @@ class JClient_Function(JClient_UI):
             text = {'server_close': 'Server will be closed'}
             self.signal_data_close_server_send.emit(text)
 
+    # 客户端向服务端发送关闭信号
+    def send_close_signal(self):
+        if hasattr(self, 'client_video') and self.client_video and self.client_video.isRunning():
+            close_signal = {'close': 'Client_disconnected'}
+            self.signal_data_close_client_send.emit(close_signal)
+            self.signal_data_close_client_send.disconnect(self.client_video.send)      # 断开信号连接，避免重复被激活
+            self.client_video.stop()
+            self.clear_port_display(self.lb_video_port, False)
+        if hasattr(self, 'client_console') and self.client_console and self.client_console.isRunning():
+            close_signal = {'close': 'Client_disconnected'}
+            self.signal_data_close_client_send.emit(close_signal)
+            self.client_console.stop()
+            self.clear_port_display(self.lb_console_port, False)
+
+
 # **************************************** 子窗口功能 ****************************************
+
     def send_console_to_server(self):
         sender = self.sender()
         data = self.console_win.build_console_dict()  # 获取所有 LineEdit 的文字
