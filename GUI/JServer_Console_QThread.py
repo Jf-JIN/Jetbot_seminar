@@ -33,20 +33,21 @@ class JConsole_Read_QThread(QThread):
     def run(self):
         while self.flag_running:
             try:
-                r, _, _ = select.select([self.master_fd], [], [], 0.1)
-                if r:
-                    output_line = os.read(self.master_fd, 1024).decode(errors='ignore')
-                    if output_line == '':
-                        break
-                    if output_line:
-                        output_line = self.convert_to_plain_text(output_line)
-                        if 'process[master]: started with pid' in output_line:
-                            pid = output_line.split('[')[2].split(']')[0]
-                            self.signal_roscore_pid.emit(pid)
-                            print('[pid]: ', pid)
-                        # print('[output_line]:\t', repr(output_line))
-                        print('[output_line]:\t', output_line)
-                        self.signal_console_line.emit({self.flag_widget: output_line.strip()})
+                # r, _, _ = select.select([self.master_fd], [], [], 0.1)
+                # if r:
+                #     output_line = os.read(self.master_fd, 1024).decode(errors='ignore')
+                output_line = os.read(self.master_fd, 1024).decode()
+                if output_line == '':
+                    break
+                if output_line:
+                    output_line = self.convert_to_plain_text(output_line)
+                    if 'process[master]: started with pid' in output_line:
+                        pid = output_line.split('[')[2].split(']')[0]
+                        self.signal_roscore_pid.emit(pid)
+                        # print('[pid]: ', pid)
+                    # print('[output_line]:\t', repr(output_line))
+                    # print('[output_line]:\t', output_line)
+                    self.signal_console_line.emit({self.flag_widget: output_line.strip()})
             except OSError as e:
                 self.signal_error_output.emit({self.flag_widget: str(e)})
                 break
@@ -84,7 +85,7 @@ class JConsole_QThread(QThread):
 
     def set_pid(self, pid):
         self.pid = pid
-        print('[pid]: ', self.pid)
+        # print('[pid]: ', self.pid)
 
     def run(self):
         full_command = self.init_command  # 具体命令
@@ -92,14 +93,14 @@ class JConsole_QThread(QThread):
             master_fd, slave_fd = pty.openpty()
             self.process = subprocess.Popen(full_command, shell=True, stdout=slave_fd, stderr=subprocess.STDOUT, universal_newlines=True)
             os.close(slave_fd)
-            self.console_thread = JConsole_Read_QThread(self.flag_widget, master_fd)
-            self.console_thread.signal_console_line.connect(functools.partial(self.signal_extend, self.signal_console_line))
-            self.console_thread.signal_finished.connect(functools.partial(self.signal_extend, self.signal_finished))
-            self.console_thread.signal_error_output.connect(functools.partial(self.signal_extend, self.signal_error_output))
-            self.console_thread.signal_running_flag.connect(functools.partial(self.signal_extend, self.signal_running_flag))
-            self.console_thread.signal_roscore_pid.connect(self.set_pid)
-            self.console_thread.start()
-            self.console_thread.wait()  # 等待读取线程完成
+            # self.console_thread = JConsole_Read_QThread(self.flag_widget, master_fd)
+            # self.console_thread.signal_console_line.connect(functools.partial(self.signal_extend, self.signal_console_line))
+            # self.console_thread.signal_finished.connect(functools.partial(self.signal_extend, self.signal_finished))
+            # self.console_thread.signal_error_output.connect(functools.partial(self.signal_extend, self.signal_error_output))
+            # self.console_thread.signal_running_flag.connect(functools.partial(self.signal_extend, self.signal_running_flag))
+            # self.console_thread.signal_roscore_pid.connect(self.set_pid)
+            # self.console_thread.start()
+            # self.console_thread.wait()  # 等待读取线程完成
             # self.signal_finished.emit()
         except subprocess.CalledProcessError as e:
             e = traceback.format_exc()
