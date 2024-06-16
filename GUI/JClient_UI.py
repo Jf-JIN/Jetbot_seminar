@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(800, 832)
+        MainWindow.resize(1084, 854)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -28,17 +28,40 @@ class Ui_MainWindow(object):
         self.centralwidget.setSizePolicy(sizePolicy)
         self.centralwidget.setStyleSheet("QWidget#centralwidget{\n"
 "    background-color: rgb(85, 170, 255);\n"
-"    min-width: 800px;\n"
-"    min-height: 600px;\n"
+"    min-width: 1080px;\n"
+"    min-height: 800px;\n"
 "}\n"
 "\n"
 "QPushButton{\n"
 "    background-color: rgb(100, 190, 0);\n"
-"    min-width:50px;\n"
-"    min-height:40px;\n"
 "    border: 1px solid;\n"
 "    border-radius: 20px;\n"
 "    font: 18px \'幼圆\';\n"
+"}\n"
+"\n"
+"QFrame#frame_left QPushButton{\n"
+"    min-width:50px;\n"
+"    min-height:40px;\n"
+"}\n"
+"QFrame#frame_control QPushButton{\n"
+"    min-width:50px;\n"
+"    min-height:40px;\n"
+"}\n"
+"\n"
+"QPushButton#pb_reconnect_console{\n"
+"    min-width: 30px;\n"
+"    max-width: 30px;\n"
+"    min-height: 30px;\n"
+"    max-height: 30px;\n"
+"    border-radius:15px;\n"
+"}\n"
+"\n"
+"QPushButton#pb_reconnect_video{\n"
+"    min-width: 30px;\n"
+"    max-width: 30px;\n"
+"    min-height: 30px;\n"
+"    max-height: 30px;\n"
+"    border-radius:15px;\n"
 "}\n"
 "\n"
 "QPushButton#pb_launch{\n"
@@ -84,7 +107,13 @@ class Ui_MainWindow(object):
 "QPushButton#pb_up:hover, QPushButton#pb_down:hover, QPushButton#pb_left:hover, QPushButton#pb_right:hover, QPushButton#pb_center:hover{\n"
 "    background-color: rgb(100, 100, 100);\n"
 "    padding-bottom: 5px;\n"
+"}\n"
 "\n"
+"QPushButton#pb_camera_listener{\n"
+"    max-height:20px;\n"
+"    font: 16px \'幼圆\';\n"
+"    border: 1px solid;\n"
+"    border-radius: 8px;\n"
 "}\n"
 "\n"
 "QFrame#frame_left{\n"
@@ -105,7 +134,6 @@ class Ui_MainWindow(object):
 "}\n"
 "\n"
 "QFrame#frame_left QLabel#lb_connection_status{\n"
-"    margin-left: 5px;\n"
 "    margin-right: 10px;\n"
 "    padding-right: 10px;\n"
 "    font-weight: bold;\n"
@@ -130,9 +158,36 @@ class Ui_MainWindow(object):
 "    border-radius: 10px;\n"
 "    background-color: rgb(50, 50, 50);\n"
 "    color: rgb(240, 240, 240)\n"
+"}\n"
+"\n"
+"QTabWidget{\n"
+"    font: 16px \'Arial\';\n"
+"}\n"
+"\n"
+"QGroupBox{\n"
+"    font: 14px \'幼圆\';\n"
+"}\n"
+"\n"
+"QFrame#frame_parameter QLabel{\n"
+"    font: 14px \'幼圆\';\n"
+"}\n"
+"\n"
+"QScrollArea{\n"
+"    border:None;\n"
+"    font: 12px \'Arial\';\n"
+"}\n"
+"\n"
+"QFrame#frame_left QLabel#lb_a1_discription, QFrame#frame_left QLabel#lb_a2_discription, QFrame#frame_left QLabel#lb_a3_discription{\n"
+"    font: 20px \'Arial\';\n"
+"}\n"
+"\n"
+"QLineEdit{\n"
+"    border: 0px solid;\n"
+"    border-radius: 10px;\n"
 "}")
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.centralwidget)
+        self.horizontalLayout.setSpacing(10)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.frame_left = QtWidgets.QFrame(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
@@ -196,7 +251,7 @@ class Ui_MainWindow(object):
         self.frame_7.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_7.setObjectName("frame_7")
         self.formLayout = QtWidgets.QFormLayout(self.frame_7)
-        self.formLayout.setContentsMargins(-1, 0, 0, 0)
+        self.formLayout.setContentsMargins(0, 0, 0, 0)
         self.formLayout.setHorizontalSpacing(5)
         self.formLayout.setVerticalSpacing(0)
         self.formLayout.setObjectName("formLayout")
@@ -225,6 +280,16 @@ class Ui_MainWindow(object):
         self.horizontalLayout_4.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_4.setSpacing(0)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
+        self.pb_reconnect_console = QtWidgets.QPushButton(self.frame_4)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.pb_reconnect_console.sizePolicy().hasHeightForWidth())
+        self.pb_reconnect_console.setSizePolicy(sizePolicy)
+        self.pb_reconnect_console.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.pb_reconnect_console.setText("")
+        self.pb_reconnect_console.setObjectName("pb_reconnect_console")
+        self.horizontalLayout_4.addWidget(self.pb_reconnect_console)
         self.lb_console_port = QtWidgets.QLabel(self.frame_4)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -234,6 +299,16 @@ class Ui_MainWindow(object):
         self.lb_console_port.setText("")
         self.lb_console_port.setObjectName("lb_console_port")
         self.horizontalLayout_4.addWidget(self.lb_console_port)
+        self.pb_reconnect_video = QtWidgets.QPushButton(self.frame_4)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.pb_reconnect_video.sizePolicy().hasHeightForWidth())
+        self.pb_reconnect_video.setSizePolicy(sizePolicy)
+        self.pb_reconnect_video.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.pb_reconnect_video.setText("")
+        self.pb_reconnect_video.setObjectName("pb_reconnect_video")
+        self.horizontalLayout_4.addWidget(self.pb_reconnect_video)
         self.lb_video_port = QtWidgets.QLabel(self.frame_4)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -347,15 +422,16 @@ class Ui_MainWindow(object):
         self.frame_9 = QtWidgets.QFrame(self.tab_A1)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(10)
+        sizePolicy.setVerticalStretch(20)
         sizePolicy.setHeightForWidth(self.frame_9.sizePolicy().hasHeightForWidth())
         self.frame_9.setSizePolicy(sizePolicy)
+        self.frame_9.setMaximumSize(QtCore.QSize(16777215, 60))
         self.frame_9.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_9.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_9.setObjectName("frame_9")
         self.horizontalLayout_7 = QtWidgets.QHBoxLayout(self.frame_9)
         self.horizontalLayout_7.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout_7.setSpacing(0)
+        self.horizontalLayout_7.setSpacing(5)
         self.horizontalLayout_7.setObjectName("horizontalLayout_7")
         self.label = QtWidgets.QLabel(self.frame_9)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
@@ -383,21 +459,39 @@ class Ui_MainWindow(object):
         self.pb_a1_load.setObjectName("pb_a1_load")
         self.horizontalLayout_7.addWidget(self.pb_a1_load)
         self.verticalLayout_6.addWidget(self.frame_9)
-        self.lb_a1_discription = QtWidgets.QLabel(self.tab_A1)
+        self.scrollArea_2 = QtWidgets.QScrollArea(self.tab_A1)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(100)
+        sizePolicy.setHeightForWidth(self.scrollArea_2.sizePolicy().hasHeightForWidth())
+        self.scrollArea_2.setSizePolicy(sizePolicy)
+        self.scrollArea_2.setWidgetResizable(True)
+        self.scrollArea_2.setObjectName("scrollArea_2")
+        self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 1560, 207))
+        self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
+        self.verticalLayout_11 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents_2)
+        self.verticalLayout_11.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_11.setSpacing(0)
+        self.verticalLayout_11.setObjectName("verticalLayout_11")
+        self.lb_a1_discription = QtWidgets.QLabel(self.scrollAreaWidgetContents_2)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(100)
         sizePolicy.setHeightForWidth(self.lb_a1_discription.sizePolicy().hasHeightForWidth())
         self.lb_a1_discription.setSizePolicy(sizePolicy)
-        self.lb_a1_discription.setText("")
+        self.lb_a1_discription.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.lb_a1_discription.setObjectName("lb_a1_discription")
-        self.verticalLayout_6.addWidget(self.lb_a1_discription)
+        self.verticalLayout_11.addWidget(self.lb_a1_discription)
+        self.scrollArea_2.setWidget(self.scrollAreaWidgetContents_2)
+        self.verticalLayout_6.addWidget(self.scrollArea_2)
         self.frame_10 = QtWidgets.QFrame(self.tab_A1)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(20)
         sizePolicy.setHeightForWidth(self.frame_10.sizePolicy().hasHeightForWidth())
         self.frame_10.setSizePolicy(sizePolicy)
+        self.frame_10.setMaximumSize(QtCore.QSize(16777215, 60))
         self.frame_10.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_10.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_10.setObjectName("frame_10")
@@ -433,15 +527,16 @@ class Ui_MainWindow(object):
         self.frame = QtWidgets.QFrame(self.tabWidgetPage1)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(10)
+        sizePolicy.setVerticalStretch(20)
         sizePolicy.setHeightForWidth(self.frame.sizePolicy().hasHeightForWidth())
         self.frame.setSizePolicy(sizePolicy)
+        self.frame.setMaximumSize(QtCore.QSize(16777215, 60))
         self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame.setObjectName("frame")
         self.horizontalLayout_9 = QtWidgets.QHBoxLayout(self.frame)
         self.horizontalLayout_9.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout_9.setSpacing(0)
+        self.horizontalLayout_9.setSpacing(5)
         self.horizontalLayout_9.setObjectName("horizontalLayout_9")
         self.label_7 = QtWidgets.QLabel(self.frame)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
@@ -469,21 +564,39 @@ class Ui_MainWindow(object):
         self.pb_a2_save.setObjectName("pb_a2_save")
         self.horizontalLayout_9.addWidget(self.pb_a2_save)
         self.verticalLayout_7.addWidget(self.frame)
-        self.lb_a2_discription = QtWidgets.QLabel(self.tabWidgetPage1)
+        self.scrollArea_3 = QtWidgets.QScrollArea(self.tabWidgetPage1)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(100)
+        sizePolicy.setHeightForWidth(self.scrollArea_3.sizePolicy().hasHeightForWidth())
+        self.scrollArea_3.setSizePolicy(sizePolicy)
+        self.scrollArea_3.setWidgetResizable(True)
+        self.scrollArea_3.setObjectName("scrollArea_3")
+        self.scrollAreaWidgetContents_3 = QtWidgets.QWidget()
+        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 1575, 207))
+        self.scrollAreaWidgetContents_3.setObjectName("scrollAreaWidgetContents_3")
+        self.verticalLayout_12 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents_3)
+        self.verticalLayout_12.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_12.setSpacing(0)
+        self.verticalLayout_12.setObjectName("verticalLayout_12")
+        self.lb_a2_discription = QtWidgets.QLabel(self.scrollAreaWidgetContents_3)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(100)
         sizePolicy.setHeightForWidth(self.lb_a2_discription.sizePolicy().hasHeightForWidth())
         self.lb_a2_discription.setSizePolicy(sizePolicy)
-        self.lb_a2_discription.setText("")
+        self.lb_a2_discription.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.lb_a2_discription.setObjectName("lb_a2_discription")
-        self.verticalLayout_7.addWidget(self.lb_a2_discription)
+        self.verticalLayout_12.addWidget(self.lb_a2_discription)
+        self.scrollArea_3.setWidget(self.scrollAreaWidgetContents_3)
+        self.verticalLayout_7.addWidget(self.scrollArea_3)
         self.frame_3 = QtWidgets.QFrame(self.tabWidgetPage1)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(20)
         sizePolicy.setHeightForWidth(self.frame_3.sizePolicy().hasHeightForWidth())
         self.frame_3.setSizePolicy(sizePolicy)
+        self.frame_3.setMaximumSize(QtCore.QSize(16777215, 60))
         self.frame_3.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_3.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_3.setObjectName("frame_3")
@@ -513,16 +626,53 @@ class Ui_MainWindow(object):
         self.widget = QtWidgets.QWidget()
         self.widget.setObjectName("widget")
         self.verticalLayout_9 = QtWidgets.QVBoxLayout(self.widget)
+        self.verticalLayout_9.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_9.setSpacing(0)
         self.verticalLayout_9.setObjectName("verticalLayout_9")
         self.frame_13 = QtWidgets.QFrame(self.widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(20)
+        sizePolicy.setHeightForWidth(self.frame_13.sizePolicy().hasHeightForWidth())
+        self.frame_13.setSizePolicy(sizePolicy)
+        self.frame_13.setMaximumSize(QtCore.QSize(16777215, 60))
         self.frame_13.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_13.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_13.setObjectName("frame_13")
         self.verticalLayout_9.addWidget(self.frame_13)
-        self.label_2 = QtWidgets.QLabel(self.widget)
-        self.label_2.setObjectName("label_2")
-        self.verticalLayout_9.addWidget(self.label_2)
+        self.scrollArea = QtWidgets.QScrollArea(self.widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(100)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.scrollArea.sizePolicy().hasHeightForWidth())
+        self.scrollArea.setSizePolicy(sizePolicy)
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollArea.setObjectName("scrollArea")
+        self.scrollAreaWidgetContents = QtWidgets.QWidget()
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1417, 177))
+        self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
+        self.verticalLayout_10 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
+        self.verticalLayout_10.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_10.setSpacing(0)
+        self.verticalLayout_10.setObjectName("verticalLayout_10")
+        self.lb_a3_discription = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(100)
+        sizePolicy.setHeightForWidth(self.lb_a3_discription.sizePolicy().hasHeightForWidth())
+        self.lb_a3_discription.setSizePolicy(sizePolicy)
+        self.lb_a3_discription.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.lb_a3_discription.setObjectName("lb_a3_discription")
+        self.verticalLayout_10.addWidget(self.lb_a3_discription)
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
+        self.verticalLayout_9.addWidget(self.scrollArea)
         self.frame_14 = QtWidgets.QFrame(self.widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(20)
+        sizePolicy.setHeightForWidth(self.frame_14.sizePolicy().hasHeightForWidth())
+        self.frame_14.setSizePolicy(sizePolicy)
+        self.frame_14.setMaximumSize(QtCore.QSize(16777215, 60))
         self.frame_14.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_14.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_14.setObjectName("frame_14")
@@ -563,24 +713,43 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_2.setSpacing(0)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.lb_image = QtWidgets.QLabel(self.frame_right)
+        self.frame_16 = QtWidgets.QFrame(self.frame_right)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(100)
-        sizePolicy.setHeightForWidth(self.lb_image.sizePolicy().hasHeightForWidth())
-        self.lb_image.setSizePolicy(sizePolicy)
-        self.lb_image.setText("")
-        self.lb_image.setObjectName("lb_image")
-        self.verticalLayout_2.addWidget(self.lb_image)
-        self.lb_maze = QtWidgets.QLabel(self.frame_right)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.frame_16.sizePolicy().hasHeightForWidth())
+        self.frame_16.setSizePolicy(sizePolicy)
+        self.frame_16.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_16.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_16.setObjectName("frame_16")
+        self.horizontalLayout_14 = QtWidgets.QHBoxLayout(self.frame_16)
+        self.horizontalLayout_14.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_14.setSpacing(10)
+        self.horizontalLayout_14.setObjectName("horizontalLayout_14")
+        self.lb_hs_display = QtWidgets.QLabel(self.frame_16)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(100)
-        sizePolicy.setHeightForWidth(self.lb_maze.sizePolicy().hasHeightForWidth())
-        self.lb_maze.setSizePolicy(sizePolicy)
-        self.lb_maze.setText("")
-        self.lb_maze.setObjectName("lb_maze")
-        self.verticalLayout_2.addWidget(self.lb_maze)
+        sizePolicy.setHorizontalStretch(5)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.lb_hs_display.sizePolicy().hasHeightForWidth())
+        self.lb_hs_display.setSizePolicy(sizePolicy)
+        self.lb_hs_display.setText("")
+        self.lb_hs_display.setAlignment(QtCore.Qt.AlignCenter)
+        self.lb_hs_display.setObjectName("lb_hs_display")
+        self.horizontalLayout_14.addWidget(self.lb_hs_display)
+        self.hs_video_size = QtWidgets.QSlider(self.frame_16)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(100)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.hs_video_size.sizePolicy().hasHeightForWidth())
+        self.hs_video_size.setSizePolicy(sizePolicy)
+        self.hs_video_size.setOrientation(QtCore.Qt.Horizontal)
+        self.hs_video_size.setObjectName("hs_video_size")
+        self.horizontalLayout_14.addWidget(self.hs_video_size)
+        self.pb_camera_listener = QtWidgets.QPushButton(self.frame_16)
+        self.pb_camera_listener.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.pb_camera_listener.setObjectName("pb_camera_listener")
+        self.horizontalLayout_14.addWidget(self.pb_camera_listener)
+        self.verticalLayout_2.addWidget(self.frame_16)
         self.frame_11 = QtWidgets.QFrame(self.frame_right)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -590,11 +759,65 @@ class Ui_MainWindow(object):
         self.frame_11.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_11.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_11.setObjectName("frame_11")
-        self.horizontalLayout_11 = QtWidgets.QHBoxLayout(self.frame_11)
+        self.horizontalLayout_12 = QtWidgets.QHBoxLayout(self.frame_11)
+        self.horizontalLayout_12.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_12.setSpacing(0)
+        self.horizontalLayout_12.setObjectName("horizontalLayout_12")
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_12.addItem(spacerItem)
+        self.lb_image = QtWidgets.QLabel(self.frame_11)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(100)
+        sizePolicy.setHeightForWidth(self.lb_image.sizePolicy().hasHeightForWidth())
+        self.lb_image.setSizePolicy(sizePolicy)
+        self.lb_image.setText("")
+        self.lb_image.setObjectName("lb_image")
+        self.horizontalLayout_12.addWidget(self.lb_image)
+        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_12.addItem(spacerItem1)
+        self.verticalLayout_2.addWidget(self.frame_11)
+        self.frame_15 = QtWidgets.QFrame(self.frame_right)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(100)
+        sizePolicy.setHeightForWidth(self.frame_15.sizePolicy().hasHeightForWidth())
+        self.frame_15.setSizePolicy(sizePolicy)
+        self.frame_15.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_15.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_15.setObjectName("frame_15")
+        self.horizontalLayout_13 = QtWidgets.QHBoxLayout(self.frame_15)
+        self.horizontalLayout_13.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_13.setSpacing(0)
+        self.horizontalLayout_13.setObjectName("horizontalLayout_13")
+        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_13.addItem(spacerItem2)
+        self.lb_maze = QtWidgets.QLabel(self.frame_15)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(100)
+        sizePolicy.setHeightForWidth(self.lb_maze.sizePolicy().hasHeightForWidth())
+        self.lb_maze.setSizePolicy(sizePolicy)
+        self.lb_maze.setText("")
+        self.lb_maze.setObjectName("lb_maze")
+        self.horizontalLayout_13.addWidget(self.lb_maze)
+        spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_13.addItem(spacerItem3)
+        self.verticalLayout_2.addWidget(self.frame_15)
+        self.frame_parameter = QtWidgets.QFrame(self.frame_right)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(100)
+        sizePolicy.setHeightForWidth(self.frame_parameter.sizePolicy().hasHeightForWidth())
+        self.frame_parameter.setSizePolicy(sizePolicy)
+        self.frame_parameter.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_parameter.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_parameter.setObjectName("frame_parameter")
+        self.horizontalLayout_11 = QtWidgets.QHBoxLayout(self.frame_parameter)
         self.horizontalLayout_11.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_11.setSpacing(0)
         self.horizontalLayout_11.setObjectName("horizontalLayout_11")
-        self.groupBox = QtWidgets.QGroupBox(self.frame_11)
+        self.groupBox = QtWidgets.QGroupBox(self.frame_parameter)
         self.groupBox.setObjectName("groupBox")
         self.gridLayout = QtWidgets.QGridLayout(self.groupBox)
         self.gridLayout.setContentsMargins(2, 2, 2, 2)
@@ -702,7 +925,7 @@ class Ui_MainWindow(object):
         self.formLayout_5.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.lb_m_z)
         self.gridLayout.addWidget(self.groupBox_7, 1, 1, 1, 1)
         self.horizontalLayout_11.addWidget(self.groupBox)
-        self.frame_12 = QtWidgets.QFrame(self.frame_11)
+        self.frame_12 = QtWidgets.QFrame(self.frame_parameter)
         self.frame_12.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_12.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_12.setObjectName("frame_12")
@@ -717,21 +940,21 @@ class Ui_MainWindow(object):
         self.groupBox_3.setObjectName("groupBox_3")
         self.verticalLayout_8.addWidget(self.groupBox_3)
         self.horizontalLayout_11.addWidget(self.frame_12)
-        self.verticalLayout_2.addWidget(self.frame_11)
-        self.frame_8 = QtWidgets.QFrame(self.frame_right)
+        self.verticalLayout_2.addWidget(self.frame_parameter)
+        self.frame_control = QtWidgets.QFrame(self.frame_right)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.frame_8.sizePolicy().hasHeightForWidth())
-        self.frame_8.setSizePolicy(sizePolicy)
-        self.frame_8.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_8.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_8.setObjectName("frame_8")
-        self.horizontalLayout_5 = QtWidgets.QHBoxLayout(self.frame_8)
+        sizePolicy.setHeightForWidth(self.frame_control.sizePolicy().hasHeightForWidth())
+        self.frame_control.setSizePolicy(sizePolicy)
+        self.frame_control.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_control.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_control.setObjectName("frame_control")
+        self.horizontalLayout_5 = QtWidgets.QHBoxLayout(self.frame_control)
         self.horizontalLayout_5.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_5.setSpacing(0)
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
-        self.pb_launch_2 = QtWidgets.QPushButton(self.frame_8)
+        self.pb_launch_2 = QtWidgets.QPushButton(self.frame_control)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(20)
         sizePolicy.setVerticalStretch(0)
@@ -740,7 +963,7 @@ class Ui_MainWindow(object):
         self.pb_launch_2.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.pb_launch_2.setObjectName("pb_launch_2")
         self.horizontalLayout_5.addWidget(self.pb_launch_2)
-        self.pb_stop = QtWidgets.QPushButton(self.frame_8)
+        self.pb_stop = QtWidgets.QPushButton(self.frame_control)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(100)
         sizePolicy.setVerticalStretch(0)
@@ -749,11 +972,11 @@ class Ui_MainWindow(object):
         self.pb_stop.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.pb_stop.setObjectName("pb_stop")
         self.horizontalLayout_5.addWidget(self.pb_stop)
-        self.verticalLayout_2.addWidget(self.frame_8)
+        self.verticalLayout_2.addWidget(self.frame_control)
         self.horizontalLayout.addWidget(self.frame_right)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 23))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1084, 23))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
@@ -775,15 +998,28 @@ class Ui_MainWindow(object):
         self.label_9.setText(_translate("MainWindow", "任务内容"))
         self.label.setText(_translate("MainWindow", "地图"))
         self.pb_a1_load.setText(_translate("MainWindow", "加载"))
+        self.lb_a1_discription.setText(_translate("MainWindow", "o Am Tag des Wettbewerbs werden ein bis dahin unbekanntes Labyrinth der Größe 4x4, sowie zwei Positionen A und B bekanntgegeben.\n"
+"o Als Information über das Labyrinth wird eine YAML-Datei mit allen vorhandenen Wänden gegeben, das heißt in dieser Aufgabe ist der Aufbau des Labyrinths vollständig bekannt.\n"
+"o Der JetBot startet mit vorgegebener Startposition und -orientierung an Punkt A.\n"
+"o Ziel dieser Aufgabe ist es, so schnell wie möglich zu Punkt B zu gelangen.\n"
+"o Gewertet wird die benötigte Zeit, wobei es Zeitstrafen für die Kollision mit Wänden gibt."))
         self.label_4.setText(_translate("MainWindow", "当前状态: "))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_A1), _translate("MainWindow", "Aufgabe 1"))
         self.label_7.setText(_translate("MainWindow", "地图"))
         self.pb_a2_save.setText(_translate("MainWindow", "导出"))
+        self.lb_a2_discription.setText(_translate("MainWindow", "o Am Tag des Wettbewerbs wird der Roboter mit einem unbekannten Labyrinth der Größe 4x4 konfrontiert. Er erhält eine YAML-Datei, in der alle möglichen Wände aufgelistet sind.\n"
+"o Ziele ist das Abfahren und Kartografieren des Labyrinths, dafür stehen dem Roboter 5 Minuten zur Verfügung.\n"
+"o Die geforderte Ausgabe bei dieser Aufgabe ist ein zweidimensionaler Plot des Labyrinths, aus dem klar ersichtlich ist, welche der Wände vorhanden sind. Zudem soll\n"
+"der gefahrene Weg im Plot eingezeichnet werden."))
         self.label_8.setText(_translate("MainWindow", "当前状态: "))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabWidgetPage1), _translate("MainWindow", "Aufgabe 2"))
-        self.label_2.setText(_translate("MainWindow", "TextLabel"))
+        self.lb_a3_discription.setText(_translate("MainWindow", "o In der letzten Aufgabe steht der Roboter mit einem unbekannten Labyrinth unbekannter Größe. Startposition und -orientierung sind für alle Teams gleich.\n"
+"o Das Ziel ist das Auffinden und Bergen eines Gegenstandes (roter Würfel).\n"
+"o Der Roboter soll das Labyrinth selbständig nach dem Würfel absuchen, den Würfel mit dem Greifer aufnehmen und ihn zurück zum Start des Labyrinths bringen.\n"
+"o Wieder wird die Zeit bewertet, wobei Zeitstrafen für die Kollision mit Wänden und das Verlieren des Würfels verhängt werden."))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.widget), _translate("MainWindow", "Aufgabe 3"))
         self.pb_launch.setText(_translate("MainWindow", "执行"))
+        self.pb_camera_listener.setText(_translate("MainWindow", "连接视频"))
         self.groupBox.setTitle(_translate("MainWindow", "物理参数"))
         self.groupBox_4.setTitle(_translate("MainWindow", "速度"))
         self.label_11.setText(_translate("MainWindow", "x: "))
