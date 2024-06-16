@@ -10,8 +10,10 @@ class Main(QMainWindow, JClient_Function):
     def __init__(self) -> None:
         super().__init__()
         # self.le_jetbot_ip.setText('192.168.124.11')
-        self.le_jetbot_ip.setText('192.168.124.5')
+        # self.le_jetbot_ip.setText('192.168.124.5')
         # self.le_jetbot_ip.setText('192.168.124.9')
+        # self.le_jetbot_ip.setText('172.25.1.152')
+        self.le_jetbot_ip.setText('192.168.0.24')
         self.setWindowTitle('JetBot7-Client')
 
     # 应用关闭事件
