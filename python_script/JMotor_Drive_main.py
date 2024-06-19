@@ -27,6 +27,18 @@ class JMotor_Controller():
                 self.left = -speed
                 self.right = -speed
                 set_speed(left,right)
+                
+            def check(self, speed=1.0)
+        
+                self.left = -speed
+                self.right = -speed
+                set_speed(left,right)
+                
+                time.sleep(0.2)
+                
+                self.left = 0
+                self.right = 0
+                set_speed(left,right)
 
             def turn_left(self, speed=1.0):
                 self.left = -speed
@@ -56,35 +68,4 @@ class JFilter():
 # 电机驱动主算法 (外部可调用)
 class JMotor_Drive():
     def __init__(self, input) -> None: # 这里写类的输入(input)
-        
-        if qx > 2       and        qx < 4        and       qy < 1.5
-        forward(1)
-        
-        if qx >= 4      and        qy < 1.5
-        turn_right(1)
-        
-        if qx >= 4      and        qy > 1.5       and      qy < 2.5
-        forward(1)
-        
-        if qx >= 4      and        qy >= 2.5
-        turn_right(1)
-        
-        if qx < 4       and         qx >= 1.5     and      qy > 2.5     and     qy < 3.5
-        forward(1) 
-        
-        if qx < 1.5     and         qy < 3.5
-        turn_left(1) 
-        
-        if qx < 1.5     and         qy >= 3.5     and       qy < 5.5
-        forward(1)
-        
-        if qx < 1.5     and         qy >= 5.5
-        turn_left(1)
-
-        if qx >= 1.5    and         qx <= 2.5    and        qy >= 5.5
-        forward(1)
-        
-        if qx > 2.5     and         qy >= 5.5
-        stop
-        
         pass
