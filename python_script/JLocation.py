@@ -13,6 +13,7 @@ JLocation:          用于存储Apriltag信息和IMU信息
         set_right_list(right_list: list | tuple)  写入右侧Apriltag数据
         set_front(front: JApril_Tag_Info)         写入正前Apriltag数据
         set_imu(imu: JImu_Info)                   写入IMU数据
+        copy_JLocation -> JLocation               深度复制JLocation
 
 JFront: 
     读取:
@@ -26,13 +27,14 @@ JFront:
 
 JImu_Info:          用于存储IMU信息
     读取:   
-        orientation 
+        orientation            -> JOrientation                  方向
         velocity               -> JImu_Velocity                 速度
         angular_velocity       -> JImu_Angular_Velocity         角速度
         acceleration           -> JImu_Acceleration             加速度
+        angular_acceleration   -> JImu_Angular_Acceleration     角加速度
         magnetic_field         -> JImu_Magnetic_Field           磁场
     写入:  
-        set_orientation()
+        set_orientation(self, orientation_list: Union[list, tuple])         写入角度
         set_velocity(velocity_list: list | tuple)                           写入速度
         set_angular_velocity(angular_velocity_list: list | tuple)           写入角速度
         set_acceleration(acceleration_list: list | tuple)                   写入加速度
@@ -46,8 +48,8 @@ JApril_Tag_Info:    用于存储Apriltag信息
         id             -> list          id列表
     写入: 
         set_distance(distance_list: list | tuple)           写入距离
-        set_orientation(orientation_list: list | tuple)     写入方向3
-        set_id(id: list)                                     写入id
+        set_orientation(orientation_list: list | tuple)     写入方向
+        set_id(id: list)                                    写入id列表
 
 重要:  以上的所有信息的最终访问参数x,y,z, 必须使用方法x(), y(), z()
 
@@ -63,6 +65,7 @@ e = a.left_list                     读取左侧列表
 '''
 
 from typing import Union
+import copy
 
 # 坐标系基础类
 
@@ -189,7 +192,7 @@ class JApril_Tag_Info():
     # 赋值id参数
     def set_id(self, id: list) -> None:
         # 如果输入不是列表，亦或列表中的元素不是整数，则触发报错
-        if not isinstance(id, list[int]):
+        if not isinstance(id, list):
             raise ValueError(
                 '在 JApril_Tag 中, 方法 set_id 的参数必须为列表, 且列表内必须为整数')
         self.__id = id
@@ -397,3 +400,55 @@ class JLocation():
             raise ValueError(
                 '在 JLocation 中, 方法 set_imu 的参数必须为 JImu_Info !')
         self.__imu = imu
+
+    # 深复制JLocation
+    def copy_JLocation(self) -> "JLocation":
+        return copy.deepcopy(self)
+        # location = JLocation()
+        # location.front.front.set_distance([self.front.front.distance.x(), self.front.front.distance.y(), self.front.front.distance.z()])
+        # location.front.front.set_orientation([self.front.front.orientation.x(), self.front.front.orientation.y(), self.front.front.orientation.z()])
+        # location.front.left.set_distance([self.front.left.distance.x(), self.front.left.distance.y(), self.front.left.distance.z()])
+        # location.front.left.set_orientation([self.front.left.orientation.x(), self.front.left.orientation.y(), self.front.left.orientation.z()])
+        # location.front.right.set_distance([self.front.right.distance.x(), self.front.right.distance.y(), self.front.right.distance.z()])
+        # location.front.right.set_orientation([self.front.right.orientation.x(), self.front.right.orientation.y(), self.front.right.orientation.z()])
+        # location.left_list = [None, None]
+        # location.right_list = [None, None]
+        # if self.left_list[0]:
+        #     location.left_list[0] = JApril_Tag_Info()
+        #     location.left_list[0].set_distance([self.left_list[0].distance.x(), self.left_list[0].distance.y(), self.left_list[0].distance.z()])
+        #     location.left_list[0].set_orientation([self.left_list[0].orientation.x(), self.left_list[0].orientation.y(), self.left_list[0].orientation.z()])
+        #     location.left_list[0].set_id(self.left_list[0].id)
+        # if self.left_list[1]:
+        #     location.left_list[1] = JApril_Tag_Info()
+        #     location.left_list[1].set_distance([self.left_list[1].distance.x(), self.left_list[1].distance.y(), self.left_list[1].distance.z()])
+        #     location.left_list[1].set_orientation([self.left_list[1].orientation.x(), self.left_list[1].orientation.y(), self.left_list[1].orientation.z()])
+        #     location.left_list[1].set_id(self.left_list[1].id)
+        # if self.right_list[0]:
+        #     location.right_list[0] = JApril_Tag_Info()
+        #     location.right_list[0].set_distance([self.right_list[0].distance.x(), self.right_list[0].distance.y(), self.right_list[0].distance.z()])
+        #     location.right_list[0].set_orientation([self.right_list[0].orientation.x(), self.right_list[0].orientation.y(), self.right_list[0].orientation.z()])
+        #     location.right_list[0].set_id(self.right_list[0].id)
+        # if self.right_list[1]:
+        #     location.right_list[1] = JApril_Tag_Info()
+        #     location.right_list[1].set_distance([self.right_list[1].distance.x(), self.right_list[1].distance.y(), self.right_list[1].distance.z()])
+        #     location.right_list[1].set_orientation([self.right_list[1].orientation.x(), self.right_list[1].orientation.y(), self.right_list[1].orientation.z()])
+        #     location.right_list[1].set_id(self.right_list[1].id)
+        # location.imu.orientation.set_x(self.imu.orientation.x())
+        # location.imu.orientation.set_y(self.imu.orientation.y())
+        # location.imu.orientation.set_z(self.imu.orientation.z())
+        # location.imu.velocity.set_x(self.imu.velocity.x())
+        # location.imu.velocity.set_y(self.imu.velocity.y())
+        # location.imu.velocity.set_z(self.imu.velocity.z())
+        # location.imu.angular_velocity.set_x(self.imu.angular_velocity.x())
+        # location.imu.angular_velocity.set_y(self.imu.angular_velocity.y())
+        # location.imu.angular_velocity.set_z(self.imu.angular_velocity.z())
+        # location.imu.acceleration.set_x(self.imu.acceleration.x())
+        # location.imu.acceleration.set_y(self.imu.acceleration.y())
+        # location.imu.acceleration.set_z(self.imu.acceleration.z())
+        # location.imu.angular_acceleration.set_x(self.imu.angular_acceleration.x())
+        # location.imu.angular_acceleration.set_y(self.imu.angular_acceleration.y())
+        # location.imu.angular_acceleration.set_z(self.imu.angular_acceleration.z())
+        # location.imu.magnetic_field.set_x(self.imu.magnetic_field.x())
+        # location.imu.magnetic_field.set_y(self.imu.magnetic_field.y())
+        # location.imu.magnetic_field.set_z(self.imu.magnetic_field.z())
+        # return location
