@@ -10,7 +10,40 @@ from motor_driver import set_speed import stop
 # 姿态校正 (内部引用)
 class JPose_Correction():
     def __init__(self) -> None:
-        pass
+
+    # 向左微调    
+    def fineleft(self, speed=0.5):
+        self.left = -speed
+        self.right = speed
+        set_speed(left, right)
+        time.sleep(0.2)
+        
+        self.left = speed
+        self.right = -speed
+        set_speed(left, right)
+        time.sleep(0.2)
+        
+        self.left = 0
+        self.right = 0
+        set_speed(left, right)
+        
+    # 向右微调
+    def fineright(self, speed=0.5):
+        self.left = speed
+        self.right = -speed
+        set_speed(left, right)
+
+        time.sleep(0.2)
+        self.left = -speed
+        self.right = speed
+        set_speed(left, right)
+        time.sleep(0.2)
+
+        self.left = 0
+        self.right = 0
+        set_speed(left, right)
+
+
 
 
 
@@ -18,43 +51,51 @@ class JPose_Correction():
 class JMotor_Controller():
     def __init__(self) -> None:
         
-            def forward(self, speed=1.0):
-                self.left = speed
-                self.right = speed
-                set_speed(left,right)
-
-            def backward(self, speed=1.0):
-                self.left = -speed
-                self.right = -speed
-                set_speed(left,right)
-                
-            def check(self, speed=1.0)
+    # 前进    
+    def forward(self, speed=1.0):
+         self.left = speed
+         self.right = speed
+         set_speed(left,right)
         
-                self.left = -speed
-                self.right = -speed
-                set_speed(left,right)
+    # 后退
+    def backward(self, speed=1.0):
+          self.left = -speed
+          self.right = -speed
+          set_speed(left,right)
+        
+    # 刹车     
+    def check(self, speed=1.0)
+        
+          self.left = -speed
+          self.right = -speed
+          set_speed(left,right)
+              
+          time.sleep(0.2)
                 
-                time.sleep(0.2)
-                
-                self.left = 0
-                self.right = 0
-                set_speed(left,right)
-
-            def turn_left(self, speed=1.0):
-                self.left = -speed
-                self.right = speed
-                set_speed(left,right)
-
-            def turn_right(self, speed=1.0):
-                self.left = speed
-                self.right= -speed
-                set_speed(left,right)
-
-            def stop(self):
-                self.left = 0
-                self.right = 0
-                set_speed(left,right)
-        pass
+          self.left = 0
+          self.right = 0
+          set_speed(left,right)
+        
+     # 90°左转 需要标定持续时间
+     def turn_left(self, speed=1.0):
+         self.left = -speed
+         self.right = speed
+         set_speed(left,right)
+         time.sleep(0.2)
+         
+    # 90°右转 需要标定持续时间
+    def turn_right(self, speed=1.0):
+         self.left = speed
+         self.right= -speed
+         set_speed(left,right)
+        
+     # 停机
+     def stop(self):
+         self.left = 0
+         self.right = 0
+         set_speed(left,right)
+         
+   
 
 
 
