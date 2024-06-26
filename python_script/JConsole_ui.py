@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'e:\10_Programm\0002_Python\0902_Jetbot_seminar\UI\JConsole.ui'
+# Form implementation generated from reading ui file 'e:\10_Programm\0002_Python\0902_Jetbot_seminar\pyscript\JConsole.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
 #

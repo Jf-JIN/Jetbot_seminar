@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QMainWindow
 # from PyQt5.QtCore import
 
 import sys
+import yaml
 import socket
 import rosgraph
 import rosnode
@@ -66,7 +67,7 @@ class JServer_Function(QMainWindow):
     def console_unpacking(self, data: dict):
         print(f'[执行解包]: {data}')
         key_list = [
-            'camera_listener', 'roscore', 'ros_camera', 'ros_rectify',
+            'camera_listener', 'a1_map_yaml_dict', 'roscore', 'ros_camera', 'ros_rectify',
             'ros_apriltag_detection', 'ros_imu', 'ros_motor', 'ros_algorithm'
         ]
         key = None
@@ -83,6 +84,15 @@ class JServer_Function(QMainWindow):
         if key == 'camera_listener':
             self.camera_listener_init()
             self.jlocation_listener_init()
+        elif key == 'a1_map_yaml_dict':
+            print(data[key])
+            downloads_path = os.path.join(os.path.expanduser('~'), 'workspace')
+            yaml_filename = 'tags.yaml'
+            yaml_file_path = os.path.join(downloads_path, yaml_filename)
+            with open(yaml_file_path, 'w', encoding='utf-8') as yaml_file:
+                yaml.dump(data, yaml_file, default_flow_style=False, sort_keys=False)
+            copy_command = f'echo jetson | sudo -S cp {yaml_file_path} /opt/ && sudo -S rm {yaml_file_path}'  # 此处修改！！！！！！！！！！！！！！！！！！！！！！！
+            subprocess.Popen(copy_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         elif key not in self.active_threads and data[key] != 'Emergency_Stop':
             self.concole_thread(key, data)
         elif key in self.active_threads and data[key] == 'Emergency_Stop':

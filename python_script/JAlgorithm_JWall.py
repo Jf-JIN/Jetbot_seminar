@@ -35,6 +35,8 @@ from JAlgorithm_JWall_Const import *
 import yaml
 
 # 基础类 Apriltag 的位置 注意 x y z 值只能使用方法调用
+
+
 class JApriltag_Position():
     def __init__(self) -> None:
         self.__x = None
@@ -60,6 +62,8 @@ class JApriltag_Position():
         self.__z = z
 
 # 基础类 Apriltag 的方向 注意 qw qx qy qz 值只能使用方法调用
+
+
 class JApriltag_Orientation():
     def __init__(self) -> None:
         self.__qw = None
@@ -92,6 +96,8 @@ class JApriltag_Orientation():
         self.__qz = qz
 
 # JApril_Code 为基类 JApriltag_Position 与 JApriltag_Orientation 的扩展类
+
+
 class JApril_Code():
     def __init__(self) -> None:
         self.__id = None
@@ -125,6 +131,8 @@ class JApril_Code():
         self.__ori.set_qz(wxyz_list[3])
 
 # 主要调取类 JWall 内含4个 Apriltag 码, 是墙的类
+
+
 class JWall():
     def __init__(self):
         self.__main_0 = JApril_Code()
@@ -147,8 +155,8 @@ class JWall():
         self.__rightside: float = None  # y 轴的值
         self.__topside: float = None  # x 轴的值
         self.__bottomside: float = None  # x 轴的值
-        self.__identifier: int|str = 0  #标识符, 用于算法区分墙与路径, 墙中心的本体
-        self.__sub_indentifier: int|str = 0 #标识符, 用于算法区分墙与路径, 墙的延伸, 包括连接
+        self.__identifier: int | str = 0  # 标识符, 用于算法区分墙与路径, 墙中心的本体
+        self.__sub_indentifier: int | str = 0  # 标识符, 用于算法区分墙与路径, 墙的延伸, 包括连接
 
     @property
     def main_0(self) -> JApril_Code:
@@ -229,15 +237,14 @@ class JWall():
     @property
     def bottomside(self) -> float:
         return self.__bottomside
-    
+
     @property
-    def identifier(self) -> int|str:
+    def identifier(self) -> int | str:
         return self.__identifier
-    
+
     @property
-    def sub_identifier(self) -> int|str:
+    def sub_identifier(self) -> int | str:
         return self.__sub_indentifier
-    
 
     def set_main_0(self, code_dict) -> None:
         if code_dict:
@@ -271,7 +278,7 @@ class JWall():
             self.sub_1.set_ori(
                 [code_dict['qw'], code_dict['qx'], code_dict['qy'], code_dict['qz']])
 
-    def set_middle(self):
+    def set_middle(self):  # 板子本身的方向，而非板子的法向向量方向
         if self.main_0.ori.qx() == 0.5:
             self.__orientation = 'H'
         else:
@@ -339,13 +346,15 @@ class JWall():
         self.set_vertex()
 
 # 用于读取yaml文件, 并返回含有所有墙的列表
+
+
 class JWalls():
     def __init__(self) -> None:
-        self.JWall_list:list = []
-        self.range_Maze_x:int = []
-        self.range_Maze_y:int = []
-        self.max_middle_x:float = None
-        self.max_middle_y:float = None
+        self.JWall_list: list = []
+        self.range_Maze_x: int = []
+        self.range_Maze_y: int = []
+        self.max_middle_x: float = None
+        self.max_middle_y: float = None
 
     def build_JWall_list_from_yaml(self, yaml_data: yaml) -> list[JWall]:
         list_dict = yaml_data['tag_bundles'][0]['layout']
@@ -364,8 +373,8 @@ class JWalls():
             self.set_update_max_middle_x_y(temp_wall)
             temp_JWalls_list.append(temp_wall)
         return temp_JWalls_list
-    
-    def set_update_max_middle_x_y(self, wall:JWall) -> None:
+
+    def set_update_max_middle_x_y(self, wall: JWall) -> None:
         if wall.orientation == 'V':
             if self.max_middle_x:
                 if wall.middle.x() > self.max_middle_x:
