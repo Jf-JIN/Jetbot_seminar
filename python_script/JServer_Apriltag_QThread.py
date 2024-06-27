@@ -6,15 +6,15 @@ from JData_Collect_main import *
 class JServer_Apriltag_QThread(QThread):
     signal_jlocation_package = pyqtSignal(dict)
 
-    def __init__(self) -> None:
+    def __init__(self, parent) -> None:
         self.flag_running = True
-        self.data_collector = JData_Collection()
+        self.data_collector = parent.data_collector
 
     def jlocation_unpack(self, data: JLocation):
         temp = {
             'jlocation_package': {
-                'left_list': [None, None],
-                'right_list': [None, None],
+                'left_list': [],
+                'right_list': [],
                 'front': {
                     'front': {
                         'distance': [data.front.front.distance.x(), data.front.front.distance.y(), data.front.front.distance.z()],
@@ -42,34 +42,42 @@ class JServer_Apriltag_QThread(QThread):
                 }
             }
         }
-        if data.left_list[0]:
-            l0 = {
-                'distance': [data.left_list[0].distance.x(), data.left_list[0].distance.y(), data.left_list[0].distance.z()],
-                'orientation': [data.left_list[0].orientation.x(), data.left_list[0].orientation.y(), data.left_list[0].orientation.z()],
-                'id': data.left_list[0].id
-            }
-            temp['jlocation_package']['left_list'][0] = l0
-        if data.left_list[1]:
-            l1 = {
-                'distance': [data.left_list[1].distance.x(), data.left_list[1].distance.y(), data.left_list[1].distance.z()],
-                'orientation': [data.left_list[1].orientation.x(), data.left_list[1].orientation.y(), data.left_list[1].orientation.z()],
-                'id': data.left_list[1].id
-            }
-            temp['jlocation_package']['left_list'][0] = l1
-        if data.right_list[0]:
-            r0 = {
-                'distance': [data.right_list[0].distance.x(), data.right_list[0].distance.y(), data.right_list[0].distance.z()],
-                'orientation': [data.right_list[0].orientation.x(), data.right_list[0].orientation.y(), data.right_list[0].orientation.z()],
-                'id': data.right_list[0].id
-            }
-            temp['jlocation_package']['left_list'][0] = r0
-        if data.right_list[1]:
-            r1 = {
-                'distance': [data.right_list[1].distance.x(), data.right_list[1].distance.y(), data.right_list[1].distance.z()],
-                'orientation': [data.right_list[1].orientation.x(), data.right_list[1].orientation.y(), data.right_list[1].orientation.z()],
-                'id': data.right_list[1].id
-            }
-            temp['jlocation_package']['left_list'][0] = r1
+        if len(data.left_list) > 0:
+            temp['jlocation_package']['left_list'] = [None]
+            if data.left_list[0]:
+                l0 = {
+                    'distance': [data.left_list[0].distance.x(), data.left_list[0].distance.y(), data.left_list[0].distance.z()],
+                    'orientation': [data.left_list[0].orientation.x(), data.left_list[0].orientation.y(), data.left_list[0].orientation.z()],
+                    'id': data.left_list[0].id
+                }
+                temp['jlocation_package']['left_list'][0] = l0
+            if len(data.left_list) == 2:
+                temp['jlocation_package']['left_list'].append(None)
+                if data.left_list[1]:
+                    l1 = {
+                        'distance': [data.left_list[1].distance.x(), data.left_list[1].distance.y(), data.left_list[1].distance.z()],
+                        'orientation': [data.left_list[1].orientation.x(), data.left_list[1].orientation.y(), data.left_list[1].orientation.z()],
+                        'id': data.left_list[1].id
+                    }
+                    temp['jlocation_package']['left_list'][1] = l1
+        if len(data.right_list) > 0:
+            temp['jlocation_package']['right_list'] = [None]
+            if data.right_list[0]:
+                r0 = {
+                    'distance': [data.right_list[0].distance.x(), data.right_list[0].distance.y(), data.right_list[0].distance.z()],
+                    'orientation': [data.right_list[0].orientation.x(), data.right_list[0].orientation.y(), data.right_list[0].orientation.z()],
+                    'id': data.right_list[0].id
+                }
+                temp['jlocation_package']['right_list'][0] = r0
+            if len(data.right_list) == 2:
+                temp['jlocation_package']['right_list'].append(None)
+                if data.right_list[1]:
+                    r1 = {
+                        'distance': [data.right_list[1].distance.x(), data.right_list[1].distance.y(), data.right_list[1].distance.z()],
+                        'orientation': [data.right_list[1].orientation.x(), data.right_list[1].orientation.y(), data.right_list[1].orientation.z()],
+                        'id': data.right_list[1].id
+                    }
+                    temp['jlocation_package']['right_list'][1] = r1
         return temp
 
     def run(self):

@@ -1,17 +1,23 @@
 
-from PyQt5.QtWidgets import QMenuBar, QActionGroup, QAction, QTextBrowser, QTextEdit, QComboBox, QTabWidget, QSlider
+from PyQt5.QtWidgets import QMenuBar, QActionGroup, QAction, QTextBrowser, QTextEdit, QComboBox, QTabWidget, QSlider, QFileDialog, QPushButton, QLabel, QGridLayout, QSizePolicy
 from PyQt5.QtGui import QPixmap, QIcon, QTextCursor, QFont
 from PyQt5.QtCore import QByteArray, QSize, Qt
 
 import socket
+import time
+import json
 import traceback
+import functools
 
 # from Icon_setting import *
 from JClient_ui import *
 from JConsoleUI import *
+from JAlgorithm_JPath_Finding import *
 
 
 class JClient_UI(Ui_MainWindow):
+    signal_data_console_send = pyqtSignal(dict)
+
     def __init__(self) -> None:
         super().__init__()
         self.setupUi(self)
@@ -25,12 +31,14 @@ class JClient_UI(Ui_MainWindow):
         self.traceback_display_flag = True
         self.flag_connection_to_server = False
         self.console_win = JConcole()
+        self.formatted_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
 
     def signal_connections(self):
         self.pb_launch_2.clicked.connect(self.console_win.show)
         self.tabWidget.currentChanged.connect(self.cbb_and_tab_connection)
         self.cbb_task.currentIndexChanged.connect(self.cbb_and_tab_connection)
         self.hs_video_size.valueChanged.connect(self.hs_video_size_display)
+        self.pb_a1_load.clicked.connect(self.load_yaml_file)
 
     def UI_setup(self):
         self.pb_close_server.setEnabled(False)
@@ -132,4 +140,86 @@ class JClient_UI(Ui_MainWindow):
             textBrowser_object.insertPlainText(str(e) + "\n")
             textBrowser_object.moveCursor(QTextCursor.End)
 
-# **************************************** 子窗口功能 ****************************************
+    def clearLayout(self, layout):
+        while layout.count():
+            item = layout.takeAt(0)
+            widget = item.widget()
+            if widget is not None:
+                widget.deleteLater()
+            else:
+                self.clearLayout(item.layout())
+
+    def load_yaml_file(self):
+        options = QFileDialog.Options()
+        try:
+            yaml_file_path, _ = QFileDialog.getOpenFileName(None, '请选择需要加载的Yaml文件', '', 'yaml文件 (*.yaml)', 'yaml文件 (*.yaml)', options)
+            if yaml_file_path:
+                self.le_a1_path.setText(yaml_file_path)
+                self.load_map_from_yaml(yaml_file_path)
+                return yaml_file_path
+            return None
+        except Exception as e:
+            e = traceback.format_exc()
+            e_text = f'[加载yaml文件] - {self.formatted_time} \n[!错误!] {e}'
+            print(e_text)
+            self.append_TB_text(e_text, self.tb_console)
+
+    def load_map_from_yaml(self, path):
+        with open(path, 'r') as file:
+            loaded_data = yaml.safe_load(file)
+        # signal_text = json.dumps({'a1_map_yaml_dict': loaded_data})
+        loaded_data['standalone_tags'] = loaded_data['tag_bundles']
+        signal_text = {'a1_map_yaml_dict': loaded_data}
+        self.signal_data_console_send.emit(signal_text)
+        self.lb_goal_index.clear()
+        self.map_manager = JMap_Grid_Matrix_From_Yaml(loaded_data)
+        abstract_map = self.map_manager.map_abstract_matrix
+        # size_map = [len(abstract_map), len(abstract_map[0])]
+        map_layout = self.frame_map.layout()
+        if map_layout:
+            self.clearLayout(map_layout)
+            # self.frame_map.setLayout(None)
+        else:
+            map_layout = QGridLayout()
+        map_layout.setVerticalSpacing(0)
+        map_layout.setHorizontalSpacing(0)
+        for i in range(len(abstract_map)):
+            map_layout.setRowStretch(i, 1)
+        for j in range(len(abstract_map[0])):
+            map_layout.setColumnStretch(j, 1)
+        self.list_pb_map = []
+        for x_index, line_list in enumerate(abstract_map):
+            line_list: list[JWall]
+            for y_index, item in enumerate(line_list):
+                if item == 0:  # 墙
+                    wall_item = QLabel('   ')
+                    wall_item_name = f'lb_map_{x_index}_{y_index}'
+                    wall_item.setObjectName(wall_item_name)
+                    wall_item.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+                    wall_item.setStyleSheet('''
+                                                    background-color: #AAAAAA;
+                                                    min-width: 10px;
+                                                    min-height:10px;
+                                            ''')
+                    map_layout.addWidget(wall_item, x_index, y_index)
+                elif item == 1:
+                    path_item = QPushButton()
+                    path_item_name = f'pb_map_{x_index}_{y_index}'
+                    path_item.setObjectName(path_item_name)
+                    path_item.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+                    path_item.setStyleSheet('''QFrame#frame_map QPushButton{
+                                                    background-color: #006600;
+                                                    border: None;
+                                                    border-radius: 0px;
+                                                    min-width: 10px;
+                                                    min-height:10px;
+                                                }
+                                                QFrame#frame_map QPushButton:hover{
+                                                    background-color: #000066;
+                                                }
+                                            ''')
+                    map_layout.addWidget(path_item, x_index, y_index)
+                    self.list_pb_map.append(path_item)
+            self.frame_map.setLayout(map_layout)
+
+        # **************************************** 子窗口功能 ****************************************

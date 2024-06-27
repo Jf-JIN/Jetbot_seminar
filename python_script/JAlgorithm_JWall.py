@@ -27,11 +27,12 @@ JWall:
 JWalls:
     写入：
         build_JWall_list_from_yaml (yaml_data: yaml) -> list[JWall]
-        该方法为从yaml文件中读取所有的Code码信息, 将Code码分类, 并打包为JWall类, 
+        该方法为从yaml文件中读取所有的Code码信息, 将Code码分类, 并打包为JWall类,
         将信息记录在JWall中, 返回一个含有所有JWall类实体的列表
 '''
 
 from JAlgorithm_JWall_Const import *
+from JLocation import *
 import yaml
 
 # 基础类 Apriltag 的位置 注意 x y z 值只能使用方法调用
@@ -249,40 +250,49 @@ class JWall():
     def set_main_0(self, code_dict) -> None:
         if code_dict:
             self.main_0.set_id(code_dict['id'])
-            self.main_0.set_pos(
-                [code_dict['x'], code_dict['y'], code_dict['z']])
-            self.main_0.set_ori(
-                [code_dict['qw'], code_dict['qx'], code_dict['qy'], code_dict['qz']])
+            if 'x' in code_dict and 'y' in code_dict and 'z' in code_dict:
+                self.main_0.set_pos(
+                    [code_dict['x'], code_dict['y'], code_dict['z']])
+            if 'qw' in code_dict and 'qx' in code_dict and 'qy' in code_dict and 'qz' in code_dict:
+                self.main_0.set_andi(
+                    [code_dict[''], code_dict['qx'], code_dict['qy'], code_dict['qz']])
 
     def set_main_1(self, code_dict) -> None:
         if code_dict:
             self.main_1.set_id(code_dict['id'])
-            self.main_1.set_pos(
-                [code_dict['x'], code_dict['y'], code_dict['z']])
-            self.main_1.set_ori(
-                [code_dict['qw'], code_dict['qx'], code_dict['qy'], code_dict['qz']])
+            if 'x' in code_dict and 'y' in code_dict and 'z' in code_dict:
+                self.main_1.set_pos(
+                    [code_dict['x'], code_dict['y'], code_dict['z']])
+            if 'qw' in code_dict and 'qx' in code_dict and 'qy' in code_dict and 'qz' in code_dict:
+                self.main_1.set_andi(
+                    [code_dict['qw'], code_dict['qx'], code_dict['qy'], code_dict['qz']])
 
     def set_sub_0(self, code_dict) -> None:
         if code_dict:
             self.sub_0.set_id(code_dict['id'])
-            self.sub_0.set_pos(
-                [code_dict['x'], code_dict['y'], code_dict['z']])
-            self.sub_0.set_ori(
-                [code_dict['qw'], code_dict['qx'], code_dict['qy'], code_dict['qz']])
+            if 'x' in code_dict and 'y' in code_dict and 'z' in code_dict:
+                self.sub_0.set_pos(
+                    [code_dict['x'], code_dict['y'], code_dict['z']])
+            if 'qw' in code_dict and 'qx' in code_dict and 'qy' in code_dict and 'qz' in code_dict:
+                self.sub_0.set_andi(
+                    [code_dict['qw'], code_dict['qx'], code_dict['qy'], code_dict['qz']])
 
     def set_sub_1(self, code_dict) -> None:
         if code_dict:
             self.sub_1.set_id(code_dict['id'])
-            self.sub_1.set_pos(
-                [code_dict['x'], code_dict['y'], code_dict['z']])
-            self.sub_1.set_ori(
-                [code_dict['qw'], code_dict['qx'], code_dict['qy'], code_dict['qz']])
+            if 'x' in code_dict and 'y' in code_dict and 'z' in code_dict:
+                self.sub_1.set_pos(
+                    [code_dict['x'], code_dict['y'], code_dict['z']])
+            if 'qw' in code_dict and 'qx' in code_dict and 'qy' in code_dict and 'qz' in code_dict:
+                self.sub_1.set_andi(
+                    [code_dict['qw'], code_dict['qx'], code_dict['qy'], code_dict['qz']])
 
     def set_middle(self):  # 板子本身的方向，而非板子的法向向量方向
-        if self.main_0.ori.qx() == 0.5:
-            self.__orientation = 'H'
-        else:
-            self.__orientation = 'V'
+        if self.main_0.ori.qx():
+            if self.main_0.ori.qx() == 0.5:
+                self.__orientation = 'H'
+            else:
+                self.__orientation = 'V'
         # 如果存在4个 Apriltag 码：
         if self.main_0.pos.x() and self.sub_0.pos.x():
             # print(self.main_0.pos.y() , self.sub_0.pos.y())
@@ -308,18 +318,23 @@ class JWall():
                 self.middle.set_y(self.sub_0.pos.y()+0.0015)
             self.middle.set_z(self.sub_0.pos.z())
         else:
-            raise ValueError('没有中心点, 两侧都没有码')
+            print('当前墙壁无中心点, 未得到坐标数据')
+            # raise ValueError('没有中心点, 两侧都没有码')
 
     def set_id_list(self, id0, id1, id2, id3):
         self.__id_list = [id0, id1, id2, id3]
 
     def set_edge(self):
+        if not self.middle.x() or not self.__middle.y():
+            return
         self.__leftside = self.__middle.y() - self.__width / 2
         self.__rightside = self.__middle.y() + self.__width / 2
         self.__topside = self.middle.x() - self.__width / 2
         self.__bottomside = self.middle.x() + self.__width / 2
 
     def set_vertex(self):
+        if not self.__leftside or not self.__topside or not self.__rightside or not self.__bottomside:
+            return
         self.__topleft = (self.__leftside, self.__topside)
         self.__topright = (self.__rightside, self.__topside)
         self.__bottomleft = (self.__leftside, self.__bottomside)
@@ -339,13 +354,29 @@ class JWall():
             else:
                 print(i)
                 raise ValueError('方法 set_wall 输入错误, 请检查code_list_dict')
-        self.set_id_list(self.main_0.id, self.main_1.id,
-                         self.sub_0.id, self.sub_1.id)
+        self.set_id_list(self.main_0.id, self.main_1.id, self.sub_0.id, self.sub_1.id)
+        self.update_wall_calculated_data()
+
+    def set_wall_from_apriltag(self, apriltag: JApril_Tag_Info):
+        id_list = apriltag.id
+        for i in id_list:
+            if i % 4 == 0:
+                self.set_main_0({'id': i})
+            elif i % 4 == 1:
+                self.set_main_1({'id': i})
+            elif i % 4 == 2:
+                self.set_sub_0({'id': i})
+            elif i % 4 == 3:
+                self.set_sub_1({'id': i})
+        self.set_id_list(self.main_0.id, self.main_1.id, self.sub_0.id, self.sub_1.id)
+        self.update_wall_calculated_data()
+
+    def update_wall_calculated_data(self):
         self.set_middle()
         self.set_edge()
         self.set_vertex()
 
-# 用于读取yaml文件, 并返回含有所有墙的列表
+        # 用于读取yaml文件, 并返回含有所有墙的列表
 
 
 class JWalls():

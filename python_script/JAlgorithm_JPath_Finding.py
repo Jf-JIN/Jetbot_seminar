@@ -79,8 +79,8 @@ class JPath_Finding_A_Star():
         # print(path_list)
         temp_path = []
         for i in path_list:
-            print('\ncurrent:\t', i.end_node.current_index)
-            print('increase:\t', i.index_x_increase, i.index_y_increase)
+            # print('\ncurrent:\t', i.end_node.current_index)
+            # print('increase:\t', i.index_x_increase, i.index_y_increase)
             i: JAction
             # 寻找目标墙
             goal_wall = None
@@ -98,8 +98,8 @@ class JPath_Finding_A_Star():
                     goal_wall_index = [i.end_node.current_index[0], y_index]
                     goal_wall: JWall = map_matrix.map_obj_matrix[i.end_node.current_index[0]][y_index]
                 distance = abs(y_index - i.end_node.current_index[1] - i.index_y_increase) * goal_wall.width + goal_wall.width / 2
-            print('goal_wall\t', goal_wall_index, goal_wall)
-            print('distance\t', distance)
+            # print('goal_wall\t', goal_wall_index, goal_wall)
+            # print('distance\t', distance)
             if i.index_x_increase == 1 or i.index_y_increase == 1:  # 向右向下，看到的id是向左向上
                 id_list = [goal_wall.id_list[0], goal_wall.id_list[1]]
             if i.index_x_increase == -1 or i.index_y_increase == -1:    # 向左向上，看到的id是向右向下
@@ -112,7 +112,8 @@ class JPath_Finding_A_Star():
             }
             temp_path.append(temp_action_dict)
             # print(i,  i.vector, i.path_length, i.orientation, i.start_node.current_index, i.end_node.current_index)
-        for i in temp_path:
-            print(i)
-        print('\n')
-        print(temp_path)
+        # for i in temp_path:
+        #     print(i)
+        # print('\n')
+        # print(temp_path)
+        return temp_path
