@@ -112,8 +112,8 @@ class JPath_Finding_A_Star():
             }
             temp_path.append(temp_action_dict)
             # print(i,  i.vector, i.path_length, i.orientation, i.start_node.current_index, i.end_node.current_index)
-        # for i in temp_path:
-        #     print(i)
-        # print('\n')
-        # print(temp_path)
+        for i in temp_path:
+            print(i)
+        print('\n')
+        print(temp_path)
         return temp_path
