@@ -2,12 +2,12 @@
 from PyQt5.QtWidgets import QMenuBar, QActionGroup, QAction, QTextBrowser, QTextEdit, QComboBox, QTabWidget, QSlider, QFileDialog, QPushButton, QLabel, QGridLayout, QSizePolicy
 from PyQt5.QtGui import QPixmap, QIcon, QTextCursor, QFont
 from PyQt5.QtCore import QByteArray, QSize, Qt
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 import socket
 import time
-import json
 import traceback
-import functools
 
 # from Icon_setting import *
 from JClient_ui import *
