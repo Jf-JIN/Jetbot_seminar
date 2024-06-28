@@ -21,7 +21,7 @@ class Imu_Data_Collection(QObject):
         self.magnetic_field_data = None
 
         # 初始化ROS节点
-        rospy.init_node('imu_data_collection_node', anonymous=True)
+        #rospy.init_node('imu_data_collection_node', anonymous=False)
 
         # 订阅IMU数据和磁场数据
         rospy.Subscriber("/imu/data_raw", Imu, self.imu_callback)
@@ -69,7 +69,7 @@ class Imu_Data_Collection(QObject):
 class Camera_Data_Collection(QObject):
     signal_error_output = pyqtSignal(str)
     def __init__(self):
-        rospy.init_node('camera_data_collection_node', anonymous=True)
+        #rospy.init_node('camera_data_collection_node', anonymous=False)
 
         super().__init__()
         # 存储检测到的 Apriltag 信息
@@ -115,7 +115,7 @@ class JData_Collection(QObject):
     signal_error_output = pyqtSignal(str)
 
     def __init__(self):
-        rospy.init_node('jdata_collection_node', anonymous=True)
+        rospy.init_node('jdata_collection_node', anonymous=False)
 
         super().__init__()
         # 初始化 Camera_Data_Collection 和 Imu_Data_Collection
