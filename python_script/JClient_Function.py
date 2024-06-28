@@ -1,9 +1,14 @@
 
+from PyQt5.QtWidgets import QMessageBox, QLabel, QLineEdit, QGroupBox, QGridLayout
+
+
 from JClientUI import *
 from JClient_Server_Console import *
 from JClient_Server_Video import *
 from JLocation import *
-from PyQt5.QtWidgets import QMessageBox, QLabel, QLineEdit, QGroupBox, QGridLayout
+from JAlgorithm_JMap_Matrix_Manager import *
+
+
 import functools
 import threading
 
@@ -226,11 +231,19 @@ class JClient_Function(JClient_UI):
             'ros_motor': lambda: self.append_TB_text(data['ros_motor'], self.console_win.tb_ros_motor),
             'ros_algorithm': lambda: self.append_TB_text(data['ros_algorithm'], self.console_win.tb_ros_algorithm),
             'current_pos_float': lambda: self.display_current_pos(data['current_pos_float']),
-            'jlocation_package': lambda: self.display_jlocation(data['jlocation_package'])
+            'jlocation_package': lambda: self.display_jlocation(data['jlocation_package']),
+            'map_generation': lambda: self.map_display_update(data['map_generation'])
         }
         for key, value in data_sort_dict.items():
             if key in data:
                 value()
+
+    def map_display_update(self, data):
+        # data 是一个json文件
+        yaml_data = yaml.dump(data, default_flow_style=False)
+        map_manager = JMap_Grid_Matrix_From_Yaml(yaml_data)
+        map_abstract = map_manager.map_abstract_matrix
+        pass
 
     def display_current_pos(self, data):
         id_list = data[0]
