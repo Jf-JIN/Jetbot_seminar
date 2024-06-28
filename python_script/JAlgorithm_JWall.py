@@ -254,8 +254,8 @@ class JWall():
                 self.main_0.set_pos(
                     [code_dict['x'], code_dict['y'], code_dict['z']])
             if 'qw' in code_dict and 'qx' in code_dict and 'qy' in code_dict and 'qz' in code_dict:
-                self.main_0.set_andi(
-                    [code_dict[''], code_dict['qx'], code_dict['qy'], code_dict['qz']])
+                self.main_0.set_ori(
+                    [code_dict['qw'], code_dict['qx'], code_dict['qy'], code_dict['qz']])
 
     def set_main_1(self, code_dict) -> None:
         if code_dict:
@@ -264,7 +264,7 @@ class JWall():
                 self.main_1.set_pos(
                     [code_dict['x'], code_dict['y'], code_dict['z']])
             if 'qw' in code_dict and 'qx' in code_dict and 'qy' in code_dict and 'qz' in code_dict:
-                self.main_1.set_andi(
+                self.main_1.set_ori(
                     [code_dict['qw'], code_dict['qx'], code_dict['qy'], code_dict['qz']])
 
     def set_sub_0(self, code_dict) -> None:
@@ -274,7 +274,7 @@ class JWall():
                 self.sub_0.set_pos(
                     [code_dict['x'], code_dict['y'], code_dict['z']])
             if 'qw' in code_dict and 'qx' in code_dict and 'qy' in code_dict and 'qz' in code_dict:
-                self.sub_0.set_andi(
+                self.sub_0.set_ori(
                     [code_dict['qw'], code_dict['qx'], code_dict['qy'], code_dict['qz']])
 
     def set_sub_1(self, code_dict) -> None:
@@ -284,7 +284,7 @@ class JWall():
                 self.sub_1.set_pos(
                     [code_dict['x'], code_dict['y'], code_dict['z']])
             if 'qw' in code_dict and 'qx' in code_dict and 'qy' in code_dict and 'qz' in code_dict:
-                self.sub_1.set_andi(
+                self.sub_1.set_ori(
                     [code_dict['qw'], code_dict['qx'], code_dict['qy'], code_dict['qz']])
 
     def set_middle(self):  # 板子本身的方向，而非板子的法向向量方向
