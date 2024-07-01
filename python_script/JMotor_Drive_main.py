@@ -94,8 +94,27 @@ class JMotor_Controller():
          self.left = 0
          self.right = 0
          set_speed(left,right)
-         
-   
+
+
+
+class P_Controller
+
+    kP = 0.5
+
+    target_speed_left = left
+    target_speed_right = right
+
+    current_speed_left = rpm_left
+    current_speed_right = rpm_right
+
+    controller_left = kP * (target_speed_left-current_speed_left )
+    controller_right = kP * (current_speed_right - current_speed_right)
+
+    left = rpm_left + controller_left
+    right = rpm_right + controller_right
+
+    return left
+    return right   
 
 
 
