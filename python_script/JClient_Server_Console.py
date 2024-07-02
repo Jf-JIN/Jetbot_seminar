@@ -78,7 +78,7 @@ class Client_Console_QThread(QThread):
             if not data:
                 self.signal_connected_flag.emit(False)  # 发送断开连接的信号
                 return None
-            print(data)
+            # print(data)
             data = data.decode()
             return data
 
