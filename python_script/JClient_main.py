@@ -10,9 +10,9 @@ class Main(QMainWindow, JClient_Function):
     def __init__(self) -> None:
         super().__init__()
         # self.le_jetbot_ip.setText('192.168.124.4')
-        self.le_jetbot_ip.setText('192.168.124.5')
+        # self.le_jetbot_ip.setText('192.168.124.5')
         # self.le_jetbot_ip.setText('192.168.124.6')
-        # self.le_jetbot_ip.setText('172.25.1.152')
+        self.le_jetbot_ip.setText('172.25.1.152')
         # self.le_jetbot_ip.setText('192.168.0.24')
         # self.le_jetbot_ip.setText('192.168.43.218')
         # self.le_jetbot_ip.setText('192.168.178.149')
