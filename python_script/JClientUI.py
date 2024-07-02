@@ -34,7 +34,8 @@ class JClient_UI(Ui_MainWindow):
         self.formatted_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
 
     def signal_connections(self):
-        self.pb_launch_2.clicked.connect(self.console_win.show)
+        self.pb_launch_2.clicked.connect(self.show_console_win)
+        self.console_win.pb_main_win.clicked.connect(self.show_main_win)
         self.tabWidget.currentChanged.connect(self.cbb_and_tab_connection)
         self.cbb_task.currentIndexChanged.connect(self.cbb_and_tab_connection)
         self.hs_video_size.valueChanged.connect(self.hs_video_size_display)
@@ -76,6 +77,14 @@ class JClient_UI(Ui_MainWindow):
         self.lb_hs_display.setText('40')
         # self.hs_video_size.setTickPosition(QSlider.TicksBelow)  # 设置刻度位置
         self.hs_video_size.setTickInterval(10)  # 设置刻度间隔
+
+    def show_console_win(self):
+        self.console_win.show()
+        self.console_win.activateWindow()
+
+    def show_main_win(self):
+        self.show()
+        self.activateWindow()
 
     def change_client_server_connection_display(self) -> None:
         if self.lb_console_port.text() != '' and self.lb_video_port.text() != '':
