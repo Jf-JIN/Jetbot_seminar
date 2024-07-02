@@ -78,7 +78,7 @@ class JPath_Finding_A_Star():
         # print(len(path_list))
         # print(path_list)
         temp_path = []
-        for i in path_list:
+        for index, i in enumerate(path_list):
             # print('\ncurrent:\t', i.end_node.current_index)
             # print('increase:\t', i.index_x_increase, i.index_y_increase)
             i: JAction
@@ -104,11 +104,25 @@ class JPath_Finding_A_Star():
                 id_list = [goal_wall.id_list[0], goal_wall.id_list[1]]
             if i.index_x_increase == -1 or i.index_y_increase == -1:    # 向左向上，看到的id是向右向下
                 id_list = [goal_wall.id_list[2], goal_wall.id_list[3]]
-
+            if index < len(path_list)-1:
+                next_vector = path_list[index+1].vector
+                theta_rad = math.acos((i.vector[0]*next_vector[0]+i.vector[1]*next_vector[1])/(((i.vector[0]**2 + i.vector[1]**2) ** 0.5) * ((next_vector[0]**2 + next_vector[1]**2) ** 0.5)))
+                theta = math.degrees(theta_rad)
+                if i.vector[0]*next_vector[1]-i.vector[1]*next_vector[0] < 0:
+                    theta = -theta
+                if theta > 0:
+                    end_orientation = 'turn_left'
+                elif theta < 0:
+                    end_orientation = 'turn_right'
+                else:
+                    end_orientation = 'continue'
+            else:
+                end_orientation = 'end'
             temp_action_dict = {
                 'mode': 'line',
                 'goal_id': id_list,
-                'end_pos': distance
+                'end_pos': distance,
+                'end_orientation': end_orientation
             }
             temp_path.append(temp_action_dict)
             # print(i,  i.vector, i.path_length, i.orientation, i.start_node.current_index, i.end_node.current_index)
