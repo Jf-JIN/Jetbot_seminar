@@ -11,7 +11,6 @@ import rosnode
 from JClient_Server_Video import *
 from JClient_Server_Console import *
 from JServer_Console_QThread import *
-from JServer_Camera_Listener_QThread import *
 from JServer_Apriltag_QThread import *
 
 
@@ -24,7 +23,7 @@ class JServer_Function(QMainWindow):
         super().__init__()
         self.parameter_init()
         self.server_init()
-        time.sleep(1)
+        # time.sleep(1)
 
     def parameter_init(self) -> None:
         self.video_clients_list = []
@@ -67,7 +66,7 @@ class JServer_Function(QMainWindow):
     def console_unpacking(self, data: dict):
         print(f'[执行解包]: {data}')
         key_list = [
-            'camera_listener', 'a1_map_yaml_dict', 'a1_path_dict', 'roscore', 'ros_camera', 'ros_rectify',
+            'camera_listener', 'jlocation_listener', 'ros_node_init', 'a1_map_yaml_dict', 'a1_path_dict', 'roscore', 'ros_camera', 'ros_rectify',
             'ros_apriltag_detection', 'ros_imu', 'ros_motor', 'ros_algorithm'
         ]
         key = None
@@ -82,34 +81,29 @@ class JServer_Function(QMainWindow):
             return
         print(f'[执行解包分类]: {key in data}, {key}, {data}')
         if key == 'camera_listener':
-            self.camera_listener_init()
+            self.listener_init()
         elif key == 'jlocation_listener':
-            self.jlocation_listener_init()
+            self.listener_init()
+        elif key == 'ros_node_init':
+            rospy.init_node('jdata_collection_node', anonymous=False)
         elif key == 'a1_path_dict':
             # 发送信号, 控制小车
             pass
         elif key == 'a1_map_yaml_dict':
-            print(data[key])
+            print('[a1_map_yaml_dict]', data[key])
             downloads_path = os.path.join(os.path.expanduser('~'), 'workspace')
             yaml_filename = 'tags.yaml'
             yaml_file_path = os.path.join(downloads_path, yaml_filename)
             with open(yaml_file_path, 'w', encoding='utf-8') as yaml_file:
-                yaml.dump(data, yaml_file, default_flow_style=False, sort_keys=False)
+                yaml.dump(data[key], yaml_file, default_flow_style=False, sort_keys=False)
             copy_command = f'echo jetson | sudo -S cp {yaml_file_path} /opt/ros/noetic/share/apriltag_ros/config && sudo -S rm {yaml_file_path}'    # 此处可修改 tags.yaml 的路径
             subprocess.Popen(copy_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         elif key not in self.active_threads and data[key] != 'Emergency_Stop':
             self.concole_thread(key, data)
         elif key in self.active_threads and data[key] == 'Emergency_Stop':
             self.active_threads[key].stop_command()
-        elif key == 'ros_camera':
-            pass
-            # if not self.is_node_running('/camera'):
-            #     self.active_threads[key].send_command_to_subprocess(data[key])
-            # else:
-            #     print('[命令行线程]: 相机节点已运行, 请勿复开')
-            #     camera_is_running = {'ros_camera': '相机节点已运行, 请勿复开\nCamera node is running, please do not initialize it again.'}
-            #     self.server_console.send_all(camera_is_running)
-            #     return
+        # elif key == 'ros_camera':
+        #     pass
         elif key in self.active_threads:
             self.active_threads[key].send_command_to_subprocess(data[key])
 
@@ -155,24 +149,25 @@ class JServer_Function(QMainWindow):
         except Exception as e:
             return False
 
-        # 初始化启动视频监控
-    def camera_listener_init(self):
-        if not self.is_roscore_running() or self.is_node_running('/camera_listener_send_signal_node'):
+    def listener_init(self):
+        if not self.is_roscore_running() or not self.is_node_running('/apriltag_ros_continuous_node'):
+            tag_init_roscore = not self.is_roscore_running()
+            tag_init_apriltag = not self.is_node_running('/apriltag_ros_continuous_node')
+            print(f'[jlocation_listener_init] 未打开ROSCORE: {tag_init_roscore} / 未打开Apriltag识别: {tag_init_apriltag}')
             return
-        rospy.init_node('camera_listener_send_signal_node', anonymous=False)
-        self.c_listen = Camera_Listener_QThread()
-        self.c_listen.video_signal.connect(self.send_video)
-        self.c_listen.start()
+        if not self.is_node_running('/jdata_collection_node') and (self.is_roscore_running() and self.is_node_running('/apriltag_ros_continuous_node')):
+            rospy.init_node('jdata_collection_node', anonymous=False)
+        if hasattr(self, 'listener_object') or hasattr(self, 'jlocation_listener_Thread'):
+            print('[listener_init]: 重复初始化，已忽略')
+            return
+        self.listener_object = JData_Collection()
+        self.listener_object.video_signal.connect(self.send_video)
+        self.jlocation_listener_Thread = JServer_Apriltag_QThread(self.listener_object)
+        self.jlocation_listener_Thread.signal_jlocation_package.connect(self.server_console.send_all)
+        self.jlocation_listener_Thread.signal_current_location.connect(self.server_console.send_all)
+        self.jlocation_listener_Thread.start()
 
-    def jlocation_listener_init(self):
-        if not hasattr(self, 'data_collector'):
-            self.data_collector = JData_Collection()
-            if not hasattr(self, 'jlocation_listener_Thread'):
-                self.jlocation_listener_Thread = JServer_Apriltag_QThread(self)
-                self.jlocation_listener_Thread.signal_jlocation_package.connect(self.server_console.send_all)
-                self.jlocation_listener_Thread.start()
-
-    # 服务器发送视频信号
+        # 服务器发送视频信号
     def send_video(self, video_data):
         self.signal_data_video_send.emit(video_data)
 
