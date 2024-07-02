@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(1200, 852)
+        Form.resize(1200, 859)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(10)
@@ -58,7 +58,7 @@ class Ui_Form(object):
 "    background-color: rgb(150, 150, 150);\n"
 "    border: 0px solid;\n"
 "    border-radius: 10px;\n"
-"    min-height:24px;\n"
+"    min-height:18px;\n"
 "    min-width: 80px;\n"
 "}\n"
 "\n"
@@ -95,10 +95,37 @@ class Ui_Form(object):
 "    background-color: rgb(50, 50, 50);\n"
 "    border-radius:10px;\n"
 "}")
-        self.horizontalLayout = QtWidgets.QHBoxLayout(Form)
+        self.verticalLayout_3 = QtWidgets.QVBoxLayout(Form)
+        self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_3.setSpacing(0)
+        self.verticalLayout_3.setObjectName("verticalLayout_3")
+        self.frame_86 = QtWidgets.QFrame(Form)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(100)
+        sizePolicy.setHeightForWidth(self.frame_86.sizePolicy().hasHeightForWidth())
+        self.frame_86.setSizePolicy(sizePolicy)
+        self.frame_86.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_86.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_86.setObjectName("frame_86")
+        self.horizontalLayout = QtWidgets.QHBoxLayout(self.frame_86)
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout.setSpacing(5)
+        self.horizontalLayout.setSpacing(0)
         self.horizontalLayout.setObjectName("horizontalLayout")
+        spacerItem = QtWidgets.QSpacerItem(800, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem)
+        self.pb_main_win = QtWidgets.QPushButton(self.frame_86)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(1)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.pb_main_win.sizePolicy().hasHeightForWidth())
+        self.pb_main_win.setSizePolicy(sizePolicy)
+        self.pb_main_win.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.pb_main_win.setObjectName("pb_main_win")
+        self.horizontalLayout.addWidget(self.pb_main_win)
+        spacerItem1 = QtWidgets.QSpacerItem(100, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem1)
+        self.verticalLayout_3.addWidget(self.frame_86)
         self.tabWidget = QtWidgets.QTabWidget(Form)
         self.tabWidget.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.tabWidget.setObjectName("tabWidget")
@@ -213,8 +240,8 @@ class Ui_Form(object):
         self.horizontalLayout_62.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_62.setSpacing(0)
         self.horizontalLayout_62.setObjectName("horizontalLayout_62")
-        spacerItem = QtWidgets.QSpacerItem(888, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_62.addItem(spacerItem)
+        spacerItem2 = QtWidgets.QSpacerItem(888, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_62.addItem(spacerItem2)
         self.pb_ros_node_init = QtWidgets.QPushButton(self.frame_85)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -2601,8 +2628,8 @@ class Ui_Form(object):
         self.horizontalLayout_61.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_61.setSpacing(0)
         self.horizontalLayout_61.setObjectName("horizontalLayout_61")
-        spacerItem1 = QtWidgets.QSpacerItem(1105, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_61.addItem(spacerItem1)
+        spacerItem3 = QtWidgets.QSpacerItem(1105, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_61.addItem(spacerItem3)
         self.pb_jlocation_listen_init = QtWidgets.QPushButton(self.frame_84)
         self.pb_jlocation_listen_init.setObjectName("pb_jlocation_listen_init")
         self.horizontalLayout_61.addWidget(self.pb_jlocation_listen_init)
@@ -2961,7 +2988,7 @@ class Ui_Form(object):
         self.horizontalLayout_57.addWidget(self.groupBox_8)
         self.verticalLayout_2.addWidget(self.groupBox_4)
         self.tabWidget.addTab(self.tab_JLocation, "")
-        self.horizontalLayout.addWidget(self.tabWidget)
+        self.verticalLayout_3.addWidget(self.tabWidget)
 
         self.retranslateUi(Form)
         self.tabWidget.setCurrentIndex(0)
@@ -2970,6 +2997,7 @@ class Ui_Form(object):
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Form"))
+        self.pb_main_win.setText(_translate("Form", "主 菜 单"))
         self.label_9.setText(_translate("Form", "ROS-Core"))
         self.pb_roscore_clear.setText(_translate("Form", "清空"))
         self.pb_roscore_stop.setText(_translate("Form", "停止"))
