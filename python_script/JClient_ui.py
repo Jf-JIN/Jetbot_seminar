@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1192, 849)
+        MainWindow.resize(1440, 951)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -27,168 +27,168 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.centralwidget.sizePolicy().hasHeightForWidth())
         self.centralwidget.setSizePolicy(sizePolicy)
         self.centralwidget.setStyleSheet("QWidget#centralwidget{\n"
-                                         "    background-color: rgb(85, 170, 255);\n"
-                                         "    min-width: 1080px;\n"
-                                         "    min-height: 800px;\n"
-                                         "}\n"
-                                         "\n"
-                                         "QPushButton{\n"
-                                         "    background-color: rgb(100, 190, 0);\n"
-                                         "    border: 1px solid;\n"
-                                         "    border-radius: 20px;\n"
-                                         "    font: 18px \'幼圆\';\n"
-                                         "}\n"
-                                         "\n"
-                                         "QPushButton#pb_connect, QPushButton#pb_a1_load, QPushButton#pb_a2_save{\n"
-                                         "    min-width:50px;\n"
-                                         "    min-height:40px;\n"
-                                         "}\n"
-                                         "QFrame#frame_control QPushButton{\n"
-                                         "    min-width:50px;\n"
-                                         "    min-height:40px;\n"
-                                         "}\n"
-                                         "\n"
-                                         "QFrame#frame_left QPushButton#pb_reconnect_console{\n"
-                                         "    min-width: 30px;\n"
-                                         "    max-width: 30px;\n"
-                                         "    min-height: 30px;\n"
-                                         "    max-height: 30px;\n"
-                                         "    border-radius:15px;\n"
-                                         "}\n"
-                                         "\n"
-                                         "QFrame#frame_left QPushButton#pb_reconnect_video{\n"
-                                         "    min-width: 30px;\n"
-                                         "    max-width: 30px;\n"
-                                         "    min-height: 30px;\n"
-                                         "    max-height: 30px;\n"
-                                         "    border-radius:15px;\n"
-                                         "}\n"
-                                         "\n"
-                                         "QPushButton#pb_launch{\n"
-                                         "    min-width:50px;\n"
-                                         "    min-height:40px;\n"
-                                         "    background-color: rgb(100, 190, 0)\n"
-                                         "}\n"
-                                         "\n"
-                                         "QPushButton#pb_launch:hover{\n"
-                                         "    background-color: rgb(0, 150, 0);\n"
-                                         "    padding-bottom: 5px;\n"
-                                         "    font: 25px;\n"
-                                         "    font-weight: bold;\n"
-                                         "}\n"
-                                         "\n"
-                                         "QPushButton#pb_stop{\n"
-                                         "    background-color: rgb(255, 85, 0);\n"
-                                         "}\n"
-                                         "\n"
-                                         "QPushButton#pb_stop:hover{\n"
-                                         "    background-color: rgb(180, 0, 0);\n"
-                                         "    padding-bottom: 5px;\n"
-                                         "    font: 25px;\n"
-                                         "    font-weight: bold;\n"
-                                         "}\n"
-                                         "\n"
-                                         "QPushButton#pb_close_server{\n"
-                                         "    min-width:50px;\n"
-                                         "    min-height:40px;\n"
-                                         "    border: None;\n"
-                                         "    border-radius: 0px;\n"
-                                         "    font: 14px \'幼圆\';\n"
-                                         "    background-color: rgb(255, 85, 0);\n"
-                                         "}\n"
-                                         "\n"
-                                         "QPushButton#pb_close_server:hover{\n"
-                                         "    color: rgb(250, 250, 250);\n"
-                                         "    background-color: rgb(100, 0, 0);\n"
-                                         "    padding-bottom: 5px;\n"
-                                         "    font-weight: bold;\n"
-                                         "}\n"
-                                         "\n"
-                                         "QPushButton#pb_up, QPushButton#pb_down, QPushButton#pb_left, QPushButton#pb_right, QPushButton#pb_center{\n"
-                                         "    background-color: rgb(180, 180, 180);\n"
-                                         "}\n"
-                                         "\n"
-                                         "QPushButton#pb_up:hover, QPushButton#pb_down:hover, QPushButton#pb_left:hover, QPushButton#pb_right:hover, QPushButton#pb_center:hover{\n"
-                                         "    background-color: rgb(100, 100, 100);\n"
-                                         "    padding-bottom: 5px;\n"
-                                         "}\n"
-                                         "\n"
-                                         "QPushButton#pb_camera_listener{\n"
-                                         "    max-height:20px;\n"
-                                         "    font: 16px \'幼圆\';\n"
-                                         "    border: 1px solid;\n"
-                                         "    border-radius: 8px;\n"
-                                         "}\n"
-                                         "\n"
-                                         "QFrame#frame_left{\n"
-                                         "    min-width: 400px;\n"
-                                         "}\n"
-                                         "\n"
-                                         "QFrame#frame_left QLabel{\n"
-                                         "    font: 18px \'幼圆\';\n"
-                                         "}\n"
-                                         "\n"
-                                         "QFrame#frame_left1 QLabel{\n"
-                                         "    min-height: 35px;\n"
-                                         "    max-height: 40px;\n"
-                                         "}\n"
-                                         "\n"
-                                         "QFrame#frame_left1 QLabel#lb_title{\n"
-                                         "    font: 30px;\n"
-                                         "}\n"
-                                         "\n"
-                                         "QFrame#frame_left QLabel#lb_connection_status{\n"
-                                         "    margin-right: 10px;\n"
-                                         "    padding-right: 10px;\n"
-                                         "    font-weight: bold;\n"
-                                         "}\n"
-                                         "\n"
-                                         "QFrame#frame_task{\n"
-                                         "    max-height: 40px;\n"
-                                         "}\n"
-                                         "\n"
-                                         "QFrame#frame_left QLabel#lb_console_port, QFrame#frame_left QLabel#lb_video_port{\n"
-                                         "    font: 18px \'Arial\';\n"
-                                         "}\n"
-                                         "\n"
-                                         "QComboBox, QLineEdit{\n"
-                                         "    font: 18px \'Arial\';\n"
-                                         "    min-height: 35px;\n"
-                                         "    max-height: 40px;\n"
-                                         "}\n"
-                                         "\n"
-                                         "QTextBrowser{\n"
-                                         "    border: 1px solid;\n"
-                                         "    border-radius: 10px;\n"
-                                         "    background-color: rgb(50, 50, 50);\n"
-                                         "    color: rgb(240, 240, 240)\n"
-                                         "}\n"
-                                         "\n"
-                                         "QTabWidget{\n"
-                                         "    font: 16px \'Arial\';\n"
-                                         "}\n"
-                                         "\n"
-                                         "QGroupBox{\n"
-                                         "    font: 14px \'幼圆\';\n"
-                                         "}\n"
-                                         "\n"
-                                         "QFrame#frame_parameter QLabel{\n"
-                                         "    font: 14px \'幼圆\';\n"
-                                         "}\n"
-                                         "\n"
-                                         "QScrollArea{\n"
-                                         "    border:None;\n"
-                                         "    font: 12px \'Arial\';\n"
-                                         "}\n"
-                                         "\n"
-                                         "QFrame#frame_left QLabel#lb_a1_discription, QFrame#frame_left QLabel#lb_a2_discription, QFrame#frame_left QLabel#lb_a3_discription{\n"
-                                         "    font: 16px \'Arial\';\n"
-                                         "}\n"
-                                         "\n"
-                                         "QLineEdit{\n"
-                                         "    border: 0px solid;\n"
-                                         "    border-radius: 10px;\n"
-                                         "}")
+"    background-color: rgb(85, 170, 255);\n"
+"    min-width: 1440px;\n"
+"    min-height: 900px;\n"
+"}\n"
+"\n"
+"QPushButton{\n"
+"    background-color: rgb(100, 190, 0);\n"
+"    border: 1px solid;\n"
+"    border-radius: 20px;\n"
+"    font: 18px \'幼圆\';\n"
+"}\n"
+"\n"
+"QPushButton#pb_connect, QPushButton#pb_a1_load, QPushButton#pb_a2_save{\n"
+"    min-width:50px;\n"
+"    min-height:40px;\n"
+"}\n"
+"QFrame#frame_control QPushButton{\n"
+"    min-width:50px;\n"
+"    min-height:40px;\n"
+"}\n"
+"\n"
+"QFrame#frame_left QPushButton#pb_reconnect_console{\n"
+"    min-width: 30px;\n"
+"    max-width: 30px;\n"
+"    min-height: 30px;\n"
+"    max-height: 30px;\n"
+"    border-radius:15px;\n"
+"}\n"
+"\n"
+"QFrame#frame_left QPushButton#pb_reconnect_video{\n"
+"    min-width: 30px;\n"
+"    max-width: 30px;\n"
+"    min-height: 30px;\n"
+"    max-height: 30px;\n"
+"    border-radius:15px;\n"
+"}\n"
+"\n"
+"QPushButton#pb_launch{\n"
+"    min-width:50px;\n"
+"    min-height:40px;\n"
+"    background-color: rgb(100, 190, 0)\n"
+"}\n"
+"\n"
+"QPushButton#pb_launch:hover{\n"
+"    background-color: rgb(0, 150, 0);\n"
+"    padding-bottom: 5px;\n"
+"    font: 25px;\n"
+"    font-weight: bold;\n"
+"}\n"
+"\n"
+"QPushButton#pb_stop{\n"
+"    background-color: rgb(255, 85, 0);\n"
+"}\n"
+"\n"
+"QPushButton#pb_stop:hover{\n"
+"    background-color: rgb(180, 0, 0);\n"
+"    padding-bottom: 5px;\n"
+"    font: 25px;\n"
+"    font-weight: bold;\n"
+"}\n"
+"\n"
+"QPushButton#pb_close_server{\n"
+"    min-width:50px;\n"
+"    min-height:40px;\n"
+"    border: None;\n"
+"    border-radius: 0px;\n"
+"    font: 14px \'幼圆\';\n"
+"    background-color: rgb(255, 85, 0);\n"
+"}\n"
+"\n"
+"QPushButton#pb_close_server:hover{\n"
+"    color: rgb(250, 250, 250);\n"
+"    background-color: rgb(100, 0, 0);\n"
+"    padding-bottom: 5px;\n"
+"    font-weight: bold;\n"
+"}\n"
+"\n"
+"QPushButton#pb_up, QPushButton#pb_down, QPushButton#pb_left, QPushButton#pb_right, QPushButton#pb_center{\n"
+"    background-color: rgb(180, 180, 180);\n"
+"}\n"
+"\n"
+"QPushButton#pb_up:hover, QPushButton#pb_down:hover, QPushButton#pb_left:hover, QPushButton#pb_right:hover, QPushButton#pb_center:hover{\n"
+"    background-color: rgb(100, 100, 100);\n"
+"    padding-bottom: 5px;\n"
+"}\n"
+"\n"
+"QPushButton#pb_camera_listener{\n"
+"    max-height:20px;\n"
+"    font: 16px \'幼圆\';\n"
+"    border: 1px solid;\n"
+"    border-radius: 8px;\n"
+"}\n"
+"\n"
+"QFrame#frame_left{\n"
+"    min-width: 400px;\n"
+"}\n"
+"\n"
+"QFrame#frame_left QLabel{\n"
+"    font: 18px \'幼圆\';\n"
+"}\n"
+"\n"
+"QFrame#frame_left1 QLabel{\n"
+"    min-height: 35px;\n"
+"    max-height: 40px;\n"
+"}\n"
+"\n"
+"QFrame#frame_left1 QLabel#lb_title{\n"
+"    font: 30px;\n"
+"}\n"
+"\n"
+"QFrame#frame_left QLabel#lb_connection_status{\n"
+"    margin-right: 10px;\n"
+"    padding-right: 10px;\n"
+"    font-weight: bold;\n"
+"}\n"
+"\n"
+"QFrame#frame_task{\n"
+"    max-height: 40px;\n"
+"}\n"
+"\n"
+"QFrame#frame_left QLabel#lb_console_port, QFrame#frame_left QLabel#lb_video_port{\n"
+"    font: 18px \'Arial\';\n"
+"}\n"
+"\n"
+"QComboBox, QLineEdit{\n"
+"    font: 18px \'Arial\';\n"
+"    min-height: 35px;\n"
+"    max-height: 40px;\n"
+"}\n"
+"\n"
+"QTextBrowser{\n"
+"    border: 1px solid;\n"
+"    border-radius: 10px;\n"
+"    background-color: rgb(50, 50, 50);\n"
+"    color: rgb(240, 240, 240)\n"
+"}\n"
+"\n"
+"QTabWidget{\n"
+"    font: 16px \'Arial\';\n"
+"}\n"
+"\n"
+"QGroupBox{\n"
+"    font: 14px \'幼圆\';\n"
+"}\n"
+"\n"
+"QFrame#frame_parameter QLabel{\n"
+"    font: 14px \'幼圆\';\n"
+"}\n"
+"\n"
+"QScrollArea{\n"
+"    border:None;\n"
+"    font: 12px \'Arial\';\n"
+"}\n"
+"\n"
+"QFrame#frame_left QLabel#lb_a1_discription, QFrame#frame_left QLabel#lb_a2_discription, QFrame#frame_left QLabel#lb_a3_discription{\n"
+"    font: 16px \'Arial\';\n"
+"}\n"
+"\n"
+"QLineEdit{\n"
+"    border: 0px solid;\n"
+"    border-radius: 10px;\n"
+"}")
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.centralwidget)
         self.horizontalLayout.setSpacing(10)
@@ -472,7 +472,7 @@ class Ui_MainWindow(object):
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollArea_2.setObjectName("scrollArea_2")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 1249, 206))
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 1249, 241))
         self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
         self.verticalLayout_11 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents_2)
         self.verticalLayout_11.setContentsMargins(0, 0, 0, 0)
@@ -497,7 +497,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lb_a1_discription.sizePolicy().hasHeightForWidth())
         self.lb_a1_discription.setSizePolicy(sizePolicy)
-        self.lb_a1_discription.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
+        self.lb_a1_discription.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.lb_a1_discription.setObjectName("lb_a1_discription")
         self.horizontalLayout_15.addWidget(self.lb_a1_discription)
         self.frame_17 = QtWidgets.QFrame(self.frame_8)
@@ -645,7 +645,7 @@ class Ui_MainWindow(object):
         self.scrollArea_3.setWidgetResizable(True)
         self.scrollArea_3.setObjectName("scrollArea_3")
         self.scrollAreaWidgetContents_3 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 1253, 206))
+        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 1253, 241))
         self.scrollAreaWidgetContents_3.setObjectName("scrollAreaWidgetContents_3")
         self.horizontalLayout_17 = QtWidgets.QHBoxLayout(self.scrollAreaWidgetContents_3)
         self.horizontalLayout_17.setContentsMargins(0, 0, 0, 0)
@@ -657,7 +657,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(100)
         sizePolicy.setHeightForWidth(self.lb_a2_discription.sizePolicy().hasHeightForWidth())
         self.lb_a2_discription.setSizePolicy(sizePolicy)
-        self.lb_a2_discription.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
+        self.lb_a2_discription.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.lb_a2_discription.setObjectName("lb_a2_discription")
         self.horizontalLayout_17.addWidget(self.lb_a2_discription)
         self.frame_19 = QtWidgets.QFrame(self.scrollAreaWidgetContents_3)
@@ -747,7 +747,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1107, 174))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1107, 225))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_10 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_10.setContentsMargins(0, 0, 0, 0)
@@ -759,7 +759,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(100)
         sizePolicy.setHeightForWidth(self.lb_a3_discription.sizePolicy().hasHeightForWidth())
         self.lb_a3_discription.setSizePolicy(sizePolicy)
-        self.lb_a3_discription.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
+        self.lb_a3_discription.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.lb_a3_discription.setObjectName("lb_a3_discription")
         self.verticalLayout_10.addWidget(self.lb_a3_discription)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
@@ -1072,7 +1072,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addWidget(self.frame_right)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1192, 23))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1440, 26))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
@@ -1095,24 +1095,24 @@ class Ui_MainWindow(object):
         self.label.setText(_translate("MainWindow", "地图"))
         self.pb_a1_load.setText(_translate("MainWindow", "加载"))
         self.lb_a1_discription.setText(_translate("MainWindow", "o Am Tag des Wettbewerbs werden ein bis dahin unbekanntes Labyrinth der Größe 4x4, sowie zwei Positionen A und B bekanntgegeben.\n"
-                                                  "o Als Information über das Labyrinth wird eine YAML-Datei mit allen vorhandenen Wänden gegeben, das heißt in dieser Aufgabe ist der Aufbau des Labyrinths vollständig bekannt.\n"
-                                                  "o Der JetBot startet mit vorgegebener Startposition und -orientierung an Punkt A.\n"
-                                                  "o Ziel dieser Aufgabe ist es, so schnell wie möglich zu Punkt B zu gelangen.\n"
-                                                  "o Gewertet wird die benötigte Zeit, wobei es Zeitstrafen für die Kollision mit Wänden gibt."))
+"o Als Information über das Labyrinth wird eine YAML-Datei mit allen vorhandenen Wänden gegeben, das heißt in dieser Aufgabe ist der Aufbau des Labyrinths vollständig bekannt.\n"
+"o Der JetBot startet mit vorgegebener Startposition und -orientierung an Punkt A.\n"
+"o Ziel dieser Aufgabe ist es, so schnell wie möglich zu Punkt B zu gelangen.\n"
+"o Gewertet wird die benötigte Zeit, wobei es Zeitstrafen für die Kollision mit Wänden gibt."))
         self.label_4.setText(_translate("MainWindow", "当前状态: "))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_A1), _translate("MainWindow", "Aufgabe 1"))
         self.label_7.setText(_translate("MainWindow", "地图"))
         self.pb_a2_save.setText(_translate("MainWindow", "导出"))
         self.lb_a2_discription.setText(_translate("MainWindow", "o Am Tag des Wettbewerbs wird der Roboter mit einem unbekannten Labyrinth der Größe 4x4 konfrontiert. Er erhält eine YAML-Datei, in der alle möglichen Wände aufgelistet sind.\n"
-                                                  "o Ziele ist das Abfahren und Kartografieren des Labyrinths, dafür stehen dem Roboter 5 Minuten zur Verfügung.\n"
-                                                  "o Die geforderte Ausgabe bei dieser Aufgabe ist ein zweidimensionaler Plot des Labyrinths, aus dem klar ersichtlich ist, welche der Wände vorhanden sind. Zudem soll\n"
-                                                  "der gefahrene Weg im Plot eingezeichnet werden."))
+"o Ziele ist das Abfahren und Kartografieren des Labyrinths, dafür stehen dem Roboter 5 Minuten zur Verfügung.\n"
+"o Die geforderte Ausgabe bei dieser Aufgabe ist ein zweidimensionaler Plot des Labyrinths, aus dem klar ersichtlich ist, welche der Wände vorhanden sind. Zudem soll\n"
+"der gefahrene Weg im Plot eingezeichnet werden."))
         self.label_8.setText(_translate("MainWindow", "当前状态: "))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabWidgetPage1), _translate("MainWindow", "Aufgabe 2"))
         self.lb_a3_discription.setText(_translate("MainWindow", "o In der letzten Aufgabe steht der Roboter mit einem unbekannten Labyrinth unbekannter Größe. Startposition und -orientierung sind für alle Teams gleich.\n"
-                                                  "o Das Ziel ist das Auffinden und Bergen eines Gegenstandes (roter Würfel).\n"
-                                                  "o Der Roboter soll das Labyrinth selbständig nach dem Würfel absuchen, den Würfel mit dem Greifer aufnehmen und ihn zurück zum Start des Labyrinths bringen.\n"
-                                                  "o Wieder wird die Zeit bewertet, wobei Zeitstrafen für die Kollision mit Wänden und das Verlieren des Würfels verhängt werden."))
+"o Das Ziel ist das Auffinden und Bergen eines Gegenstandes (roter Würfel).\n"
+"o Der Roboter soll das Labyrinth selbständig nach dem Würfel absuchen, den Würfel mit dem Greifer aufnehmen und ihn zurück zum Start des Labyrinths bringen.\n"
+"o Wieder wird die Zeit bewertet, wobei Zeitstrafen für die Kollision mit Wänden und das Verlieren des Würfels verhängt werden."))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.widget), _translate("MainWindow", "Aufgabe 3"))
         self.pb_launch.setText(_translate("MainWindow", "执行"))
         self.pb_camera_listener.setText(_translate("MainWindow", "连接视频"))
