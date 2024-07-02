@@ -38,8 +38,8 @@ class JConsole_Read_QThread(QThread):
                     break
                 if output_line:
                     output_line = self.convert_to_plain_text(output_line)
-                    # print('[output_line]:\t', repr(output_line))
-                    print('[output_line]:\t', output_line)
+                    # print('\n[output_line]:\t', repr(output_line))
+                    print('\n[output_line]:\t', output_line)
                     self.signal_console_line.emit({self.key_command: output_line.strip()})
             except OSError as e:
                 self.signal_error_output.emit({self.key_command: str(e)})
@@ -122,16 +122,16 @@ class JConsole_QThread(QThread):
                 cmdline = process_element.info['cmdline']
                 if self.key_command == 'roscore':
                     if cmdline and any('/opt/ros/noetic/bin/roscore' in item for item in cmdline):
-                        print('[JConsole_QThread][关闭线程]', cmdline)
+                        print('\n[JConsole_QThread][关闭线程]', cmdline)
                         return process_element.info['pid']
                 elif 'roslaunch' in self.value_command:
                     if cmdline and any('/opt/ros/noetic/bin/roslaunch' in item for item in cmdline):
-                        print('[JConsole_QThread][关闭线程]', cmdline)
+                        print('\n[JConsole_QThread][关闭线程]', cmdline)
                         return process_element.info['pid']
                 elif 'rosrun' in self.value_command:
                     print('rosrun')
                     if cmdline and any(self.value_command in item for item in cmdline):
-                        print('[JConsole_QThread][关闭线程]', cmdline)
+                        print('\n[JConsole_QThread][关闭线程]', cmdline)
                         return process_element.info['pid']
                 else:
                     return self.process.pid
