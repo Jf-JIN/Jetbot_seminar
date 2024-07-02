@@ -417,6 +417,7 @@ class JLocation():
         self.__right_list = []
         self.__front = JFront()
         self.__imu = JImu_Info()
+        self.__current_position = []
 
     # 获取左侧位置信息
     @ property
@@ -437,6 +438,11 @@ class JLocation():
     @ property
     def imu(self) -> JImu_Info:
         return self.__imu
+
+    # 获取实时位置信息
+    @ property
+    def current_position(self) -> JFront:
+        return self.__current_position
 
     # 赋值左侧位置信息
     def set_left_list(self, left_list: Union[list, tuple]) -> None:
@@ -471,6 +477,12 @@ class JLocation():
             return
             # raise ValueError('在 JLocation 中, 方法 set_imu 的参数必须为 JImu_Info !')
         self.__imu = imu
+
+    def set_current_position(self, data: list):
+        if not isinstance(data, list):
+            print('在 JLocation 中, 方法 set_current_position 的参数必须为 list !')
+            return
+        self.__current_position = data
 
     # 深复制JLocation
     def copy_JLocation(self) -> "JLocation":
