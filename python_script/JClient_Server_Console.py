@@ -9,7 +9,7 @@ from PyQt5.QtCore import pyqtSignal, QThread, pyqtSlot
 
 # 常量
 DEFAULT_PORT = 10098  # 默认端口
-BUFFER_SIZE = 1024  # 默认缓存大小
+BUFFER_SIZE = 2048  # 默认缓存大小
 SLICE_SIZE = 4
 
 
@@ -78,6 +78,7 @@ class Client_Console_QThread(QThread):
             if not data:
                 self.signal_connected_flag.emit(False)  # 发送断开连接的信号
                 return None
+            print(data)
             data = data.decode()
             return data
 
@@ -133,8 +134,21 @@ class Client_Console_QThread(QThread):
             while self.flag_running:
                 data_decode: str = self.receive_decode()
                 if data_decode:
-                    for _, item in enumerate(data_decode.split('{')):
-                        item = '{' + item.split('}')[0] + '}'
+                    for i in ['\x00', '\x00', '\x00', '\x01']:      # 莫名其妙的符号，不必管
+                        if i in data_decode:
+                            data_decode = data_decode.replace(i, '')
+                    if not data_decode:
+                        continue
+                    list_data = data_decode.split('}{')
+                    for index, item in enumerate(list_data):
+                        if len(list_data) == 1:
+                            pass
+                        elif index == 0:
+                            item = item + '}'
+                        elif index == len(list_data)-1:
+                            item = '{' + item
+                        else:
+                            item = '{' + item + '}'
                         self.read_and_analyse_data(item)
         except:
             e = traceback.format_exc()
@@ -186,9 +200,21 @@ class Server_Console_QThread(QThread):
             print(f'[服务器_文本端口] [初始化] - {self.formatted_time} \n[!错误!] {e}')
 
     # 发送: 服务器以json形式发送命令行显示
+    # def send(self, client_socket: socket.socket, message: dict) -> None:
+    #     try:
+    #         print(message)
+    #         client_socket.sendall(json.dumps(message).encode())
     def send(self, client_socket: socket.socket, message: dict) -> None:
         try:
-            client_socket.sendall(json.dumps(message).encode())
+            serialized_data = json.dumps(message)
+            total_bytes = len(serialized_data)
+            num_chunks = total_bytes // BUFFER_SIZE + 1
+            client_socket.sendall(num_chunks.to_bytes(SLICE_SIZE, byteorder='big'))
+            for i in range(num_chunks):
+                start_idx = i * BUFFER_SIZE
+                end_idx = min((i + 1) * BUFFER_SIZE, total_bytes)
+                chunk = serialized_data[start_idx:end_idx]
+                client_socket.sendall(chunk.encode())
         except Exception as e:
             e = traceback.format_exc()
             self.signal_error_output.emit(f'[服务器_文本端口] [发送] - {self.formatted_time} \n[!错误!] {e}')
@@ -319,12 +345,17 @@ class Server_Handle_Console_QThread(QThread):
 
     # 运行线程
 
-    def run(self):
+    def run(self) -> None:
         try:
             while self.flag_running:
                 data_decode = self.receive_decode()
                 if data_decode:
-                    list_data = data_decode.split('}\x00\x00\x00\x01{')  # 莫名其妙的符号，不必管
+                    for i in ['\x00', '\x00', '\x00', '\x01']:      # 莫名其妙的符号，不必管
+                        if i in data_decode:
+                            data_decode = data_decode.replace(i, '')
+                    if not data_decode:
+                        continue
+                    list_data = data_decode.split('}{')
                     for index, item in enumerate(list_data):
                         if len(list_data) == 1:
                             pass
