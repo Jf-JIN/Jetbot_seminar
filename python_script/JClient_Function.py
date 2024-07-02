@@ -39,7 +39,7 @@ class JClient_Function(JClient_UI):
         self.pb_camera_listener.clicked.connect(lambda: self.signal_data_console_send.emit({'camera_listener': 'on'}))
         self.console_win.pb_jlocation_listen_init.clicked.connect(lambda: self.signal_data_console_send.emit({'jlocation_listener': 'on'}))
         self.console_win.pb_ros_node_init.clicked.connect(lambda: self.signal_data_console_send.emit({'ros_node_init': 'on'}))
-        self.console_win.pb_ros_apriltag_detection_start.clicked.connect(lambda: self.signal_data_console_send.emit({'camera_listener': 'on'}))
+        # self.console_win.pb_ros_apriltag_detection_start.clicked.connect(lambda: self.signal_data_console_send.emit({'camera_listener': 'on'}))
         self.tabWidget.currentChanged.connect(self.clear_launch_function)
         self.pb_launch.clicked.connect(self.launch_function)
     # ==================================== JConsole 信号连接 ====================================
@@ -68,8 +68,6 @@ class JClient_Function(JClient_UI):
     def launch_function(self):
         if self.tabWidget.currentIndex() == 0:
             self.map_pb_function_connection()
-            tt = threading.Thread(target=self.signal_sort_test)
-            tt.start()
 
     # 用于清除执行任务后的关联
     def clear_launch_function(self):
@@ -200,29 +198,21 @@ class JClient_Function(JClient_UI):
     def send_console_to_server(self, key: str):
         sender = self.sender()
         data = self.console_win.build_console_dict()  # 获取所有 LineEdit 控件
-        print(f'[触发控件]: {sender}')
+        print(f'\n[触发控件]: {sender}')
         line_edit_widget: QLineEdit = data[key]
         line_edit_text = line_edit_widget.text()
         if line_edit_text == '':
             line_edit_text = line_edit_widget.placeholderText()
         command_data = {key: line_edit_text}
-        print(f'[发送命令信号]: {command_data}')
+        print(f'\n[发送命令信号]: {command_data}')
         self.signal_data_console_send.emit(command_data)
         line_edit_widget.clear()
 
-    def signal_sort_test(self):
-        distance = 0.8
-        while distance > 0:
-            distance = distance - 0.01
-            text = {'current_pos_float': [[116, 117], distance]}
-            self.signal_sort(text)
-            print(text)
-            time.sleep(0.01)
-
     # 数据解包
+
     def signal_sort(self, data):
         data: dict
-        print(f'[接收命令行包]: {data}')
+        print(f'\n[接收命令行包]: {data}')
         data_sort_dict = {
             'roscore': lambda: self.append_TB_text(data['roscore'], self.console_win.tb_roscore),
             'ros_camera': lambda: self.append_TB_text(data['ros_camera'], self.console_win.tb_ros_camera),
@@ -231,7 +221,7 @@ class JClient_Function(JClient_UI):
             'ros_imu': lambda: self.append_TB_text(data['ros_imu'], self.console_win.tb_ros_imu),
             'ros_motor': lambda: self.append_TB_text(data['ros_motor'], self.console_win.tb_ros_motor),
             'ros_algorithm': lambda: self.append_TB_text(data['ros_algorithm'], self.console_win.tb_ros_algorithm),
-            'current_pos_float': lambda: self.display_current_pos(data['current_pos_float']),
+            # 'current_pos_float': lambda: self.display_current_pos(data['current_pos_float']),
             'jlocation_package': lambda: self.display_jlocation(data['jlocation_package']),
             'map_generation': lambda: self.map_display_update(data['map_generation'])
         }
@@ -241,19 +231,32 @@ class JClient_Function(JClient_UI):
 
     def map_display_update(self, data):
         # data 是一个json文件
-        yaml_data = yaml.dump(data, default_flow_style=False)
+        # yaml_data = yaml.dump(data, default_flow_style=False)
         # map_manager = JMap_Matrix_From_Yaml(yaml_data)
         # map_abstract = map_manager.map_abstract_matrix
         pass
 
-    def display_current_pos(self, data):
+    def display_current_pos(self, data: list):
+        self.lb_current_pos.setText('')
+        # id_list = location.front.front.id
+        # current_pos_float = location.current_position
+        # print('[current_pos_float]\t', current_pos_float)
+        # if current_pos_float:
+        #     self.lb_current_pos.setText(str(current_pos_float))
+
         id_list = data[0]
+        id = None
         for i in id_list:
             if i:
                 id = i
                 break
         current_pos_float = data[1]
+        if not id or not current_pos_float:
+            print(f'无id或无距离, id:{id} 距离: {current_pos_float}')
+            return
+
         if hasattr(self, 'map_manager'):
+            # self.current_pos_index = self.map_manager.from_coordinate_to_index([current_pos_float[0], current_pos_float[1]])
             self.current_pos_index = self.map_manager.from_id_to_index(id, float(current_pos_float))
             if not self.current_pos_index:
                 if self.last_passed_pb:
@@ -261,19 +264,22 @@ class JClient_Function(JClient_UI):
                     self.last_passed_pb.setStyleSheet(default_bgc_ss)
                 return
             x_index, y_index = self.current_pos_index
-            if self.last_passed_pb and self.last_passed_pb.objectName() != f'pb_map_{x_index}_{y_index}':
-                default_bgc_ss = self.last_passed_pb.styleSheet().replace('background-color: #EEEE00;', 'background-color: #006600;')
-                self.last_passed_pb.setStyleSheet(default_bgc_ss)
-            for i in self.list_pb_map:
-                i: QPushButton
-                if i.objectName() == f'pb_map_{x_index}_{y_index}':
-                    current_bgc_ss = i.styleSheet().replace('background-color: #006600;', 'background-color: #EEEE00;')
-                    i.setStyleSheet(current_bgc_ss)
-                    self.last_passed_pb: QPushButton = i
-            print('按钮位置', f'pb_map_{x_index}_{y_index}')
+            if x_index and y_index:
+                self.lb_current_pos.setText(f'[位置]{id}前{"{:.2f}".format(current_pos_float*1000)}\n[索引][{x_index}, {y_index}]')
+                if self.last_passed_pb and self.last_passed_pb.objectName() != f'pb_map_{x_index}_{y_index}':
+                    default_bgc_ss = self.last_passed_pb.styleSheet().replace('background-color: #EEEE00;', 'background-color: #006600;')
+                    self.last_passed_pb.setStyleSheet(default_bgc_ss)
+                for i in self.list_pb_map:
+                    i: QPushButton
+                    if i.objectName() == f'pb_map_{x_index}_{y_index}':
+                        current_bgc_ss = i.styleSheet().replace('background-color: #006600;', 'background-color: #EEEE00;')
+                        i.setStyleSheet(current_bgc_ss)
+                        self.last_passed_pb: QPushButton = i
+                print('按钮位置', f'pb_map_{x_index}_{y_index}')
 
     def display_jlocation(self, data):
         location = self.jlocation_pack_from_dict(data)
+        self.display_current_pos(location)
         location_dict = {
             'lb_april_front_front_distance_x': location.front.front.distance.xStr(),
             'lb_april_front_front_distance_y': location.front.front.distance.yStr(),
@@ -528,6 +534,7 @@ class JClient_Function(JClient_UI):
         location.front.right.set_distance(data['front']['right']['distance'])
         location.front.right.set_orientation(data['front']['right']['orientation'])
         location.front.right.set_id(data['front']['right']['id'])
+        location.set_current_position(data['current_position'])
         left_list = []
         right_list = []
         if len(data['left_list']) > 0:
