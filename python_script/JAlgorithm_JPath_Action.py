@@ -78,8 +78,9 @@ class JAction():
         return math.degrees(math.atan2(vector[1], vector[0]))
 
     def set_mode(self, mode):
-        if mode not in ['line', 'circle']:
-            raise ValueError(f'set_mode只有两个模式, line 和 circle, 当前输入为 {mode}')
+        if mode not in ['line', 'circle', '']:
+            print(f'set_mode只有两个模式, line 和 circle, 当前输入为 {mode}')
+            return
         self.__mode = mode
         if self.__mode == 'circle' and self.__end_node and self.__last_node and self.__start_node:
             self.__set_turn_parameter()
