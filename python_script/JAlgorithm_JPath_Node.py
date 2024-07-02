@@ -90,3 +90,9 @@ class JPath_Node():
         cost = (x_cost ** 2 + y_cost ** 2) ** 0.5 + self.__parent_node.cost
         self.__cost = cost
         return cost
+
+
+class JMap_Node():
+    def __init__(self) -> None:
+        self.left_list = []
+        pass
