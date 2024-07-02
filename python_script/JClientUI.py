@@ -168,7 +168,8 @@ class JClient_UI(Ui_MainWindow):
         with open(path, 'r') as file:
             loaded_data = yaml.safe_load(file)
         # signal_text = json.dumps({'a1_map_yaml_dict': loaded_data})
-        loaded_data['standalone_tags'] = loaded_data['tag_bundles']
+        if 'standalone_tags' not in loaded_data:
+            loaded_data['standalone_tags'] = loaded_data['tag_bundles']['layout']
         signal_text = {'a1_map_yaml_dict': loaded_data}
         self.signal_data_console_send.emit(signal_text)
         self.lb_goal_index.clear()
