@@ -2,10 +2,10 @@
 接口：
 JWall:
     读取：
-        main_0          -> JApril_Code          正面大码, id 可被4整除
-        main_1          -> JApril_Code          正面小码, id 除4余1
-        sub_0           -> JApril_Code          背面大码, id 除4余2
-        sub_1           -> JApril_Code          背面小码, id 除4余3
+        main_0          -> JApril_Code          正面大码, 向上向左
+        main_1          -> JApril_Code          正面小码, 向上向左
+        sub_0           -> JApril_Code          背面大码, 向下向右
+        sub_1           -> JApril_Code          背面小码, 向下向右
         orientation     ->'H' 或 'V'            墙的方向, 'H' 为水平, 即平行于Y轴 'V'为垂直, 即平行于X轴
         middle          -> JApriltag_Position   墙的中心点
         id_list         -> list                 墙的所有码的 id 列表
@@ -143,21 +143,21 @@ class JWall():
         self.__orientation: str = ''
         self.__middle = JApriltag_Position()
         self.__id_list: list = []
-        self.__width: float = 0.250  # m
-        self.__height: float = 0.170  # m
-        self.__thickness: float = 0.003  # m
-        self.__big_tag_size: float = 0.140  # m
-        self.__small_tag_size: float = 0.028  # m
-        self.__topleft: tuple[float] = None
-        self.__topright: tuple[float] = None
-        self.__bottomleft: tuple[float] = None
-        self.__bottomright: tuple[float] = None
+        self.__width: float = WALL_WIDTH  # m
+        self.__height: float = WALL_HEIGHT  # m
+        self.__thickness: float = WALL_THICKNESS  # m
+        self.__big_tag_size: float = WALL_BIG_TAG_SIZE  # m
+        self.__small_tag_size: float = WALL_SMALL_TAG_SIZE  # m
+        self.__topleft: list = None
+        self.__topright: list = None
+        self.__topleft: list = None
+        self.__bottomright: list = None
         self.__leftside: float = None  # y 轴的值
         self.__rightside: float = None  # y 轴的值
         self.__topside: float = None  # x 轴的值
         self.__bottomside: float = None  # x 轴的值
-        self.__identifier: int | str = 0  # 标识符, 用于算法区分墙与路径, 墙中心的本体
-        self.__sub_indentifier: int | str = 0  # 标识符, 用于算法区分墙与路径, 墙的延伸, 包括连接
+        self.__identifier = 0  # 标识符, 用于算法区分墙与路径, 墙中心的本体
+        self.__sub_indentifier = 0  # 标识符, 用于算法区分墙与路径, 墙的延伸, 包括连接
 
     @property
     def main_0(self) -> JApril_Code:
@@ -294,13 +294,13 @@ class JWall():
             else:
                 self.__orientation = 'V'
         # 如果存在4个 Apriltag 码：
-        if self.main_0.pos.x() and self.sub_0.pos.x():
+        if (self.main_0.pos.x() or self.main_0.pos.x() == 0) and (self.sub_0.pos.x() or self.sub_0.pos.x() == 0):
             # print(self.main_0.pos.y() , self.sub_0.pos.y())
             self.middle.set_x((self.main_0.pos.x() + self.sub_0.pos.x()) / 2)
             self.middle.set_y((self.main_0.pos.y() + self.sub_0.pos.y()) / 2)
             self.middle.set_z((self.main_0.pos.z() + self.sub_0.pos.z()) / 2)
         # 如果只有 主Apriltag码：
-        elif self.main_0.pos.x():
+        elif self.main_0.pos.x() or self.main_0.pos.x() == 0:
             if self.__orientation == 'H':
                 self.middle.set_x(self.main_0.pos.x()+0.0015)
                 self.middle.set_y(self.main_0.pos.y())
@@ -309,7 +309,7 @@ class JWall():
                 self.middle.set_y(self.main_0.pos.y()+0.0015)
             self.middle.set_z(self.main_0.pos.z())
         # 如果只有 副Apriltag码:
-        elif self.sub_0.pos.x():
+        elif self.sub_0.pos.x() or self.sub_0.pos.x() == 0:
             if self.__orientation == 'H':
                 self.middle.set_x(self.sub_0.pos.x()+0.0015)
                 self.middle.set_y(self.sub_0.pos.y())
@@ -318,8 +318,7 @@ class JWall():
                 self.middle.set_y(self.sub_0.pos.y()+0.0015)
             self.middle.set_z(self.sub_0.pos.z())
         else:
-            print('当前墙壁无中心点, 未得到坐标数据')
-            # raise ValueError('没有中心点, 两侧都没有码')
+            print(f'当前墙壁无中心点, 未得到坐标数据{self.main_0.id}')
 
     def set_id_list(self, id0, id1, id2, id3):
         self.__id_list = [id0, id1, id2, id3]
@@ -327,10 +326,16 @@ class JWall():
     def set_edge(self):
         if not self.middle.x() or not self.__middle.y():
             return
-        self.__leftside = self.__middle.y() - self.__width / 2
-        self.__rightside = self.__middle.y() + self.__width / 2
-        self.__topside = self.middle.x() - self.__width / 2
-        self.__bottomside = self.middle.x() + self.__width / 2
+        if self.orientation == 'H':
+            self.__leftside = self.__middle.y() - self.__width / 2
+            self.__rightside = self.__middle.y() + self.__width / 2
+            self.__topside = self.middle.x() - self.__thickness / 2
+            self.__bottomside = self.middle.x() + self.__thickness / 2
+        else:
+            self.__leftside = self.__middle.y() - self.__thickness / 2
+            self.__rightside = self.__middle.y() + self.__thickness / 2
+            self.__topside = self.middle.x() - self.__width / 2
+            self.__bottomside = self.middle.x() + self.__width / 2
 
     def set_vertex(self):
         if not self.__leftside or not self.__topside or not self.__rightside or not self.__bottomside:
@@ -342,21 +347,43 @@ class JWall():
 
     # 主要入口
     def set_wall(self, code_list_dict):
+        min_x = code_list_dict[0]['x']
+        min_y = code_list_dict[0]['y']
+        max_x = 0
+        max_y = 0
+        main = None
+        sub = None
         for i in code_list_dict:
-            if i['id'] % 4 == 0:
-                self.set_main_0(i)
-            elif i['id'] % 4 == 1:
-                self.set_main_1(i)
-            elif i['id'] % 4 == 2:
-                self.set_sub_0(i)
-            elif i['id'] % 4 == 3:
-                self.set_sub_1(i)
+            x = i['x']
+            y = i['y']
+            if x > max_x:
+                max_x = x
+            if x <= min_x:
+                min_x = x
+            if y > max_y:
+                max_y = y
+            if y <= min_y:
+                min_y = y
+        for i in code_list_dict:
+            x = i['x']
+            y = i['y']
+            if x == min_x or y == min_y:
+                if i['size'] == 0.084:
+                    self.set_main_0(i)
+                elif i['size'] == 0.0168:
+                    self.set_main_1(i)
+            elif x == max_x or y == max_y:
+                if i['size'] == 0.084:
+                    self.set_sub_0(i)
+                elif i['size'] == 0.0168:
+                    self.set_sub_1(i)
             else:
-                print(i)
-                raise ValueError('方法 set_wall 输入错误, 请检查code_list_dict')
+                print(f'方法 set_wall 输入错误, 请检查code_list_dict: {code_list_dict}\n 当前为: {i}\n min_x: {min_x}\tmin_y: {min_y}\tmax_x: {max_x}\tmax_y: {max_y}')
+                return
         self.set_id_list(self.main_0.id, self.main_1.id, self.sub_0.id, self.sub_1.id)
         self.update_wall_calculated_data()
 
+    # 有问题需要检查！！！！！！！！！不能使用id进行定义
     def set_wall_from_apriltag(self, apriltag: JApril_Tag_Info):
         id_list = apriltag.id
         for i in id_list:
@@ -392,8 +419,8 @@ class JWalls():
         code_list_dict = self._code_sort(list_dict)
         wall_list = self._build_in_JWall_from_code_list(code_list_dict)
         self.JWall_list = wall_list
-        self.range_Maze_x = int((self.max_middle_x-0.128) / 0.253 + 1)  # 最大中点位置 = (0.25 + 0.003) * (n - 1) + (0.125 + 0.003)
-        self.range_Maze_y = int((self.max_middle_y-0.128) / 0.253 + 1)
+        self.range_Maze_x = int((self.max_middle_x-(WALL_WIDTH_HALF + WALL_THICKNESS)) / (WALL_WIDTH + WALL_THICKNESS) + 1)  # 最大中点位置 = (0.25 + 0.003) * (n - 1) + (0.125 + 0.003)
+        self.range_Maze_y = int((self.max_middle_y-(WALL_WIDTH_HALF + WALL_THICKNESS)) / (WALL_WIDTH + WALL_THICKNESS) + 1)
         return wall_list
 
     def _build_in_JWall_from_code_list(self, code_list_dict: list) -> list[JWall]:
@@ -405,20 +432,20 @@ class JWalls():
             temp_JWalls_list.append(temp_wall)
         return temp_JWalls_list
 
+    # 设置最大墙中点
     def set_update_max_middle_x_y(self, wall: JWall) -> None:
-        if wall.orientation == 'V':
-            if self.max_middle_x:
-                if wall.middle.x() > self.max_middle_x:
-                    self.max_middle_x = wall.middle.x()
-            else:
+        if self.max_middle_x:
+            if wall.middle.x() > self.max_middle_x:
                 self.max_middle_x = wall.middle.x()
         else:
-            if self.max_middle_y:
-                if wall.middle.y() > self.max_middle_y:
-                    self.max_middle_y = wall.middle.y()
-            else:
+            self.max_middle_x = wall.middle.x()
+        if self.max_middle_y:
+            if wall.middle.y() > self.max_middle_y:
                 self.max_middle_y = wall.middle.y()
+        else:
+            self.max_middle_y = wall.middle.y()
 
+    # Apriltag分类，将一张板上的4个码放在一个列表中
     def _code_sort(self, ori_list: list[dict]) -> list[list[dict]]:
         temp_JWall_list = []
         for item_dict in ori_list[:]:
@@ -435,12 +462,14 @@ class JWalls():
                 temp_JWall_list.append(code_list)
         return temp_JWall_list
 
+    # 对比标准板库
     def _compare_with_base(self, input_id: int) -> list:
         for _, value in APRILCODE_BASE.items():
             if input_id in value:
                 return value
         return []
 
+    # 删除列表元素
     def _delete_in_list(self, id_input: int, list: list) -> None:
         for index, item in enumerate(list):
             if item['id'] == id_input:
