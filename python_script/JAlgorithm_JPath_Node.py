@@ -71,7 +71,8 @@ class JPath_Node():
         c_x, c_y = self.__current_index
         g_x, g_y = self.__goal_index
         if not c_x or not c_y or not g_x or not g_y:
-            raise ValueError(f'c_x, c_y, g_x, g_y 值错误: \t {c_x}, {c_y}, {g_x}, {g_y}')
+            print(f'c_x, c_y, g_x, g_y 值错误: \t {c_x}, {c_y}, {g_x}, {g_y}')
+            return
         x_cost = g_x - c_x
         y_cost = g_y - c_y
         x_estimate_positiv = abs(x_cost)
