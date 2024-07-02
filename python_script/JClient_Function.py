@@ -38,6 +38,8 @@ class JClient_Function(JClient_UI):
         self.pb_close_server.clicked.connect(self.close_server)
         self.pb_camera_listener.clicked.connect(lambda: self.signal_data_console_send.emit({'camera_listener': 'on'}))
         self.console_win.pb_jlocation_listen_init.clicked.connect(lambda: self.signal_data_console_send.emit({'jlocation_listener': 'on'}))
+        self.console_win.pb_ros_node_init.clicked.connect(lambda: self.signal_data_console_send.emit({'ros_node_init': 'on'}))
+        self.console_win.pb_ros_apriltag_detection_start.clicked.connect(lambda: self.signal_data_console_send.emit({'camera_listener': 'on'}))
         self.tabWidget.currentChanged.connect(self.clear_launch_function)
         self.pb_launch.clicked.connect(self.launch_function)
     # ==================================== JConsole 信号连接 ====================================
@@ -165,7 +167,6 @@ class JClient_Function(JClient_UI):
 
     # 显示更新视频
     def video_update(self, pixmap: QPixmap):
-        # print(pixmap)
         origal_width = pixmap.width()
         origal_height_width_rate = pixmap.height() / pixmap.width()
         width_rate = self.hs_video_size.value()
@@ -241,8 +242,8 @@ class JClient_Function(JClient_UI):
     def map_display_update(self, data):
         # data 是一个json文件
         yaml_data = yaml.dump(data, default_flow_style=False)
-        map_manager = JMap_Grid_Matrix_From_Yaml(yaml_data)
-        map_abstract = map_manager.map_abstract_matrix
+        # map_manager = JMap_Matrix_From_Yaml(yaml_data)
+        # map_abstract = map_manager.map_abstract_matrix
         pass
 
     def display_current_pos(self, data):
@@ -253,7 +254,7 @@ class JClient_Function(JClient_UI):
                 break
         current_pos_float = data[1]
         if hasattr(self, 'map_manager'):
-            self.current_pos_index = self.map_manager.from_id_to_index(id, current_pos_float)
+            self.current_pos_index = self.map_manager.from_id_to_index(id, float(current_pos_float))
             if not self.current_pos_index:
                 if self.last_passed_pb:
                     default_bgc_ss = self.last_passed_pb.styleSheet().replace('background-color: #EEEE00;', 'background-color: #006600;')
@@ -267,7 +268,6 @@ class JClient_Function(JClient_UI):
                 i: QPushButton
                 if i.objectName() == f'pb_map_{x_index}_{y_index}':
                     current_bgc_ss = i.styleSheet().replace('background-color: #006600;', 'background-color: #EEEE00;')
-                    print(current_bgc_ss)
                     i.setStyleSheet(current_bgc_ss)
                     self.last_passed_pb: QPushButton = i
             print('按钮位置', f'pb_map_{x_index}_{y_index}')
@@ -275,180 +275,279 @@ class JClient_Function(JClient_UI):
     def display_jlocation(self, data):
         location = self.jlocation_pack_from_dict(data)
         location_dict = {
-            'lb_april_front_front_x': location.front.front.distance.x(),
-            'lb_april_front_front_y': location.front.front.distance.y(),
-            'lb_april_front_front_z': location.front.front.distance.z(),
+            'lb_april_front_front_distance_x': location.front.front.distance.xStr(),
+            'lb_april_front_front_distance_y': location.front.front.distance.yStr(),
+            'lb_april_front_front_distance_z': location.front.front.distance.zStr(),
+            'lb_april_front_front_orientation_x': location.front.front.orientation.xStr(),
+            'lb_april_front_front_orientation_y': location.front.front.orientation.yStr(),
+            'lb_april_front_front_orientation_z': location.front.front.orientation.zStr(),
             'lb_april_front_front_id': location.front.front.id,
-            'lb_april_front_left_x': location.front.left.distance.x(),
-            'lb_april_front_left_y': location.front.left.distance.y(),
-            'lb_april_front_left_z': location.front.left.distance.z(),
+            'lb_april_front_left_distance_x': location.front.left.distance.xStr(),
+            'lb_april_front_left_distance_y': location.front.left.distance.yStr(),
+            'lb_april_front_left_distance_z': location.front.left.distance.zStr(),
+            'lb_april_front_left_orientation_x': location.front.left.orientation.xStr(),
+            'lb_april_front_left_orientation_y': location.front.left.orientation.yStr(),
+            'lb_april_front_left_orientation_z': location.front.left.orientation.zStr(),
             'lb_april_front_left_id': location.front.left.id,
-            'lb_april_front_right_x': location.front.right.distance.x(),
-            'lb_april_front_right_y': location.front.right.distance.y(),
-            'lb_april_front_right_z': location.front.right.distance.z(),
+            'lb_april_front_right_distance_x': location.front.right.distance.xStr(),
+            'lb_april_front_right_distance_y': location.front.right.distance.yStr(),
+            'lb_april_front_right_distance_z': location.front.right.distance.zStr(),
+            'lb_april_front_right_orientation_x': location.front.right.orientation.xStr(),
+            'lb_april_front_right_orientation_y': location.front.right.orientation.yStr(),
+            'lb_april_front_right_orientation_z': location.front.right.orientation.zStr(),
             'lb_april_front_right_id': location.front.right.id,
-            'lb_imu_o_x': location.imu.orientation.x(),
-            'lb_imu_o_y': location.imu.orientation.y(),
-            'lb_imu_o_z': location.imu.orientation.z(),
-            'lb_imu_v_x': location.imu.velocity.x(),
-            'lb_imu_v_y': location.imu.velocity.y(),
-            'lb_imu_v_z': location.imu.velocity.z(),
-            'lb_imu_a_x': location.imu.acceleration.x(),
-            'lb_imu_a_y': location.imu.acceleration.y(),
-            'lb_imu_a_z': location.imu.acceleration.z(),
-            'lb_imu_av_x': location.imu.angular_velocity.x(),
-            'lb_imu_av_y': location.imu.angular_velocity.y(),
-            'lb_imu_av_z': location.imu.angular_velocity.z(),
-            'lb_imu_m_x': location.imu.magnetic_field.x(),
-            'lb_imu_m_y': location.imu.magnetic_field.y(),
-            'lb_imu_m_z': location.imu.magnetic_field.z()
+            'lb_imu_o_x': location.imu.orientation.xStr(),
+            'lb_imu_o_y': location.imu.orientation.yStr(),
+            'lb_imu_o_z': location.imu.orientation.zStr(),
+            'lb_imu_v_x': location.imu.velocity.xStr(),
+            'lb_imu_v_y': location.imu.velocity.yStr(),
+            'lb_imu_v_z': location.imu.velocity.zStr(),
+            'lb_imu_a_x': location.imu.acceleration.xStr(),
+            'lb_imu_a_y': location.imu.acceleration.yStr(),
+            'lb_imu_a_z': location.imu.acceleration.zStr(),
+            'lb_imu_av_x': location.imu.angular_velocity.xStr(),
+            'lb_imu_av_y': location.imu.angular_velocity.yStr(),
+            'lb_imu_av_z': location.imu.angular_velocity.zStr(),
+            'lb_imu_m_x': location.imu.magnetic_field.xStr(),
+            'lb_imu_m_y': location.imu.magnetic_field.yStr(),
+            'lb_imu_m_z': location.imu.magnetic_field.zStr()
         }
-        for key, value in location_dict.items():
-            getattr(self.console_win, key).setText(str(value))
-        self.clear_group_box(self.console_win.gb_april_l0)
-        self.clear_group_box(self.console_win.gb_april_l1)
-        self.clear_group_box(self.console_win.gb_april_r0)
-        self.clear_group_box(self.console_win.gb_april_r1)
-        # 判断是否只有一个或者没有码
-        if len(location.left_list) > 0:
-            lb_l0_x_x = QLabel('x')
-            lb_l0_y_y = QLabel('y')
-            lb_l0_z_z = QLabel('z')
+        trans_list = ['distance']
+        try:
+            for key, value in location_dict.items():
+                for i in trans_list:
+                    if i in key and value:
+                        value = '{:.{}f}'.format(float(value)*1000, DIGITS_S)
+                if not value and 'april' in key:
+                    getattr(self.console_win, key).setText('')
+                else:
+                    getattr(self.console_win, key).setText(str(value))
+            self.clear_group_box(self.console_win.gb_april_l0)
+            self.clear_group_box(self.console_win.gb_april_l1)
+            self.clear_group_box(self.console_win.gb_april_r0)
+            self.clear_group_box(self.console_win.gb_april_r1)
+            lb_l0_x_x_d = QLabel('x_mm')
+            lb_l0_y_y_d = QLabel('y_mm')
+            lb_l0_z_z_d = QLabel('z_mm')
+            lb_l0_x_x_o = QLabel('x_degree')
+            lb_l0_y_y_o = QLabel('y_degree')
+            lb_l0_z_z_o = QLabel('z_degree')
             lb_l0_id_id = QLabel('id')
-            if location.left_list[0]:
-                lb_l0_x = QLabel(str(location.left_list[0].distance.x()))
-                lb_l0_y = QLabel(str(location.left_list[0].distance.x()))
-                lb_l0_z = QLabel(str(location.left_list[0].distance.x()))
-                lb_l0_id = QLabel(str(location.left_list[0].id))
-            else:
-                lb_l0_x = QLabel('None')
-                lb_l0_y = QLabel('None')
-                lb_l0_z = QLabel('None')
-                lb_l0_id = QLabel('None')
-            grid_l0 = QGridLayout()
-            self.console_win.gb_april_l0.setLayout(grid_l0)
-            grid_l0.addWidget(lb_l0_x_x, 0, 0)
-            grid_l0.addWidget(lb_l0_x, 0, 1)
-            grid_l0.addWidget(lb_l0_y_y, 1, 0)
-            grid_l0.addWidget(lb_l0_y, 1, 1)
-            grid_l0.addWidget(lb_l0_z_z, 2, 0)
-            grid_l0.addWidget(lb_l0_z, 2, 1)
-            grid_l0.addWidget(lb_l0_id_id, 3, 0)
-            grid_l0.addWidget(lb_l0_id, 3, 1)
-            if len(location.left_list) == 2:
-                lb_l1_x_x = QLabel('x')
-                lb_l1_y_y = QLabel('y')
-                lb_l1_z_z = QLabel('z')
-                lb_l1_id_id = QLabel('id')
+            lb_l1_x_x_d = QLabel('x_mm')
+            lb_l1_y_y_d = QLabel('y_mm')
+            lb_l1_z_z_d = QLabel('z_mm')
+            lb_l1_x_x_o = QLabel('x_degree')
+            lb_l1_y_y_o = QLabel('y_degree')
+            lb_l1_z_z_o = QLabel('z_degree')
+            lb_l1_id_id = QLabel('id')
+            lb_r0_x_x_d = QLabel('x_mm')
+            lb_r0_y_y_d = QLabel('y_mm')
+            lb_r0_z_z_d = QLabel('z_mm')
+            lb_r0_x_x_o = QLabel('x_degree')
+            lb_r0_y_y_o = QLabel('y_degree')
+            lb_r0_z_z_o = QLabel('z_degree')
+            lb_r0_id_id = QLabel('id')
+            lb_r1_x_x_d = QLabel('x_mm')
+            lb_r1_y_y_d = QLabel('y_mm')
+            lb_r1_z_z_d = QLabel('z_mm')
+            lb_r1_x_x_o = QLabel('x_degree')
+            lb_r1_y_y_o = QLabel('y_degree')
+            lb_r1_z_z_o = QLabel('z_degree')
+            lb_r1_id_id = QLabel('id')
+            # 判断是否只有一个或者没有码
+            if len(location.left_list) > 0:
+                if not hasattr(self, 'grid_l0'):
+                    self.grid_l0 = QGridLayout()
+                else:
+                    self.clear_gridlayout(self.grid_l0)
+                if location.left_list[0]:
+                    lb_l0_x_d = QLabel('{:.{}f}'.format(float(location.left_list[0].distance.xStr())*1000, DIGITS_S))
+                    lb_l0_y_d = QLabel('{:.{}f}'.format(float(location.left_list[0].distance.yStr())*1000, DIGITS_S))
+                    lb_l0_z_d = QLabel('{:.{}f}'.format(float(location.left_list[0].distance.zStr())*1000, DIGITS_S))
+                    lb_l0_x_o = QLabel(location.left_list[0].orientation.xStr())
+                    lb_l0_y_o = QLabel(location.left_list[0].orientation.yStr())
+                    lb_l0_z_o = QLabel(location.left_list[0].orientation.zStr())
+                    lb_l0_id = QLabel(str(location.left_list[0].id))
+                else:
+                    lb_l0_x_d = QLabel('None')
+                    lb_l0_y_d = QLabel('None')
+                    lb_l0_z_d = QLabel('None')
+                    lb_l0_x_o = QLabel('None')
+                    lb_l0_y_o = QLabel('None')
+                    lb_l0_z_o = QLabel('None')
+                    lb_l0_id = QLabel('None')
+                self.grid_l0.addWidget(lb_l0_x_x_d, 0, 0)
+                self.grid_l0.addWidget(lb_l0_x_d, 0, 1)
+                self.grid_l0.addWidget(lb_l0_x_x_o, 0, 2)
+                self.grid_l0.addWidget(lb_l0_x_o, 0, 3)
+                self.grid_l0.addWidget(lb_l0_y_y_d, 1, 0)
+                self.grid_l0.addWidget(lb_l0_y_d, 1, 1)
+                self.grid_l0.addWidget(lb_l0_y_y_o, 1, 2)
+                self.grid_l0.addWidget(lb_l0_y_o, 1, 3)
+                self.grid_l0.addWidget(lb_l0_z_z_d, 2, 0)
+                self.grid_l0.addWidget(lb_l0_z_d, 2, 1)
+                self.grid_l0.addWidget(lb_l0_z_z_o, 2, 2)
+                self.grid_l0.addWidget(lb_l0_z_o, 2, 3)
+                self.grid_l0.addWidget(lb_l0_id_id, 3, 0)
+                self.grid_l0.addWidget(lb_l0_id, 3, 1)
+                self.console_win.gb_april_l0.setLayout(self.grid_l0)
+
+            if len(location.left_list) > 1:
+                if not hasattr(self, 'grid_l1'):
+                    self.grid_l1 = QGridLayout()
+                else:
+                    self.clear_gridlayout(self.grid_l1)
                 if location.left_list[1]:
-                    lb_l1_x = QLabel(str(location.left_list[1].distance.x()))
-                    lb_l1_y = QLabel(str(location.left_list[1].distance.x()))
-                    lb_l1_z = QLabel(str(location.left_list[1].distance.x()))
+                    lb_l1_x_d = QLabel('{:.{}f}'.format(float(location.left_list[1].distance.xStr())*1000, DIGITS_S))
+                    lb_l1_y_d = QLabel('{:.{}f}'.format(float(location.left_list[1].distance.yStr())*1000, DIGITS_S))
+                    lb_l1_z_d = QLabel('{:.{}f}'.format(float(location.left_list[1].distance.zStr())*1000, DIGITS_S))
+                    lb_l1_x_o = QLabel(location.left_list[1].orientation.xStr())
+                    lb_l1_y_o = QLabel(location.left_list[1].orientation.yStr())
+                    lb_l1_z_o = QLabel(location.left_list[1].orientation.zStr())
                     lb_l1_id = QLabel(str(location.left_list[1].id))
                 else:
-                    lb_l1_x = QLabel('None')
-                    lb_l1_y = QLabel('None')
-                    lb_l1_z = QLabel('None')
+                    lb_l1_x_d = QLabel('None')
+                    lb_l1_y_d = QLabel('None')
+                    lb_l1_z_d = QLabel('None')
+                    lb_l1_x_o = QLabel('None')
+                    lb_l1_y_o = QLabel('None')
+                    lb_l1_z_o = QLabel('None')
                     lb_l1_id = QLabel('None')
-                grid_l1 = QGridLayout()
-                self.console_win.gb_april_l1.setLayout(grid_l1)
-                grid_l0.addWidget(lb_l1_x_x, 0, 0)
-                grid_l0.addWidget(lb_l1_x, 0, 1)
-                grid_l0.addWidget(lb_l1_y_y, 1, 0)
-                grid_l0.addWidget(lb_l1_y, 1, 1)
-                grid_l0.addWidget(lb_l1_z_z, 2, 0)
-                grid_l0.addWidget(lb_l1_z, 2, 1)
-                grid_l0.addWidget(lb_l1_id_id, 3, 0)
-                grid_l0.addWidget(lb_l1_id, 3, 1)
-        if len(location.right_list) > 0:
-            lb_r0_x_x = QLabel('x')
-            lb_r0_y_y = QLabel('y')
-            lb_r0_z_z = QLabel('z')
-            lb_r0_id_id = QLabel('id')
-            if location.right_list[0]:
-                lb_r0_x = QLabel(str(location.right_list[0].distance.x()))
-                lb_r0_y = QLabel(str(location.right_list[0].distance.x()))
-                lb_r0_z = QLabel(str(location.right_list[0].distance.x()))
-                lb_r0_id = QLabel(str(location.right_list[0].id))
-            else:
-                lb_r0_x = QLabel('None')
-                lb_r0_y = QLabel('None')
-                lb_r0_z = QLabel('None')
-                lb_r0_id = QLabel('None')
-            grid_r0 = QGridLayout()
-            self.console_win.gb_april_r0.setLayout(grid_r0)
-            grid_l0.addWidget(lb_r0_x_x, 0, 0)
-            grid_l0.addWidget(lb_r0_x, 0, 1)
-            grid_l0.addWidget(lb_r0_y_y, 1, 0)
-            grid_l0.addWidget(lb_r0_y, 1, 1)
-            grid_l0.addWidget(lb_r0_z_z, 2, 0)
-            grid_l0.addWidget(lb_r0_z, 2, 1)
-            grid_l0.addWidget(lb_r0_id_id, 3, 0)
-            grid_l0.addWidget(lb_r0_id, 3, 1)
-            if len(location.left_list) == 2:
-                lb_r1_x_x = QLabel('x')
-                lb_r1_y_y = QLabel('y')
-                lb_r1_z_z = QLabel('z')
-                lb_r1_id_id = QLabel('id')
-                if location.right_list[1]:
-                    lb_r1_x = QLabel(str(location.right_list[0].distance.x()))
-                    lb_r1_y = QLabel(str(location.right_list[0].distance.x()))
-                    lb_r1_z = QLabel(str(location.right_list[0].distance.x()))
-                    lb_r1_id = QLabel(str(location.right_list[0].id))
+                self.grid_l1.addWidget(lb_l1_x_x_d, 0, 0)
+                self.grid_l1.addWidget(lb_l1_x_d, 0, 1)
+                self.grid_l1.addWidget(lb_l1_x_x_o, 0, 2)
+                self.grid_l1.addWidget(lb_l1_x_o, 0, 3)
+                self.grid_l1.addWidget(lb_l1_y_y_d, 1, 0)
+                self.grid_l1.addWidget(lb_l1_y_d, 1, 1)
+                self.grid_l1.addWidget(lb_l1_y_y_o, 1, 2)
+                self.grid_l1.addWidget(lb_l1_y_o, 1, 3)
+                self.grid_l1.addWidget(lb_l1_z_z_d, 2, 0)
+                self.grid_l1.addWidget(lb_l1_z_d, 2, 1)
+                self.grid_l1.addWidget(lb_l1_z_z_o, 2, 2)
+                self.grid_l1.addWidget(lb_l1_z_o, 2, 3)
+                self.grid_l1.addWidget(lb_l1_id_id, 3, 0)
+                self.grid_l1.addWidget(lb_l1_id, 3, 1)
+                self.console_win.gb_april_l1.setLayout(self.grid_l1)
+
+            if len(location.right_list) > 0:
+                if not hasattr(self, 'grid_r0'):
+                    self.grid_r0 = QGridLayout()
                 else:
-                    lb_r1_x = QLabel('None')
-                    lb_r1_y = QLabel('None')
-                    lb_r1_z = QLabel('None')
+                    self.clear_gridlayout(self.grid_r0)
+                if location.right_list[0]:
+                    lb_r0_x_d = QLabel('{:.{}f}'.format(float(location.right_list[0].distance.xStr())*1000, DIGITS_S))
+                    lb_r0_y_d = QLabel('{:.{}f}'.format(float(location.right_list[0].distance.yStr())*1000, DIGITS_S))
+                    lb_r0_z_d = QLabel('{:.{}f}'.format(float(location.right_list[0].distance.zStr())*1000, DIGITS_S))
+                    lb_r0_x_o = QLabel(location.right_list[0].orientation.xStr())
+                    lb_r0_y_o = QLabel(location.right_list[0].orientation.yStr())
+                    lb_r0_z_o = QLabel(location.right_list[0].orientation.zStr())
+                    lb_r0_id = QLabel(str(location.right_list[0].id))
+                else:
+                    lb_r0_x_d = QLabel('None')
+                    lb_r0_y_d = QLabel('None')
+                    lb_r0_z_d = QLabel('None')
+                    lb_r0_x_o = QLabel('None')
+                    lb_r0_y_o = QLabel('None')
+                    lb_r0_z_o = QLabel('None')
+                    lb_r0_id = QLabel('None')
+                self.grid_r0.addWidget(lb_r0_x_x_d, 0, 0)
+                self.grid_r0.addWidget(lb_r0_x_d, 0, 1)
+                self.grid_r0.addWidget(lb_r0_x_x_o, 0, 2)
+                self.grid_r0.addWidget(lb_r0_x_o, 0, 3)
+                self.grid_r0.addWidget(lb_r0_y_y_d, 1, 0)
+                self.grid_r0.addWidget(lb_r0_y_d, 1, 1)
+                self.grid_r0.addWidget(lb_r0_y_y_o, 1, 2)
+                self.grid_r0.addWidget(lb_r0_y_o, 1, 3)
+                self.grid_r0.addWidget(lb_r0_z_z_d, 2, 0)
+                self.grid_r0.addWidget(lb_r0_z_d, 2, 1)
+                self.grid_r0.addWidget(lb_r0_z_z_o, 2, 2)
+                self.grid_r0.addWidget(lb_r0_z_o, 2, 3)
+                self.grid_r0.addWidget(lb_r0_id_id, 3, 0)
+                self.grid_r0.addWidget(lb_r0_id, 3, 1)
+                self.console_win.gb_april_r0.setLayout(self.grid_r0)
+            if len(location.right_list) > 1:
+                if not hasattr(self, 'grid_r1'):
+                    self.grid_r1 = QGridLayout()
+                else:
+                    self.clear_gridlayout(self.grid_r1)
+                if location.right_list[1]:
+                    lb_r1_x_d = QLabel('{:.{}f}'.format(float(location.right_list[1].distance.xStr())*1000, DIGITS_S))
+                    lb_r1_y_d = QLabel('{:.{}f}'.format(float(location.right_list[1].distance.yStr())*1000, DIGITS_S))
+                    lb_r1_z_d = QLabel('{:.{}f}'.format(float(location.right_list[1].distance.zStr())*1000, DIGITS_S))
+                    lb_r1_x_o = QLabel(location.right_list[1].orientation.xStr())
+                    lb_r1_y_o = QLabel(location.right_list[1].orientation.yStr())
+                    lb_r1_z_o = QLabel(location.right_list[1].orientation.zStr())
+                    lb_r1_id = QLabel(str(location.right_list[1].id))
+                else:
+                    lb_r1_x_d = QLabel('None')
+                    lb_r1_y_d = QLabel('None')
+                    lb_r1_z_d = QLabel('None')
+                    lb_r1_x_o = QLabel('None')
+                    lb_r1_y_o = QLabel('None')
+                    lb_r1_z_o = QLabel('None')
                     lb_r1_id = QLabel('None')
-                grid_r1 = QGridLayout()
-                self.console_win.gb_april_r1.setLayout(grid_r1)
-                grid_r1.addWidget(lb_r1_x_x, 0, 0)
-                grid_r1.addWidget(lb_r1_x, 1, 0)
-                grid_r1.addWidget(lb_r1_y_y, 0, 1)
-                grid_r1.addWidget(lb_r1_y, 1, 1)
-                grid_r1.addWidget(lb_r1_z_z, 0, 2)
-                grid_r1.addWidget(lb_r1_z, 1, 2)
-                grid_r1.addWidget(lb_r1_id_id, 0, 3)
-                grid_r1.addWidget(lb_r1_id, 1, 3)
+                self.grid_r1.addWidget(lb_r1_x_x_d, 0, 0)
+                self.grid_r1.addWidget(lb_r1_x_d, 0, 1)
+                self.grid_r1.addWidget(lb_r1_x_x_o, 0, 2)
+                self.grid_r1.addWidget(lb_r1_x_o, 0, 3)
+                self.grid_r1.addWidget(lb_r1_y_y_d, 1, 0)
+                self.grid_r1.addWidget(lb_r1_y_d, 1, 1)
+                self.grid_r1.addWidget(lb_r1_y_y_o, 1, 2)
+                self.grid_r1.addWidget(lb_r1_y_o, 1, 3)
+                self.grid_r1.addWidget(lb_r1_z_z_d, 2, 0)
+                self.grid_r1.addWidget(lb_r1_z_d, 2, 1)
+                self.grid_r1.addWidget(lb_r1_z_z_o, 2, 2)
+                self.grid_r1.addWidget(lb_r1_z_o, 2, 3)
+                self.grid_r1.addWidget(lb_r1_id_id, 3, 0)
+                self.grid_r1.addWidget(lb_r1_id, 3, 1)
+                self.console_win.gb_april_r1.setLayout(self.grid_r1)
+        except Exception as e:
+            e = traceback.format_exc()
+            print(e)
 
     def jlocation_pack_from_dict(self, data):
         location = JLocation()
         location.front.front.set_distance(data['front']['front']['distance'])
         location.front.front.set_orientation(data['front']['front']['orientation'])
+        location.front.front.set_id(data['front']['front']['id'])
         location.front.left.set_distance(data['front']['left']['distance'])
         location.front.left.set_orientation(data['front']['left']['orientation'])
+        location.front.left.set_id(data['front']['left']['id'])
         location.front.right.set_distance(data['front']['right']['distance'])
         location.front.right.set_orientation(data['front']['right']['orientation'])
-        location.left_list = []
-        location.right_list = []
-        if len(data['left_list']) > 1:
-            location.left_list = [None]
+        location.front.right.set_id(data['front']['right']['id'])
+        left_list = []
+        right_list = []
+        if len(data['left_list']) > 0:
+            left_list = [None]
             if data['left_list'][0]:
-                location.left_list[0] = JApril_Tag_Info()
-                location.left_list[0].set_distance(data['left_list'][0]['distance'])
-                location.left_list[0].set_orientation(data['left_list'][0]['orientation'])
-                location.left_list[0].set_id(data['left_list'][0]['id'])
+                left_list[0] = JApril_Tag_Info()
+                left_list[0].set_distance(data['left_list'][0]['distance'])
+                left_list[0].set_orientation(data['left_list'][0]['orientation'])
+                left_list[0].set_id(data['left_list'][0]['id'])
             if len(data['left_list']) == 2:
-                location.left_list.append(None)
+                left_list.append(None)
                 if data['left_list'][1]:
-                    location.left_list[1] = JApril_Tag_Info()
-                    location.left_list[1].set_distance(data['left_list'][1]['distance'])
-                    location.left_list[1].set_orientation(data['left_list'][1]['orientation'])
-                    location.left_list[1].set_id(data['left_list'][1]['id'])
-        if len(data['right_list']) > 1:
-            location.right_list = [None]
+                    left_list[1] = JApril_Tag_Info()
+                    left_list[1].set_distance(data['left_list'][1]['distance'])
+                    left_list[1].set_orientation(data['left_list'][1]['orientation'])
+                    left_list[1].set_id(data['left_list'][1]['id'])
+            location.set_left_list(left_list)
+        if len(data['right_list']) > 0:
+            right_list = [None]
             if data['right_list'][0]:
-                location.right_list[0] = JApril_Tag_Info()
-                location.right_list[0].set_distance(data['right_list'][0]['distance'])
-                location.right_list[0].set_orientation(data['right_list'][0]['orientation'])
-                location.right_list[0].set_id(data['right_list'][0]['id'])
+                right_list[0] = JApril_Tag_Info()
+                right_list[0].set_distance(data['right_list'][0]['distance'])
+                right_list[0].set_orientation(data['right_list'][0]['orientation'])
+                right_list[0].set_id(data['right_list'][0]['id'])
             if len(data['right_list']) == 2:
-                location.right_list.append(None)
+                right_list.append(None)
                 if data['right_list'][1]:
-                    location.right_list[1] = JApril_Tag_Info()
-                    location.right_list[1].set_distance(data['right_list'][1]['distance'])
-                    location.right_list[1].set_orientation(data['right_list'][1]['orientation'])
-                    location.right_list[1].set_id(data['right_list'][1]['id'])
+                    right_list[1] = JApril_Tag_Info()
+                    right_list[1].set_distance(data['right_list'][1]['distance'])
+                    right_list[1].set_orientation(data['right_list'][1]['orientation'])
+                    right_list[1].set_id(data['right_list'][1]['id'])
+            location.set_right_list(right_list)
         location.imu.orientation.set_x(data['imu']['orientation'][0])
         location.imu.orientation.set_y(data['imu']['orientation'][1])
         location.imu.orientation.set_z(data['imu']['orientation'][2])
@@ -471,11 +570,24 @@ class JClient_Function(JClient_UI):
 
     def clear_group_box(self, group_box: QGroupBox):
         layout = group_box.layout()
-        while layout.count():
-            item = layout.takeAt(0)
-            widget = item.widget()
-            if widget is not None:
-                widget.deleteLater()
+        if layout:
+            while layout.count():
+                item = layout.takeAt(0)
+                widget = item.widget()
+                if widget is not None:
+                    widget.deleteLater()
+
+    def clear_gridlayout(self, grid):
+        layout = grid.layout()
+        if layout:
+            # 移除布局中的所有小部件
+            for i in reversed(range(layout.count())):
+                widget = layout.itemAt(i).widget()
+                if widget:
+                    widget.setParent(None)  # 将 widget 分离，防止内存泄漏
+
+            # 删除旧布局
+            QWidget().setLayout(layout)
 
     def emergency_stop(self, key):
         self.signal_data_console_send.emit({key: 'Emergency_Stop'})
