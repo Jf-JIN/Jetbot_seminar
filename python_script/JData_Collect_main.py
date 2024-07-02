@@ -10,21 +10,24 @@ from sensor_msgs.msg import Imu, MagneticField
 from apriltag_ros.msg import AprilTagDetectionArray
 from sensor_msgs.msg import CompressedImage
 from PyQt5.QtCore import QObject, pyqtSignal, QThread
+import yaml
 
 
 class JCollector_QThread(QThread):
 
-    def __init__(self, imu_callback, mag_callback, apriltag_callback, video_callback) -> None:
+    def __init__(self, imu_callback, mag_callback, apriltag_callback, pos_callback, video_callback) -> None:
         super().__init__()
         self.imu_callback = imu_callback
         self.mag_callback = mag_callback
         self.apriltag_callback = apriltag_callback
+        self.pos_callback = pos_callback
         self.video_callback = video_callback
 
     def run(self):
         rospy.Subscriber("/imu/data_raw", Imu, self.imu_callback)
         rospy.Subscriber("/imu/mag", MagneticField, self.mag_callback)
         rospy.Subscriber("/tag_detections", AprilTagDetectionArray, self.apriltag_callback)
+        # rospy.Subscriber("/tag_detections", AprilTagDetectionArray, self.pos_callback)
         rospy.Subscriber("/tag_detections_image/compressed", CompressedImage, self.video_callback)
         rospy.spin()  # 保持节点运行
 
@@ -38,9 +41,13 @@ class JData_Collection(QObject):
         self.imu_data = None
         self.magnetic_field_data = None
         self.apriltag_data = None
+        self.current_position = None
+        # self.yaml_path = '/opt/ros/noetic/share/apriltag_ros/config/tags.yaml'
+        # with open(self.yaml_path, 'r', encoding='utf-8') as yaml_file:
+        #     self.tag_map = yaml.safe_load(yaml_file)
         # 初始化 JLocation 对象
         self.jlocation = JLocation()
-        self.collector_thread = JCollector_QThread(self.imu_callback, self.mag_callback, self.apriltag_callback, self.video_callback)
+        self.collector_thread = JCollector_QThread(self.imu_callback, self.mag_callback, self.apriltag_callback, self.pos_callback, self.video_callback)
         self.collector_thread.start()
 
     def imu_callback(self, data):
@@ -101,17 +108,29 @@ class JData_Collection(QObject):
             apriltag_detections.append(tag_info)
         self.apriltag_data = apriltag_detections
 
+    # def pos_callback(self, data):
+    #     for detection in data.detections:
+    #         tag_id = detection.id[0]
+    #         for i in self.tag_map['tag_bundles']['layout']:
+    #             if tag_id in i['id']:
+    #                 tag_info = self.tag_map[tag_id]
+    #                 tag_pose = detection.pose.pose.pose
+    #                 self.current_position = [tag_pose.position.x, tag_pose.position.y, tag_pose.position.z]
+    #                 print(tag_id, tag_info)
+    #                 print(f"Detected tag {tag_id} at position ({tag_pose.position.x}, {tag_pose.position.y}, {tag_pose.position.z})")
+    #                 # rospy.loginfo(f"Detected tag {tag_id} at position ({tag_pose.position.x}, {tag_pose.position.y}, {tag_pose.position.z})")
+
     def video_callback(self, data):
         self.video_signal.emit(data.data)
 
-    def set_imu_data(self, data):
-        self.imu_data = data
+    # def set_imu_data(self, data):
+    #     self.imu_data = data
 
-    def set_mag_data(self, data):
-        self.magnetic_field_data = data
+    # def set_mag_data(self, data):
+    #     self.magnetic_field_data = data
 
-    def set_apriltag_data(self, data):
-        self.apriltag_data = data
+    # def set_apriltag_data(self, data):
+    #     self.apriltag_data = data
 
     # 四元数转换为欧拉角
     def quaternion_to_euler(self, quaternion):
@@ -123,6 +142,7 @@ class JData_Collection(QObject):
         apriltag_data = copy.deepcopy(self.apriltag_data)
         imu_data = copy.deepcopy(self.imu_data)
         magnetic_field_data = copy.deepcopy(self.magnetic_field_data)
+        current_position = copy.deepcopy(self.current_position)
 
         location = JLocation()
         temp_left = JApril_Tag_Info()
@@ -159,7 +179,7 @@ class JData_Collection(QObject):
                         left_list[0] = copy.deepcopy(temp_left)
                     elif left_list[0].distance.z() > item['position'][2] and item['id'] != left_list[0].id:
                         left_list.insert(0, copy.deepcopy(temp_left))
-                    elif left_list[0].distance.z() < item['position'][2] and left_list[1].distance.z() > item['position'][2]:
+                    elif len(left_list) == 2 and left_list[0].distance.z() < item['position'][2] and left_list[1].distance.z() > item['position'][2]:
                         left_list[1] = copy.deepcopy(temp_left)
                 # 置右侧
                 elif item['position'][0] > 0 and euler_orientation[1] > 45:
@@ -191,5 +211,8 @@ class JData_Collection(QObject):
 
         if magnetic_field_data:
             location.imu.set_magnetic_field(magnetic_field_data)
+
+        if current_position:
+            location.set_current_position(current_position)
 
         return location
