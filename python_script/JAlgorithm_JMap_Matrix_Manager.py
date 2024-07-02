@@ -39,8 +39,8 @@ class JMap_Grid_Matrix_From_Yaml():
         temp_obj_matrix = [[None for _ in range(JWall_list.range_Maze_y * 2 + 1)] for _ in range(JWall_list.range_Maze_x * 2 + 1)]
         for _, wall in enumerate(JWall_list.JWall_list):
             wall: JWall
-            x_index = int((wall.middle.x() - 0.0015) / 0.1265)  # 索引坐标(以中点计算) = 1.5 + (125 + 1.5) * 索引值 n
-            y_index = int((wall.middle.y() - 0.0015) / 0.1265)
+            x_index = int((wall.middle.x() - WALL_THICKNESS_HALF) / (WALL_THICKNESS_HALF+WALL_WIDTH_HALF))  # 索引坐标(以中点计算) = 1.5 + (125 + 1.5) * 索引值 n
+            y_index = int((wall.middle.y() - WALL_THICKNESS_HALF) / (WALL_THICKNESS_HALF+WALL_WIDTH_HALF))
             temp_obj_matrix[x_index][y_index] = wall
         self.__map_obj_matrix = temp_obj_matrix
         self._from_map_obj_to_abstract_matrix()
@@ -56,7 +56,7 @@ class JMap_Grid_Matrix_From_Yaml():
                     if wall.orientation == 'H':    # 横向延伸
                         temp_abstract_matrix[x_index][max(0, y_index - 1)] = wall.sub_identifier                  # 向左延伸一格墙壁, 取0和索引-1两者最大值, 避免出现负数
                         temp_abstract_matrix[x_index][min(y_index + 1, len(wall_list)-1)] = wall.sub_identifier   # 向右延伸一格墙壁, 取索引+1和列表最大索引两者最大值, 避免出现索引超出范围
-                    else:                           # 纵向延伸
+                    else:                          # 纵向延伸
                         temp_abstract_matrix[max(0, x_index - 1)][y_index] = wall.sub_identifier                  # 向上延伸一格墙壁, 取0和索引-1两者最大值, 避免出现负数
                         temp_abstract_matrix[min(x_index + 1, len(wall_list)-1)][y_index] = wall.sub_identifier   # 向下延伸一格墙壁, 取索引+1和列表最大索引两者最大值, 避免出现索引超出范围
         self.__map_abstract_matrix = temp_abstract_matrix
@@ -68,23 +68,25 @@ class JMap_Grid_Matrix_From_Yaml():
             for y_index, i in enumerate(list_item):
                 i: JWall
                 if i and id in i.id_list:
-                    if id % 4 == 0 or id % 4 == 1:
-                        if i.orientation == 'H':    # 向上
-                            x_index = i.topside-i.width/2 - distance
+                    if id in [i.main_0.id, i.main_1.id]:    # 正面 向上或向左
+                        if i.orientation == 'H':    # 向上， 车位于码的上方
+                            x_index = i.topside - distance
                             y_index = i.middle.y()
-                        elif i.orientation == 'V':  # 向左
+                        elif i.orientation == 'V':  # 向左， 车位于码的左侧
                             x_index = i.middle.x()
-                            y_index = i.leftside-i.width/2 - distance
-                    elif id % 4 == 2 or id % 4 == 3:
-                        if i.orientation == 'H':    # 向下
-                            x_index = i.topside+i.width/2 + distance
+                            y_index = i.leftside - distance
+                    elif id in [i.sub_0.id, i.sub_1.id]:    # 背面 向下或向右
+                        if i.orientation == 'H':    # 向下， 车位于码的下方
+                            x_index = i.topside + distance
                             y_index = i.middle.y()
-                        elif i.orientation == 'V':  # 向右
+                        elif i.orientation == 'V':  # 向右， 车位于码的右侧
                             x_index = i.middle.x()
-                            y_index = i.leftside+i.width/2 + distance
+                            y_index = i.leftside + distance
                     if x_index < 0 or y_index < 0:
-                        print('请正确输入id和距离, 当前id号和距离对应部分超出地图范围')
+                        print(f'请正确输入id和距离, 当前id号({id})和距离{distance}对应部分x: {x_index} y: {y_index}超出地图范围')
                         return None
+
+                    print(f'当前id号({id})，距离：{distance}, 索引: [{x_index}, {y_index}]')
                     index = self.from_coordinate_to_index([x_index, y_index])
                     return index
 
@@ -103,12 +105,14 @@ class JMap_Grid_Matrix_From_Yaml():
                 # 判断条件: 方向为水平, 输入的 y 值小于当前板子的右边界, 同时 temp_index 为第一次赋值
                 if y_item.orientation == 'H' and coordinate[1] < y_item.rightside and not temp_index[1]:
                     temp_index[1] = y_index
+                    print(f'[板子y]: {y_item.topleft, y_item.bottomright}')
                     break
                 elif y_item.orientation == 'H' and coordinate[1] == y_item.rightside or coordinate[1] == y_item.leftside:
                     print('请检查输入值, 输入值 y 与墙重叠')
                     raise ValueError('请检查输入值, 输入值 y 与墙重叠')
                 # 判断条件: 方向为竖直, 输入的 x 值小于当前板子的下边界, 同时 temp_index 为第一次赋值
                 if y_item.orientation == 'V' and coordinate[0] < y_item.bottomside and not temp_index[0]:
+                    print(f'[板子x]: {y_item.topleft, y_item.bottomright}')
                     temp_index[0] = x_index
                     break
                 elif y_item.orientation == 'V' and (coordinate[0] == y_item.bottomside or coordinate[0] == y_item.topside):
@@ -119,8 +123,8 @@ class JMap_Grid_Matrix_From_Yaml():
     # 将索引转换为坐标系, 返回中心点的坐标系
     def from_index_to_coordinate(self, index: list) -> tuple:
         # index: (x, y)
-        x_coordinate = (index[0] * 0.1265) + 0.0015
-        y_coordinate = (index[1] * 0.1265) + 0.0015
+        x_coordinate = (index[0] * (WALL_THICKNESS_HALF+WALL_WIDTH_HALF)) + WALL_THICKNESS_HALF
+        y_coordinate = (index[1] * (WALL_THICKNESS_HALF+WALL_WIDTH_HALF)) + WALL_THICKNESS_HALF
         return x_coordinate, y_coordinate
 
 
