@@ -6,9 +6,11 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 import socket
+import os
 import time
 import traceback
-
+import json
+# import yaml
 # from Icon_setting import *
 from JClient_ui import *
 from JConsoleUI import *
@@ -169,7 +171,7 @@ class JClient_UI(Ui_MainWindow):
             return None
         except Exception as e:
             e = traceback.format_exc()
-            e_text = f'[加载yaml文件] - {self.formatted_time} \n[!错误!] {e}'
+            e_text = f'\n[加载yaml文件] - {self.formatted_time} \n[!错误!] {e}'
             print(e_text)
             self.append_TB_text(e_text, self.tb_console)
 
@@ -177,10 +179,18 @@ class JClient_UI(Ui_MainWindow):
         with open(path, 'r') as file:
             loaded_data = yaml.safe_load(file)
         # signal_text = json.dumps({'a1_map_yaml_dict': loaded_data})
-        if 'standalone_tags' not in loaded_data:
-            loaded_data['standalone_tags'] = loaded_data['tag_bundles']['layout']
         signal_text = {'a1_map_yaml_dict': loaded_data}
         self.signal_data_console_send.emit(signal_text)
+        if 'standalone_tags' not in loaded_data:
+            loaded_data['standalone_tags'] = loaded_data['tag_bundles'][0]['layout']
+        # signal_text = {'a1_map_yaml_dict': loaded_data}
+        json_path_new = os.path.join(os.path.dirname(path), 'tags.json')
+        yaml_path_new = os.path.join(os.path.dirname(path), 'tags.yaml')
+        with open(yaml_path_new, 'w') as yaml_file:
+            yaml.dump(loaded_data, yaml_file, default_flow_style=False, sort_keys=False)
+        with open(json_path_new, 'w') as json_file:
+            json.dump(signal_text, json_file, indent=4)
+
         self.lb_goal_index.clear()
         self.map_manager = JMap_Grid_Matrix_From_Yaml(loaded_data)
         abstract_map = self.map_manager.map_abstract_matrix
