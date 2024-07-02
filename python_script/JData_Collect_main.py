@@ -6,33 +6,42 @@
 from JLocation import *
 from scipy.spatial.transform import Rotation
 import rospy
-from sensor_msgs.msg import Imu,MagneticField
+from sensor_msgs.msg import Imu, MagneticField
 from apriltag_ros.msg import AprilTagDetectionArray
-import math
-import threading
-# from PyQt5
-from PyQt5.QtCore import QObject,pyqtSignal,QThread
+from sensor_msgs.msg import CompressedImage
+from PyQt5.QtCore import QObject, pyqtSignal, QThread
 
 
-class Imu_Data_Collection(QThread):
+class JCollector_QThread(QThread):
+
+    def __init__(self, imu_callback, mag_callback, apriltag_callback, video_callback) -> None:
+        super().__init__()
+        self.imu_callback = imu_callback
+        self.mag_callback = mag_callback
+        self.apriltag_callback = apriltag_callback
+        self.video_callback = video_callback
+
+    def run(self):
+        rospy.Subscriber("/imu/data_raw", Imu, self.imu_callback)
+        rospy.Subscriber("/imu/mag", MagneticField, self.mag_callback)
+        rospy.Subscriber("/tag_detections", AprilTagDetectionArray, self.apriltag_callback)
+        rospy.Subscriber("/tag_detections_image/compressed", CompressedImage, self.video_callback)
+        rospy.spin()  # 保持节点运行
+
+
+class JData_Collection(QObject):
     signal_error_output = pyqtSignal(str)
-    signal_imu_data = pyqtSignal(dict)
-    signal_mag_data = pyqtSignal(dict)
-
+    video_signal = pyqtSignal(object)
 
     def __init__(self):
         super().__init__()
         self.imu_data = None
         self.magnetic_field_data = None
-
-        # 初始化ROS节点
-        #rospy.init_node('imu_data_collection_node', anonymous=False)
-
-    def run(self):
-        # 订阅IMU数据和磁场数据
-        rospy.Subscriber("/imu/data_raw", Imu, self.imu_callback)
-        rospy.Subscriber("/imu/mag", MagneticField, self.mag_callback)
-        rospy.spin()  # 保持节点运行
+        self.apriltag_data = None
+        # 初始化 JLocation 对象
+        self.jlocation = JLocation()
+        self.collector_thread = JCollector_QThread(self.imu_callback, self.mag_callback, self.apriltag_callback, self.video_callback)
+        self.collector_thread.start()
 
     def imu_callback(self, data):
         try:
@@ -42,9 +51,7 @@ class Imu_Data_Collection(QThread):
                 "angular_velocity": [data.angular_velocity.x, data.angular_velocity.y, data.angular_velocity.z],
                 "orientation": [data.orientation.x, data.orientation.y, data.orientation.z, data.orientation.w]
             }
-            self.signal_imu_data.emit(self.imu_data)
-
-            rospy.loginfo("IMU data received")
+            # rospy.loginfo("IMU data received")
         except AttributeError as e:
             rospy.logerr("Attribute error in imu_callback: %s", e)
         except Exception as e:
@@ -54,8 +61,8 @@ class Imu_Data_Collection(QThread):
         try:
             # 从磁场消息中提取数据
             self.magnetic_field_data = [data.magnetic_field.x, data.magnetic_field.y, data.magnetic_field.z]
-            self.signal_mag_data.emit(self.magnetic_field_data)
-            rospy.loginfo("Magnetic field data received")
+
+            # rospy.loginfo("Magnetic field data received")
         except AttributeError as e:
             error_text = f'[IMU] [!错误!]: {str(e)}'
             self.signal_error_output.emit(error_text)
@@ -63,105 +70,39 @@ class Imu_Data_Collection(QThread):
         except Exception as e:
             rospy.logerr("Unexpected error in mag_callback: %s", e)
 
-    # def get_imu_data(self):
-    #     return self.imu_data
-
-    # def get_magnetic_field_data(self):
-    #     return self.magnetic_field_data
-
-
-class Camera_Data_Collection(QThread):
-    signal_error_output = pyqtSignal(str)
-    signal_apriltag_data = pyqtSignal(list)
-
-    def __init__(self):
-        super(Camera_Data_Collection, self).__init__()
-        self.apriltag_detections = []
-
-        # 初始化ROS节点
-        # rospy.init_node('camera_data_collection_node', anonymous=False)
-
-    def run(self):
-        # 订阅 Apriltag 话题
-        rospy.Subscriber("/tag_detections", AprilTagDetectionArray, self.apriltag_callback)
-        rospy.spin()  # 保持节点运行
-
     def apriltag_callback(self, data):
-        try:
-            # 清空当前的 Apriltag 数据
-            self.apriltag_detections = []
+        # 清空当前的 Apriltag 数据
+        apriltag_detections = []
+        # 处理每个检测到的 Apriltag
+        for detection in data.detections:
+            if len(detection.id) > 1:
+                continue  # 跳过包含多个 ID 的检测信息
+            tag_id = int(detection.id[0])
+            if tag_id % 4 == 0 or tag_id % 4 == 2:
+                tag_id_list = [tag_id, tag_id+1]
+            elif tag_id % 4 == 1 or tag_id % 4 == 3:
+                tag_id_list = [tag_id-1, tag_id]
+            tag_position = detection.pose.pose.pose.position
+            tag_orientation = detection.pose.pose.pose.orientation
+            tag_info = {
+                'id': tag_id_list,
+                'position': [
+                    tag_position.x,
+                    tag_position.y,
+                    tag_position.z
+                ],
+                'orientation': [
+                    tag_orientation.x,
+                    tag_orientation.y,
+                    tag_orientation.z,
+                    tag_orientation.w
+                ]
+            }
+            apriltag_detections.append(tag_info)
+        self.apriltag_data = apriltag_detections
 
-            # 处理每个检测到的 Apriltag
-            for detection in data.detections:
-                if len(detection.id) > 1:
-                    continue  # 跳过包含多个 ID 的检测信息
-
-                tag_id = detection.id[0]
-                tag_position = detection.pose.pose.pose.position
-                tag_orientation = detection.pose.pose.pose.orientation
-
-                tag_info = {
-                    'id': tag_id,
-                    'position': [
-                        tag_position.x,
-                        tag_position.y,
-                        tag_position.z
-                    ],
-                    'orientation': [
-                        tag_orientation.x,
-                        tag_orientation.y,
-                        tag_orientation.z,
-                        tag_orientation.w
-                    ]
-                }
-                self.apriltag_detections.append(tag_info)
-
-            # 发射 Apriltag 数据信号
-            self.signal_apriltag_data.emit(self.apriltag_detections)
-            rospy.loginfo("AprilTag data received")
-        except AttributeError as e:
-            error_text = f'[Camera] [!错误!]: {str(e)}'
-            self.signal_error_output.emit(error_text)
-            rospy.logerr("Attribute error in apriltag_callback: %s", e)
-        except Exception as e:
-            rospy.logerr("Unexpected error in apriltag_callback: %s", e)
-
-    def get_detections(self):
-        return self.apriltag_detections
-
-
-class JData_Collection(QObject):
-    signal_error_output = pyqtSignal(str)
-
-    def __init__(self):
-        super(JData_Collection, self).__init__()
-
-        # 初始化 ROS 节点（如果需要）
-        # rospy.init_node('jdata_collection_node', anonymous=False)
-
-        # 初始化 IMU 数据
-        self.imu_data = None
-        self.magnetic_field_data = None
-        self.camera_data = []
-
-        # 初始化 Camera_Data_Collection 和 Imu_Data_Collection
-        self.camera_collector = Camera_Data_Collection()
-        self.imu_collector = Imu_Data_Collection()
-
-        # 连接信号和插槽
-        self.imu_collector.signal_imu_data.connect(self.set_imu_data)
-        self.imu_collector.signal_mag_data.connect(self.set_mag_data)
-        self.imu_collector.signal_error_output.connect(self.signal_error_output.emit)
-
-        self.camera_collector.signal_apriltag_data.connect(self.set_camera_data)
-        self.camera_collector.signal_error_output.connect(self.signal_error_output.emit)
-
-        # 启动数据收集线程
-        self.imu_collector.start()
-        self.camera_collector.start()
-
-        # 初始化 JLocation 对象
-        self.jlocation = JLocation()
+    def video_callback(self, data):
+        self.video_signal.emit(data.data)
 
     def set_imu_data(self, data):
         self.imu_data = data
@@ -169,217 +110,86 @@ class JData_Collection(QObject):
     def set_mag_data(self, data):
         self.magnetic_field_data = data
 
-    def set_camera_data(self, data):
-        self.camera_data = data
+    def set_apriltag_data(self, data):
+        self.apriltag_data = data
 
     # 四元数转换为欧拉角
     def quaternion_to_euler(self, quaternion):
         r = Rotation.from_quat(quaternion)
         euler = r.as_euler('xyz', degrees=True)
-        return euler
+        return list(euler)
 
     def update_jlocation_all(self):
-        new_jlocation = JLocation()
-
-        # 从摄像头收集检测数据
-        detections = copy.deepcopy(self.camera_data)
-
-        # 清空新 JLocation 中的 Apriltag 数据
-        new_jlocation.set_left_list([])
-        new_jlocation.set_right_list([])
-        new_jlocation.set_front(None)
-
-        max_distance = -1
-        front_tag = None
-
-        # 处理摄像头检测数据
-        for detection in detections:
-            tag_info = JApril_Tag_Info()
-            tag_info.set_id(detection['id'])
-            tag_info.set_distance(detection['position'])
-
-            # 转换 orientation 为欧拉角
-            euler_orientation = self.quaternion_to_euler(detection['orientation'])
-            tag_info.set_orientation(euler_orientation)
-
-            position = detection['position']
-            distance = math.sqrt(position[0] ** 2 + position[1] ** 2 + position[2] ** 2)
-
-            if distance > max_distance:
-                max_distance = distance
-                front_tag = tag_info
-
-            if position[0] < 0:  # 根据 x 坐标分类
-                new_jlocation.left_list.append(tag_info)
-            else:
-                new_jlocation.right_list.append(tag_info)
-
-        if front_tag:
-            new_jlocation.set_front(front_tag)
-
-        # 收集 IMU 数据
+        apriltag_data = copy.deepcopy(self.apriltag_data)
         imu_data = copy.deepcopy(self.imu_data)
         magnetic_field_data = copy.deepcopy(self.magnetic_field_data)
 
-        # 处理 IMU 数据
+        location = JLocation()
+        temp_left = JApril_Tag_Info()
+        temp_right = JApril_Tag_Info()
+        left_list = []
+        right_list = []
+
+        max_distance = 0
+        if apriltag_data:
+            for item in apriltag_data:
+                euler_orientation = self.quaternion_to_euler(item['orientation'])
+                # 置front.front
+                if max_distance < item['position'][2] and abs(item['position'][0]) < 0.125 and abs(euler_orientation[1]) < 45:
+                    max_distance = item['position'][2]
+                    location.front.front.distance.set_x(item['position'][0])
+                    location.front.front.distance.set_y(item['position'][1])
+                    location.front.front.distance.set_z(item['position'][2])
+                    location.front.front.orientation.set_x(euler_orientation[0])
+                    location.front.front.orientation.set_y(euler_orientation[1])
+                    location.front.front.orientation.set_z(euler_orientation[2])
+                    location.front.front.set_id(item['id'])
+                # 置左侧
+                elif item['position'][0] < 0 and euler_orientation[1] < -45:
+                    temp_left.distance.set_x(item['position'][0])
+                    temp_left.distance.set_y(item['position'][1])
+                    temp_left.distance.set_z(item['position'][2])
+                    temp_left.orientation.set_x(euler_orientation[0])
+                    temp_left.orientation.set_y(euler_orientation[1])
+                    temp_left.orientation.set_z(euler_orientation[2])
+                    temp_left.set_id(item['id'])
+                    if not left_list or (left_list[0].distance.z() < item['position'][2] and len(left_list) == 1 and item['id'] != left_list[0].id):
+                        left_list.append(copy.deepcopy(temp_left))
+                    elif left_list[0].distance.z() > item['position'][2] and item['id'] == left_list[0].id:
+                        left_list[0] = copy.deepcopy(temp_left)
+                    elif left_list[0].distance.z() > item['position'][2] and item['id'] != left_list[0].id:
+                        left_list.insert(0, copy.deepcopy(temp_left))
+                    elif left_list[0].distance.z() < item['position'][2] and left_list[1].distance.z() > item['position'][2]:
+                        left_list[1] = copy.deepcopy(temp_left)
+                # 置右侧
+                elif item['position'][0] > 0 and euler_orientation[1] > 45:
+                    temp_right.distance.set_x(item['position'][0])
+                    temp_right.distance.set_y(item['position'][1])
+                    temp_right.distance.set_z(item['position'][2])
+                    temp_right.orientation.set_x(euler_orientation[0])
+                    temp_right.orientation.set_y(euler_orientation[1])
+                    temp_right.orientation.set_z(euler_orientation[2])
+                    temp_right.set_id(item['id'])
+                    if not right_list or (right_list[0].distance.z() < item['position'][2] and len(right_list) == 1 and item['id'] != right_list[0].id):
+                        right_list.append(copy.deepcopy(temp_right))
+                    elif right_list[0].distance.z() > item['position'][2] and item['id'] == right_list[0].id:
+                        right_list[0] = copy.deepcopy(temp_right)
+                    elif right_list[0].distance.z() > item['position'][2] and item['id'] != right_list[0].id:
+                        right_list.insert(0, copy.deepcopy(temp_right))
+                    elif len(right_list) == 2 and right_list[0].distance.z() < item['position'][2] and right_list[1].distance.z() > item['position'][2]:
+                        right_list[1] = copy.deepcopy(temp_right)
+            location.set_left_list(left_list)
+            location.set_right_list(right_list)
+
         if imu_data:
-            imu_info = JImu_Info()
-            imu_info.set_velocity(imu_data["linear_acceleration"])
-            imu_info.set_angular_velocity(imu_data["angular_velocity"])
-
-            # 转换 orientation 为欧拉角
             euler_orientation = self.quaternion_to_euler(imu_data["orientation"])
+            imu_info = JImu_Info()
+            imu_info.set_acceleration(imu_data["linear_acceleration"])
+            imu_info.set_angular_velocity(imu_data["angular_velocity"])
             imu_info.set_orientation(euler_orientation)
-
-            new_jlocation.set_imu(imu_info)
+            location.set_imu(imu_info)
 
         if magnetic_field_data:
-            new_jlocation.set_magnetic_field(magnetic_field_data)
+            location.imu.set_magnetic_field(magnetic_field_data)
 
-        return new_jlocation
-
-# class Camera_Data_Collection(QThread):
-#     signal_error_output = pyqtSignal(str)
-#     signal_imu_data = pyqtSignal(dict)
-#
-#     def __init__(self):
-#         #rospy.init_node('camera_data_collection_node', anonymous=False)
-#
-#         super().__init__()
-#         # 存储检测到的 Apriltag 信息
-#         self.apriltag_detections = []
-#
-#     def run(self):
-#     # 订阅 Apriltag 话题
-#     rospy.Subscriber("/apriltag_detections", AprilTagDetectionArray, self.apriltag_callback)
-#     rospy.spin()  # 保持节点运行
-#
-#     def apriltag_callback(self, data):
-#         # 清空当前的 Apriltag 数据
-#         self.apriltag_detections = []
-#
-#         # 处理每个检测到的 Apriltag
-#         for detection in data.detections:
-#             if len(detection.id) > 1:
-#                 continue  # 跳过包含多个 ID 的检测信息
-#
-#             tag_id = detection.id[0]
-#             tag_position = detection.pose.pose.pose.position
-#             tag_orientation = detection.pose.pose.pose.orientation
-#
-#             tag_info = {
-#                 'id': tag_id,
-#                 'position': [
-#                     tag_position.x,
-#                     tag_position.y,
-#                     tag_position.z
-#                 ],
-#                 'orientation': [
-#                     tag_orientation.x,
-#                     tag_orientation.y,
-#                     tag_orientation.z,
-#                     tag_orientation.w
-#                 ]
-#             }
-#             self.apriltag_detections.append(tag_info)
-#
-#     def get_detections(self):
-#         return self.apriltag_detections
-#
-
-# class JData_Collection(QObject):
-#     signal_error_output = pyqtSignal(str)
-#
-#     def __init__(self):
-#         super(JData_Collection, self).__init__()
-#
-#         # 初始化 ROS 节点
-#         # rospy.init_node('jdata_collection_node', anonymous=False)
-#
-#         # 初始化 IMU 数据
-#         self.imu_data = None
-#
-#         # 初始化 Camera_Data_Collection 和 Imu_Data_Collection
-#         self.camera_collector = Camera_Data_Collection()
-#         self.imu_collector = Imu_Data_Collection()
-#
-#         # 连接 IMU 数据和错误信号
-#         self.imu_collector.signal_imu_data.connect(self.set_imu_data)
-#         self.imu_collector.signal_error_output.connect(self.signal_error_output.emit)
-#         self.imu_collector.start()
-#
-#         # 初始化 JLocation 对象
-#         self.jlocation = JLocation()
-#
-#         # 在单独的线程中运行摄像头数据收集
-#         self.camera_collector.start()
-#
-#     def set_imu_data(self, data):
-#         self.imu_data = data
-#
-#     # 四元数转换为欧拉角
-#     def quaternion_to_euler(self, quaternion):
-#         r = Rotation.from_quat(quaternion)
-#         euler = r.as_euler('xyz', degrees=True)
-#         return euler
-#
-#     def update_jlocation_all(self):
-#         new_jlocation = JLocation()
-#
-#         # 从摄像头收集检测数据
-#         detections = self.camera_collector.get_detections()
-#
-#         # 清空新 JLocation 中的 Apriltag 数据
-#         new_jlocation.set_left_list([])
-#         new_jlocation.set_right_list([])
-#         new_jlocation.set_front(None)
-#
-#         max_distance = -1
-#         front_tag = None
-#
-#         # 处理摄像头检测数据
-#         for detection in detections:
-#             tag_info = JApril_Tag_Info()
-#             tag_info.set_id(detection['id'])
-#             tag_info.set_distance(detection['position'])
-#
-#             # 转换 orientation 为欧拉角
-#             euler_orientation = self.quaternion_to_euler(detection['orientation'])
-#             tag_info.set_orientation(euler_orientation)
-#
-#             position = detection['position']
-#             distance = math.sqrt(position[0] ** 2 + position[1] ** 2 + position[2] ** 2)
-#
-#             if distance > max_distance:
-#                 max_distance = distance
-#                 front_tag = tag_info
-#
-#             if position[0] < 0:  # 根据 x 坐标分类
-#                 new_jlocation.left_list.append(tag_info)
-#             else:
-#                 new_jlocation.right_list.append(tag_info)
-#
-#         if front_tag:
-#             new_jlocation.set_front(front_tag)
-#
-#         # 收集 IMU 数据
-#         imu_data = copy.deepcopy(self.imu_data)
-#         magnetic_field_data = copy.deepcopy(self.imu_collector.get_magnetic_field_data())
-#
-#         # 处理 IMU 数据
-#         if imu_data:
-#             imu_info = JImu_Info()
-#             imu_info.set_velocity(imu_data["linear_acceleration"])
-#             imu_info.set_angular_velocity(imu_data["angular_velocity"])
-#
-#             # 转换 orientation 为欧拉角
-#             euler_orientation = self.quaternion_to_euler(imu_data["orientation"])
-#             imu_info.set_orientation(euler_orientation)
-#
-#             new_jlocation.set_imu(imu_info)
-#
-#         if magnetic_field_data:
-#             new_jlocation.set_magnetic_field(magnetic_field_data)
-#
-#         return new_jlocation
-
+        return location
