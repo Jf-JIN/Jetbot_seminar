@@ -42,7 +42,8 @@ class JServer_Apriltag_QThread(QThread):
                     'acceleration': [data.imu.acceleration.xStr(), data.imu.acceleration.yStr(), data.imu.acceleration.zStr()],
                     'angular_acceleration': [data.imu.angular_acceleration.xStr(), data.imu.angular_acceleration.yStr(), data.imu.angular_acceleration.zStr()],
                     'magnetic_field': [data.imu.magnetic_field.xStr(), data.imu.magnetic_field.yStr(), data.imu.magnetic_field.zStr()]
-                }
+                },
+                'current_position': data.current_position
             }
         }
         if len(data.left_list) > 0:
