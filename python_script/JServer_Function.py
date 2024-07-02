@@ -64,7 +64,7 @@ class JServer_Function(QMainWindow):
     # 解包命令行信号
     @pyqtSlot(dict)
     def console_unpacking(self, data: dict):
-        print(f'[执行解包]: {data}')
+        print(f'\n[执行解包]: {data}')
         key_list = [
             'camera_listener', 'jlocation_listener', 'ros_node_init', 'a1_map_yaml_dict', 'a1_path_dict', 'roscore', 'ros_camera', 'ros_rectify',
             'ros_apriltag_detection', 'ros_imu', 'ros_motor', 'ros_algorithm'
@@ -79,7 +79,7 @@ class JServer_Function(QMainWindow):
     def console_threading_sort(self, key, data):
         if not key:
             return
-        print(f'[执行解包分类]: {key in data}, {key}, {data}')
+        print(f'\n[执行解包分类]: {key in data}, {key}, {data}')
         if key == 'camera_listener':
             self.listener_init()
         elif key == 'jlocation_listener':
@@ -90,12 +90,15 @@ class JServer_Function(QMainWindow):
             # 发送信号, 控制小车
             pass
         elif key == 'a1_map_yaml_dict':
-            print('[a1_map_yaml_dict]', data[key])
+            # print('\n[a1_map_yaml_dict]', data[key])
+            loaded_data = data[key]
+            if 'standalone_tags' not in loaded_data:
+                loaded_data['standalone_tags'] = data[key]['tag_bundles'][0]['layout']
             downloads_path = os.path.join(os.path.expanduser('~'), 'workspace')
             yaml_filename = 'tags.yaml'
             yaml_file_path = os.path.join(downloads_path, yaml_filename)
             with open(yaml_file_path, 'w', encoding='utf-8') as yaml_file:
-                yaml.dump(data[key], yaml_file, default_flow_style=False, sort_keys=False)
+                yaml.dump(loaded_data, yaml_file, default_flow_style=False, sort_keys=False)
             copy_command = f'echo jetson | sudo -S cp {yaml_file_path} /opt/ros/noetic/share/apriltag_ros/config && sudo -S rm {yaml_file_path}'    # 此处可修改 tags.yaml 的路径
             subprocess.Popen(copy_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         elif key not in self.active_threads and data[key] != 'Emergency_Stop':
@@ -109,28 +112,28 @@ class JServer_Function(QMainWindow):
 
     # 构建命令行线程
     def concole_thread(self, key, data):
-        print(f'[执行命令行线程初始化]: {data}')
+        print(f'\n[执行命令行线程初始化]: {data}')
         thread_under_concole_thread = JConsole_QThread(key, data[key])
         thread_under_concole_thread.signal_console_line.connect(self.server_console.send_all)
         thread_under_concole_thread.signal_finished.connect(lambda: self.thread_finish(key))
         # thread_under_concole_thread.signal_video_watcher_init.connect(self.camera_listener_init)
         thread_under_concole_thread.start()
         self.active_threads[key] = thread_under_concole_thread  # 保持对活动线程的引用
-        print('[命令行线程] [启动之后active_thread]: ', self.active_threads)
+        print('\n[命令行线程] [启动之后active_thread]: ', self.active_threads)
 
     # 结束命令行线程
     def thread_finish(self, key):
-        print('[命令行线程]: 结束命令行线程')
+        print('\n[命令行线程]: 结束命令行线程')
         sender_thrd = self.sender()
-        print(f'[命令行线程] [sender类型]: {type(sender_thrd)}')
+        print(f'\n[命令行线程] [sender类型]: {type(sender_thrd)}')
         sender_thrd.wait()
         sender_thrd.quit()  # 停止线程的事件循环
-        print('[命令行线程] [删除之前active_thread]: ', self.active_threads)
+        print('\n[命令行线程] [删除之前active_thread]: ', self.active_threads)
         if key in self.active_threads:
             self.active_threads.pop(key)  # 删除对象的引用
         else:
             print(f"[命令行线程]: 线程键名 {key} 不存在于 active_threads 中")
-        print('[命令行线程] [删除之后active_thread]: ', self.active_threads)
+        print('\n[命令行线程] [删除之后active_thread]: ', self.active_threads)
 
     # 检查ROSCORE是否运行
     def is_roscore_running(self):
@@ -153,12 +156,12 @@ class JServer_Function(QMainWindow):
         if not self.is_roscore_running() or not self.is_node_running('/apriltag_ros_continuous_node'):
             tag_init_roscore = not self.is_roscore_running()
             tag_init_apriltag = not self.is_node_running('/apriltag_ros_continuous_node')
-            print(f'[jlocation_listener_init] 未打开ROSCORE: {tag_init_roscore} / 未打开Apriltag识别: {tag_init_apriltag}')
+            print(f'\n[jlocation_listener_init] 未打开ROSCORE: {tag_init_roscore} / 未打开Apriltag识别: {tag_init_apriltag}')
             return
         if not self.is_node_running('/jdata_collection_node') and (self.is_roscore_running() and self.is_node_running('/apriltag_ros_continuous_node')):
             rospy.init_node('jdata_collection_node', anonymous=False)
         if hasattr(self, 'listener_object') or hasattr(self, 'jlocation_listener_Thread'):
-            print('[listener_init]: 重复初始化，已忽略')
+            print('\n[listener_init]: 重复初始化，已忽略')
             return
         self.listener_object = JData_Collection()
         self.listener_object.video_signal.connect(self.send_video)
@@ -186,7 +189,7 @@ class JServer_Function(QMainWindow):
     def close_server_by_client(self):
         self.close_client_socket()
         # 此处关闭其他的线程
-        print('[服务器端口]: 关闭服务器')
+        print('\n[服务器端口]: 关闭服务器')
         sys.exit()
 
     # 关闭所有的客户端Socket
@@ -199,7 +202,7 @@ class JServer_Function(QMainWindow):
             for cclient in self.console_clients_list:
                 csocket: socket.socket = cclient[0]
                 csocket.close()
-        print('[服务器端口] 断开所有客户端socket')
+        print('\n[服务器端口] 断开所有客户端socket')
 
     # 服务器关闭事件
     def closeEvent(self, event):
