@@ -65,11 +65,13 @@ e = a.left_list                     读取左侧列表
 '''
 
 from typing import Union
+from JetBot_Parameter_Const import *
 import copy
+from JLogger import *
 
-# 保留浮点数位数
-DIGITS = 6
-DIGITS_S = 2
+logger_dict_location = JLog('Location', 'JLocation')
+log_error = logger_dict_location['error']
+
 
 # 坐标系基础类
 
@@ -87,7 +89,7 @@ class JCoordinate():
             return
         # 如果输入不是浮点数或者整数，则触发报错
         if not isinstance(x, (float, str)):
-            print(f'x值必须为浮点数!(当前为{type(x)})')
+            log_error(f'x值必须为浮点数!(当前为{type(x)})')
             return
             # raise ValueError('x值必须为浮点数或者整数 !')
         self.__x = float(x)
@@ -98,7 +100,7 @@ class JCoordinate():
             self.__y = None
             return
         if not isinstance(y, (float, str)):
-            print(f'y值必须为浮点数!(当前为{type(y)})')
+            log_error(f'y值必须为浮点数!(当前为{type(y)})')
             return
             # raise ValueError('y值必须为浮点数或者整数 !')
         self.__y = float(y)
@@ -109,7 +111,7 @@ class JCoordinate():
             self.__z = None
             return
         if not isinstance(z, (float, str)):
-            print(f'z值必须为浮点数 !(当前为{type(z)})')
+            log_error(f'z值必须为浮点数 !(当前为{type(z)})')
             return
             # raise ValueError('z值必须为浮点数或者整数 !')
         self.__z = float(z)
@@ -211,9 +213,9 @@ class JApril_Tag_Info():
         if not isinstance(distance_list, (list, tuple)):
             if not all([isinstance(i, (float, str)) for i in distance_list]) or \
                     len(distance_list) != 3:
-                print(f'在 JApril_Tag 中, 方法 set_distance 的参数必须为元组或列表, 且其中元素必须为浮点数或字符串(当前为{type(distance_list[0])}), 且长度必须为3(当前{len(distance_list)}), 即(x, y, z) !')
+                log_error(f'在 JApril_Tag 中, 方法 set_distance 的参数必须为元组或列表, 且其中元素必须为浮点数或字符串(当前为{type(distance_list[0])}), 且长度必须为3(当前{len(distance_list)}), 即(x, y, z) !')
             else:
-                print(f'在 JApril_Tag 中, 方法 set_distance 的参数必须为元组或列表(当前为{type(distance_list)}), 且其中元素必须为浮点数或字符串, 且长度必须为3, 即(x, y, z) !')
+                log_error(f'在 JApril_Tag 中, 方法 set_distance 的参数必须为元组或列表(当前为{type(distance_list)}), 且其中元素必须为浮点数或字符串, 且长度必须为3, 即(x, y, z) !')
             return
         if not distance_list[0] and not distance_list[1] and not distance_list[2]:
             return
@@ -227,9 +229,9 @@ class JApril_Tag_Info():
         if not isinstance(orientation_list, (list, tuple)):
             if not all([isinstance(i, (float, str)) for i in orientation_list]) or \
                     len(orientation_list) != 3:
-                print(f'在 JApril_Tag 中, 方法 set_orientation 的参数必须为元组或列表, 且其中元素必须为浮点数或字符串(当前为{type(orientation_list[0])}), 且长度必须为3(当前{len(orientation_list)}), 即(x, y, z) !')
+                log_error(f'在 JApril_Tag 中, 方法 set_orientation 的参数必须为元组或列表, 且其中元素必须为浮点数或字符串(当前为{type(orientation_list[0])}), 且长度必须为3(当前{len(orientation_list)}), 即(x, y, z) !')
             else:
-                print(f'在 JApril_Tag 中, 方法 set_orientation 的参数必须为元组或列表(当前为{type(orientation_list)}), 且其中元素必须为浮点数或字符串, 且长度必须为3, 即(x, y, z) !')
+                log_error(f'在 JApril_Tag 中, 方法 set_orientation 的参数必须为元组或列表(当前为{type(orientation_list)}), 且其中元素必须为浮点数或字符串, 且长度必须为3, 即(x, y, z) !')
             return
         if not orientation_list[0] and not orientation_list[1] and not orientation_list[2]:
             return
@@ -241,8 +243,7 @@ class JApril_Tag_Info():
     def set_id(self, id: list) -> None:
         # 如果输入不是列表，亦或列表中的元素不是整数，则触发报错
         if not isinstance(id, list):
-            # raise ValueError('在 JApril_Tag 中, 方法 set_id 的参数必须为列表, 且列表内必须为整数')
-            print(f'在 JApril_Tag 中, 方法 set_id 的参数必须为列表(当前为{type(id)}), 且列表内必须为整数')
+            log_error(f'在 JApril_Tag 中, 方法 set_id 的参数必须为列表(当前为{type(id)}), 且列表内必须为整数')
             return
         self.__id = id
 
@@ -292,9 +293,8 @@ class JImu_Info():
         if not isinstance(orientation_list, (list, tuple)) or \
                 not all([isinstance(i, (float, str)) for i in orientation_list]) or \
                 len(orientation_list) != 3:
-            print('在 JImu_Info 中, 方法 set_orientation 的参数必须为元组或列表, 且其中元素必须为浮点数或字符串, 且长度必须为3, 即(x, y, z) !')
+            log_error('在 JImu_Info 中, 方法 set_orientation 的参数必须为元组或列表, 且其中元素必须为浮点数或字符串, 且长度必须为3, 即(x, y, z) !')
             return
-            # raise ValueError('在 JImu_Info 中, 方法 set_orientation 的参数必须为元组或列表, 且其中元素必须为浮点数或字符串, 且长度必须为3, 即(x, y, z) !')
         if not orientation_list[0] and not orientation_list[1] and not orientation_list[2]:
             return
         self.__orientation.set_x(float(orientation_list[0]))
@@ -307,9 +307,8 @@ class JImu_Info():
         if not isinstance(velocity_list, (list, tuple)) or \
                 not all([isinstance(i, (float, str)) for i in velocity_list]) or \
                 len(velocity_list) != 3:
-            print('在 JImu_Info 中, 方法 set_velocity 的参数必须为元组或列表, 且其中元素必须为浮点数或字符串, 且长度必须为3, 即(x, y, z) !')
+            log_error('在 JImu_Info 中, 方法 set_velocity 的参数必须为元组或列表, 且其中元素必须为浮点数或字符串, 且长度必须为3, 即(x, y, z) !')
             return
-            # raise ValueError('在 JImu_Info 中, 方法 set_velocity 的参数必须为元组或列表, 且其中元素必须为浮点数或字符串, 且长度必须为3, 即(x, y, z) !')
         if not velocity_list[0] and not velocity_list[1] and not velocity_list[2]:
             return
         self.__imu_velocity.set_x(float(velocity_list[0]))
@@ -321,9 +320,8 @@ class JImu_Info():
         if not isinstance(angular_velocity_list, (list, tuple)) or \
                 not all([isinstance(i, (float, str)) for i in angular_velocity_list]) or \
                 len(angular_velocity_list) != 3:
-            print('在 JImu_Info 中, 方法 set_angular_velocity 的参数必须为元组或列表, 且其中元素必须为浮点数或字符串, 且长度必须为3, 即(x, y, z) !')
+            log_error('在 JImu_Info 中, 方法 set_angular_velocity 的参数必须为元组或列表, 且其中元素必须为浮点数或字符串, 且长度必须为3, 即(x, y, z) !')
             return
-            # raise ValueError('在 JImu_Info 中, 方法 set_angular_velocity 的参数必须为元组或列表, 且其中元素必须为浮点数或字符串, 且长度必须为3, 即(x, y, z) !')
         if not angular_velocity_list[0] and not angular_velocity_list[1] and not angular_velocity_list[2]:
             return
         self.__imu_angular_velocity.set_x(float(angular_velocity_list[0]))
@@ -335,9 +333,8 @@ class JImu_Info():
         if not isinstance(acceleration_list, (list, tuple)) or \
                 not all([isinstance(i, (float, str)) for i in acceleration_list]) or \
                 len(acceleration_list) != 3:
-            print('在 JImu_Info 中, 方法 set_acceleration 的参数必须为元组或列表, 且其中元素必须为浮点数或字符串, 且长度必须为3, 即(x, y, z) !')
+            log_error('在 JImu_Info 中, 方法 set_acceleration 的参数必须为元组或列表, 且其中元素必须为浮点数或字符串, 且长度必须为3, 即(x, y, z) !')
             return
-            # raise ValueError('在 JImu_Info 中, 方法 set_acceleration 的参数必须为元组或列表, 且其中元素必须为浮点数或字符串, 且长度必须为3, 即(x, y, z) !')
         if not acceleration_list[0] and not acceleration_list[1] and not acceleration_list[2]:
             return
         self.__imu_acceleration.set_x(float(acceleration_list[0]))
@@ -349,9 +346,8 @@ class JImu_Info():
         if not isinstance(angular_acceleration_list, (list, tuple)) or \
                 not all([isinstance(i, (float, str)) for i in angular_acceleration_list]) or \
                 len(angular_acceleration_list) != 3:
-            print('在 JImu_Info 中, 方法 set_angular_acceleration 的参数必须为元组或列表, 且其中元素必须为浮点数或字符串, 且长度必须为3, 即(x, y, z) !')
+            log_error('在 JImu_Info 中, 方法 set_angular_acceleration 的参数必须为元组或列表, 且其中元素必须为浮点数或字符串, 且长度必须为3, 即(x, y, z) !')
             return
-            # raise ValueError('在 JImu_Info 中, 方法 set_angular_acceleration 的参数必须为元组或列表, 且其中元素必须为浮点数或字符串, 且长度必须为3, 即(x, y, z) !')
         if not angular_acceleration_list[0] and not angular_acceleration_list[1] and not angular_acceleration_list[2]:
             return
         self.__imu_angular_acceleration.set_x(float(angular_acceleration_list[0]))
@@ -363,9 +359,8 @@ class JImu_Info():
         if not isinstance(magnetic_field_list, (list, tuple)) or \
                 not all([isinstance(i, (float, str)) for i in magnetic_field_list]) or \
                 len(magnetic_field_list) != 3:
-            print('在 JImu_Info 中, 方法 set_magnetic_field 的参数必须为元组或列表, 且其中元素必须为浮点数或字符串, 且长度必须为3, 即(x, y, z) !')
+            log_error('在 JImu_Info 中, 方法 set_magnetic_field 的参数必须为元组或列表, 且其中元素必须为浮点数或字符串, 且长度必须为3, 即(x, y, z) !')
             return
-            # raise ValueError('在 JImu_Info 中, 方法 set_magnetic_field 的参数必须为元组或列表, 且其中元素必须为浮点数或字符串, 且长度必须为3, 即(x, y, z) !')
         if not magnetic_field_list[0] and not magnetic_field_list[1] and not magnetic_field_list[2]:
             return
         self.__magnetic_field.set_x(float(magnetic_field_list[0]))
@@ -418,6 +413,7 @@ class JLocation():
         self.__front = JFront()
         self.__imu = JImu_Info()
         self.__current_position = []
+        self.__cube = None
 
     # 获取左侧位置信息
     @ property
@@ -444,45 +440,52 @@ class JLocation():
     def current_position(self) -> JFront:
         return self.__current_position
 
+    # 获取骰子信息
+    @ property
+    def cube(self) -> JApril_Tag_Info:
+        return self.__cube
+
     # 赋值左侧位置信息
     def set_left_list(self, left_list: Union[list, tuple]) -> None:
         if not isinstance(left_list, (list, tuple)) or \
                 not all([isinstance(i, JApril_Tag_Info) for i in left_list]):
-            print('在 JLocation 中, 方法 set_left_list 的参数必须为元组或列表, 且其中元素必须为 JApril_Tag_Info !')
+            log_error('在 JLocation 中, 方法 set_left_list 的参数必须为元组或列表, 且其中元素必须为 JApril_Tag_Info !')
             return
-            # raise ValueError('在 JLocation 中, 方法 set_left_list 的参数必须为元组或列表, 且其中元素必须为 JApril_Tag_Info !')
         self.__left_list = left_list
 
     # 赋值右侧位置信息
     def set_right_list(self, right_list: Union[list, tuple]) -> None:
         if not isinstance(right_list, (list, tuple)) or \
                 not all([isinstance(i, JApril_Tag_Info) for i in right_list]):
-            print('在 JLocation 中, 方法 set_right_list 的参数必须为元组或列表, 且其中元素必须为 JApril_Tag_Info !')
+            log_error('在 JLocation 中, 方法 set_right_list 的参数必须为元组或列表, 且其中元素必须为 JApril_Tag_Info !')
             return
-            # raise ValueError('在 JLocation 中, 方法 set_right_list 的参数必须为元组或列表, 且其中元素必须为 JApril_Tag_Info !')
         self.__right_list = right_list
 
     # 赋值前方位置信息
     def set_front(self, front: JFront) -> None:
         if not isinstance(front, JFront):
-            print('在 JLocation 中, 方法 set_front 的参数必须为 JFront !')
+            log_error('在 JLocation 中, 方法 set_front 的参数必须为 JFront !')
             return
-            # raise ValueError('在 JLocation 中, 方法 set_front 的参数必须为 JFront !')
         self.__front = front
 
     # 赋值Imu信息
     def set_imu(self, imu: JImu_Info) -> None:
         if not isinstance(imu, JImu_Info):
-            print('在 JLocation 中, 方法 set_imu 的参数必须为 JImu_Info !')
+            log_error('在 JLocation 中, 方法 set_imu 的参数必须为 JImu_Info !')
             return
-            # raise ValueError('在 JLocation 中, 方法 set_imu 的参数必须为 JImu_Info !')
         self.__imu = imu
 
     def set_current_position(self, data: list):
         if not isinstance(data, list):
-            print('在 JLocation 中, 方法 set_current_position 的参数必须为 list !')
+            log_error('在 JLocation 中, 方法 set_current_position 的参数必须为 list !')
             return
         self.__current_position = data
+
+    def set_cube(self, data: JApril_Tag_Info):
+        if not isinstance(data, JApril_Tag_Info):
+            log_error('在 JLocation 中, 方法 set_cube 的参数必须为 JApril_Tag_Info !')
+            return
+        self.__cube = data
 
     # 深复制JLocation
     def copy_JLocation(self) -> "JLocation":
