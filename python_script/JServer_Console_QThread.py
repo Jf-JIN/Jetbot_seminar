@@ -11,6 +11,11 @@ import psutil
 import traceback
 import functools
 import subprocess
+from JLogger import *
+
+logger_dict_server = JLog('Motor', 'Motor')
+log_info = logger_dict_server['info']
+log_error = logger_dict_server['error']
 
 
 class JConsole_Read_QThread(QThread):
@@ -38,7 +43,6 @@ class JConsole_Read_QThread(QThread):
                     break
                 if output_line:
                     output_line = self.convert_to_plain_text(output_line)
-                    # print('\n[output_line]:\t', repr(output_line))
                     print('\n[output_line]:\t', output_line)
                     self.signal_console_line.emit({self.key_command: output_line.strip()})
             except OSError as e:
@@ -98,7 +102,7 @@ class JConsole_QThread(QThread):
         except subprocess.CalledProcessError as e:
             e = traceback.format_exc()
             self.signal_error_output.emit({self.key_command: f"[JConsole_QThread]: [{self.key_command}] - {self.formatted_time} \n{e}"})
-            print(f"[JConsole_QThread]: [{self.key_command}] - {self.formatted_time} \n{e}")
+            log_error(f'[{self.key_command}]\n{e}')
         finally:
             self.cleanup()
 
@@ -112,7 +116,7 @@ class JConsole_QThread(QThread):
                 self.process.terminate()
                 self.process.wait()
             except Exception as e:
-                print(f"[JConsole_QThread]: [{self.key_command}][停止子线程失败] - {self.formatted_time} \n{e}")
+                log_error(f'[停止子线程失败]\n{e}')
             finally:
                 self.process = None
 
@@ -122,16 +126,16 @@ class JConsole_QThread(QThread):
                 cmdline = process_element.info['cmdline']
                 if self.key_command == 'roscore':
                     if cmdline and any('/opt/ros/noetic/bin/roscore' in item for item in cmdline):
-                        print('\n[JConsole_QThread][关闭线程]', cmdline)
+                        log_info(f'[关闭线程] {cmdline}')
                         return process_element.info['pid']
                 elif 'roslaunch' in self.value_command:
                     if cmdline and any('/opt/ros/noetic/bin/roslaunch' in item for item in cmdline):
-                        print('\n[JConsole_QThread][关闭线程]', cmdline)
+                        log_info(f'[关闭线程] {cmdline}')
                         return process_element.info['pid']
                 elif 'rosrun' in self.value_command:
-                    print('rosrun')
+                    log_info('rosrun')
                     if cmdline and any(self.value_command in item for item in cmdline):
-                        print('\n[JConsole_QThread][关闭线程]', cmdline)
+                        log_info(f'[关闭线程] {cmdline}')
                         return process_element.info['pid']
                 else:
                     return self.process.pid
