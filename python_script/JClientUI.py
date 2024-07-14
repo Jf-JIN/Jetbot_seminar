@@ -16,6 +16,9 @@ from JClient_ui import *
 from JConsoleUI import *
 from JAlgorithm_JPath_Finding import *
 
+log_info = logger_dict_client['info']
+log_error = logger_dict_client['error']
+
 
 class JClient_UI(Ui_MainWindow):
     signal_data_console_send = pyqtSignal(dict)
@@ -42,10 +45,11 @@ class JClient_UI(Ui_MainWindow):
         self.cbb_task.currentIndexChanged.connect(self.cbb_and_tab_connection)
         self.hs_video_size.valueChanged.connect(self.hs_video_size_display)
         self.pb_a1_load.clicked.connect(self.load_yaml_file)
+        self.pb_pid_distance_reset.clicked.connect(self.reset_pid_value)
 
     def UI_setup(self):
         self.pb_close_server.setEnabled(False)
-        self.lb_connection_status.setText('未连接')
+        self.lb_connection_status.setText('disconnected')
         self.lb_connection_status.setStyleSheet(f'background-color: {self.red_status}')
         self.pb_reconnect_console.setStyleSheet(f'background-color: {self.red_status}')
         self.pb_reconnect_video.setStyleSheet(f'background-color: {self.red_status}')
@@ -79,6 +83,38 @@ class JClient_UI(Ui_MainWindow):
         self.lb_hs_display.setText('40')
         # self.hs_video_size.setTickPosition(QSlider.TicksBelow)  # 设置刻度位置
         self.hs_video_size.setTickInterval(10)  # 设置刻度间隔
+        self.dsb_distance_kp.setValue(PID_DISTANCE_DEFAULT_KP)
+        self.dsb_distance_kp.setSingleStep(DSB_STEP_S)
+        self.dsb_distance_kp.setMaximum(100.0)
+        self.dsb_distance_kp.setMinimum(-100.0)
+        self.dsb_distance_ki.setValue(PID_DISTANCE_DEFAULT_KI)
+        self.dsb_distance_ki.setSingleStep(DSB_STEP_S)
+        self.dsb_distance_ki.setMaximum(100.0)
+        self.dsb_distance_ki.setMinimum(-100.0)
+        self.dsb_distance_kd.setValue(PID_DISTANCE_DEFAULT_KD)
+        self.dsb_distance_kd.setSingleStep(DSB_STEP_S)
+        self.dsb_distance_kd.setMaximum(100.0)
+        self.dsb_distance_kd.setMinimum(-100.0)
+        # self.dsb_angle_kp.setValue(PID_DISTANCE_DEFAULT_KP)
+        # self.dsb_angle_kp.setSingleStep(DSB_STEP)
+        # self.dsb_angle_kp.setMaximum(100.0)
+        # self.dsb_angle_kp.setMinimum(-100.0)
+        # self.dsb_angle_ki.setValue(PID_DISTANCE_DEFAULT_KI)
+        # self.dsb_angle_ki.setSingleStep(DSB_STEP)
+        # self.dsb_angle_ki.setMaximum(100.0)
+        # self.dsb_angle_ki.setMinimum(-100.0)
+        # self.dsb_angle_kd.setValue(PID_DISTANCE_DEFAULT_KD)
+        # self.dsb_angle_kd.setSingleStep(DSB_STEP)
+        # self.dsb_angle_kd.setMaximum(100.0)
+        # self.dsb_angle_kd.setMinimum(-100.0)
+        self.dsb_motor_left_calib.setValue(MOTOR_LEFT_CALIB)
+        self.dsb_motor_left_calib.setSingleStep(DSB_STEP_S)
+        self.dsb_motor_left_calib.setMaximum(10.0)
+        self.dsb_motor_left_calib.setMinimum(-10.0)
+        self.dsb_motor_right_calib.setValue(MOTOR_RIGHT_CALIB)
+        self.dsb_motor_right_calib.setSingleStep(DSB_STEP_S)
+        self.dsb_motor_right_calib.setMaximum(10.0)
+        self.dsb_motor_right_calib.setMinimum(-10.0)
 
     def show_console_win(self):
         self.console_win.show()
@@ -88,16 +124,23 @@ class JClient_UI(Ui_MainWindow):
         self.show()
         self.activateWindow()
 
+    def reset_pid_value(self):
+        name = self.sender().objectName()
+        if name == 'pb_pid_distance_reset':
+            self.dsb_distance_kp.setValue(PID_DISTANCE_DEFAULT_KP)
+            self.dsb_distance_ki.setValue(PID_DISTANCE_DEFAULT_KI)
+            self.dsb_distance_kd.setValue(PID_DISTANCE_DEFAULT_KD)
+
     def change_client_server_connection_display(self) -> None:
         if self.lb_console_port.text() != '' and self.lb_video_port.text() != '':
             self.flag_connection_to_server = True
             self.pb_close_server.setEnabled(True)
-            self.lb_connection_status.setText('已连接')
+            self.lb_connection_status.setText('connected')
             self.lb_connection_status.setStyleSheet(f'background-color: {self.green_status}')
         else:
             self.flag_connection_to_server = False
             self.pb_close_server.setEnabled(False)
-            self.lb_connection_status.setText('未连接')
+            self.lb_connection_status.setText('disconnected')
             self.lb_connection_status.setStyleSheet(f'background-color: {self.red_status}')
 
     def reconnect_display(self):
@@ -139,10 +182,9 @@ class JClient_UI(Ui_MainWindow):
     def append_TB_text(self, text_content: str, textBrowser_object: QTextBrowser = None) -> None:
         if not textBrowser_object:
             textBrowser_object = self.tb_console
-        # print(type(textBrowser_object))
         try:
             textBrowser_object.moveCursor(QTextCursor.End)
-            textBrowser_object.insertPlainText(text_content + "\n")
+            textBrowser_object.insertPlainText(str(text_content) + "\n")
             textBrowser_object.moveCursor(QTextCursor.End)
         except Exception as e:
             if self.traceback_display_flag:
@@ -172,17 +214,20 @@ class JClient_UI(Ui_MainWindow):
         except Exception as e:
             e = traceback.format_exc()
             e_text = f'\n[加载yaml文件] - {self.formatted_time} \n[!错误!] {e}'
-            print(e_text)
+            log_error(e)
             self.append_TB_text(e_text, self.tb_console)
 
     def load_map_from_yaml(self, path):
         with open(path, 'r') as file:
             loaded_data = yaml.safe_load(file)
         # signal_text = json.dumps({'a1_map_yaml_dict': loaded_data})
+
         signal_text = {'a1_map_yaml_dict': loaded_data}
         self.signal_data_console_send.emit(signal_text)
+        current_time_item = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         if 'standalone_tags' not in loaded_data:
             loaded_data['standalone_tags'] = loaded_data['tag_bundles'][0]['layout']
+        loaded_data = {'time': current_time_item, **loaded_data}
         # signal_text = {'a1_map_yaml_dict': loaded_data}
         json_path_new = os.path.join(os.path.dirname(path), 'tags.json')
         yaml_path_new = os.path.join(os.path.dirname(path), 'tags.yaml')
@@ -194,6 +239,9 @@ class JClient_UI(Ui_MainWindow):
         self.lb_goal_index.clear()
         self.map_manager = JMap_Grid_Matrix_From_Yaml(loaded_data)
         abstract_map = self.map_manager.map_abstract_matrix
+        obj_map = self.map_manager.map_obj_matrix
+        for i in abstract_map:
+            self.append_TB_text(i, self.tb_console)
         # size_map = [len(abstract_map), len(abstract_map[0])]
         map_layout = self.frame_map.layout()
         if map_layout:
@@ -209,37 +257,74 @@ class JClient_UI(Ui_MainWindow):
             map_layout.setColumnStretch(j, 1)
         self.list_pb_map = []
         for x_index, line_list in enumerate(abstract_map):
+            # print(line_list)
             line_list: list[JWall]
             for y_index, item in enumerate(line_list):
+                jwall_item: JWall = obj_map[x_index][y_index]
                 if item == 0:  # 墙
                     wall_item = QLabel('   ')
                     wall_item_name = f'lb_map_{x_index}_{y_index}'
                     wall_item.setObjectName(wall_item_name)
                     wall_item.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-                    wall_item.setStyleSheet('''
-                                                    background-color: #AAAAAA;
-                                                    min-width: 10px;
-                                                    min-height:10px;
-                                            ''')
+                    wall_item.setCursor(Qt.CrossCursor)
+                    style = f'background-color: {WALL_COLOR};'
+                    wall_item.setStyleSheet(style)
                     map_layout.addWidget(wall_item, x_index, y_index)
+                    if jwall_item:
+                        if jwall_item.orientation == 'H':
+                            wall_item.setToolTip(
+                                f'id:\t[{jwall_item.main_0.id}, {jwall_item.main_1.id}]\n\t[{jwall_item.sub_0.id}, {jwall_item.sub_1.id}]\n索引:\t[{x_index}, {y_index}]\n位置:\t[{jwall_item.middle.xStr_mm()}, {jwall_item.middle.yStr_mm()}]\n方向:\t{jwall_item.orientation}')
+                        else:
+                            wall_item.setToolTip(
+                                f'id:\t[{jwall_item.main_0.id}, {jwall_item.main_1.id}] [{jwall_item.sub_0.id}, {jwall_item.sub_1.id}]\n索引:\t[{x_index}, {y_index}]\n位置:\t[{jwall_item.middle.xStr_mm()}, {jwall_item.middle.yStr_mm()}]\n方向:\t{jwall_item.orientation}')
+                    else:
+                        style = f'background-color: {WALL_VIRTUAL_COLOR};'
+                        wall_item.setStyleSheet(style)
                 elif item == 1:
                     path_item = QPushButton()
                     path_item_name = f'pb_map_{x_index}_{y_index}'
+                    path_middle_x, path_middle_y = self.map_manager.from_index_to_coordinate([x_index, y_index])
+                    path_middle_x = '{:.{}f}'.format(path_middle_x * 1000, DIGITS_S)
+                    path_middle_y = '{:.{}f}'.format(path_middle_y * 1000, DIGITS_S)
                     path_item.setObjectName(path_item_name)
                     path_item.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-                    path_item.setStyleSheet('''QFrame#frame_map QPushButton{
-                                                    background-color: #006600;
-                                                    border: None;
-                                                    border-radius: 0px;
-                                                    min-width: 10px;
-                                                    min-height:10px;
-                                                }
-                                                QFrame#frame_map QPushButton:hover{
-                                                    background-color: #000066;
-                                                }
-                                            ''')
+                    path_item.setToolTip(f'索引:\t[{x_index}, {y_index}]\n位置:\t[{path_middle_x}, {path_middle_y}]')
+                    path_item.setCursor(Qt.PointingHandCursor)
                     map_layout.addWidget(path_item, x_index, y_index)
                     self.list_pb_map.append(path_item)
             self.frame_map.setLayout(map_layout)
+            self.frame_map_style_sheet =\
+                'QFrame#frame_map QPushButton{' + \
+                f'''background-color: {PATH_COLOR};
+                    border: None;
+                    border-radius: 0px;
+                    min-width: 10px;
+                    min-height:10px;''' + \
+                '}' + \
+                '''QFrame#frame_map QPushButton:hover''' + '{' + \
+                f'background-color: {PATH_HOVER_COLOR};' + \
+                '}' + \
+                'QFrame#frame_map QLabel' + '{' +\
+                '''min-width: 10px;
+                    min-height:10px;''' + \
+                '}'
+            # frame_style_sheet = '''
+            #                     QFrame#frame_map QPushButton{
+            #                         background-color: #CFCC88;
+            #                         border: None;
+            #                         border-radius: 0px;
+            #                         min-width: 10px;
+            #                         min-height:10px;
+            #                     }
+            #                     QFrame#frame_map QPushButton:hover{
+            #                         background-color: #CF5050;
+            #                     }
+            #                     QFrame#frame_map QLabel{
+            #                         min-width: 10px;
+            #                         min-height:10px;
+            #                     }
+            #                     '''
+
+            self.frame_map.setStyleSheet(self.frame_map_style_sheet)
 
         # **************************************** 子窗口功能 ****************************************
