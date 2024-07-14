@@ -31,11 +31,21 @@ JWalls:
         将信息记录在JWall中, 返回一个含有所有JWall类实体的列表
 '''
 
+from JetBot_Parameter_Const import *
 from JAlgorithm_JWall_Const import *
 from JLocation import *
+
 import yaml
+import traceback
 
 # 基础类 Apriltag 的位置 注意 x y z 值只能使用方法调用
+
+# 保留浮点数位数
+DIGITS = 6
+DIGITS_S = 2
+logger_dict_algo = JLog('Algorithmus', '算法')
+log_info = logger_dict_algo['info']
+log_error = logger_dict_algo['error']
 
 
 class JApriltag_Position():
@@ -52,6 +62,24 @@ class JApriltag_Position():
 
     def z(self) -> float:
         return self.__z
+
+    def xStr(self) -> float:
+        return '{:.{}f}'.format(self.__x, DIGITS)
+
+    def yStr(self) -> float:
+        return '{:.{}f}'.format(self.__y, DIGITS)
+
+    def zStr(self) -> float:
+        return '{:.{}f}'.format(self.__z, DIGITS)
+
+    def xStr_mm(self) -> float:
+        return '{:.{}f}'.format(self.__x*1000, DIGITS_S)
+
+    def yStr_mm(self) -> float:
+        return '{:.{}f}'.format(self.__y*1000, DIGITS_S)
+
+    def zStr_mm(self) -> float:
+        return '{:.{}f}'.format(self.__z*1000, DIGITS_S)
 
     def set_x(self, x: float) -> None:
         self.__x = x
@@ -120,12 +148,12 @@ class JApril_Code():
     def set_id(self, id: int) -> None:
         self.__id = id
 
-    def set_pos(self, xyz_list: list[float]) -> None:
+    def set_pos(self, xyz_list: list) -> None:
         self.pos.set_x(xyz_list[0])
         self.pos.set_y(xyz_list[1])
         self.pos.set_z(xyz_list[2])
 
-    def set_ori(self, wxyz_list: list[float]) -> None:
+    def set_ori(self, wxyz_list: list) -> None:
         self.__ori.set_qw(wxyz_list[0])
         self.__ori.set_qx(wxyz_list[1])
         self.__ori.set_qy(wxyz_list[2])
@@ -240,11 +268,11 @@ class JWall():
         return self.__bottomside
 
     @property
-    def identifier(self) -> int | str:
+    def identifier(self) -> int:
         return self.__identifier
 
     @property
-    def sub_identifier(self) -> int | str:
+    def sub_identifier(self) -> int:
         return self.__sub_indentifier
 
     def set_main_0(self, code_dict) -> None:
@@ -288,14 +316,16 @@ class JWall():
                     [code_dict['qw'], code_dict['qx'], code_dict['qy'], code_dict['qz']])
 
     def set_middle(self):  # 板子本身的方向，而非板子的法向向量方向
-        if self.main_0.ori.qx():
-            if self.main_0.ori.qx() == 0.5:
-                self.__orientation = 'H'
-            else:
-                self.__orientation = 'V'
+        for i in [self.main_0.ori.qx(), self.sub_0.ori.qx()]:
+            if i or i == 0:
+                if i == 0.5:
+                    self.__orientation = 'H'
+                    break
+                else:
+                    self.__orientation = 'V'
+                    break
         # 如果存在4个 Apriltag 码：
         if (self.main_0.pos.x() or self.main_0.pos.x() == 0) and (self.sub_0.pos.x() or self.sub_0.pos.x() == 0):
-            # print(self.main_0.pos.y() , self.sub_0.pos.y())
             self.middle.set_x((self.main_0.pos.x() + self.sub_0.pos.x()) / 2)
             self.middle.set_y((self.main_0.pos.y() + self.sub_0.pos.y()) / 2)
             self.middle.set_z((self.main_0.pos.z() + self.sub_0.pos.z()) / 2)
@@ -318,7 +348,7 @@ class JWall():
                 self.middle.set_y(self.sub_0.pos.y()+0.0015)
             self.middle.set_z(self.sub_0.pos.z())
         else:
-            print(f'当前墙壁无中心点, 未得到坐标数据{self.main_0.id}')
+            log_info(f'当前墙壁无中心点, 未得到坐标数据{self.main_0.id}')
 
     def set_id_list(self, id0, id1, id2, id3):
         self.__id_list = [id0, id1, id2, id3]
@@ -367,36 +397,49 @@ class JWall():
         for i in code_list_dict:
             x = i['x']
             y = i['y']
-            if x == min_x or y == min_y:
-                if i['size'] == 0.084:
+            size = i['size']
+            if len(code_list_dict) == 2:
+                # 单面墙， 只有背面有码
+                if x == WALL_THICKNESS or y == WALL_THICKNESS:
+                    if size == 0.084:
+                        self.set_sub_0(i)
+                    elif size == 0.0168:
+                        self.set_sub_1(i)
+                else:
+                    if size == 0.084:
+                        self.set_main_0(i)
+                    elif size == 0.0168:
+                        self.set_main_1(i)
+            elif (x == min_x and min_y == max_y) or (y == min_y and min_x == max_x):
+                if size == 0.084:
                     self.set_main_0(i)
-                elif i['size'] == 0.0168:
+                elif size == 0.0168:
                     self.set_main_1(i)
-            elif x == max_x or y == max_y:
-                if i['size'] == 0.084:
+            elif (x == max_x and min_y == max_y) or (y == max_y and min_x == max_x):
+                if size == 0.084:
                     self.set_sub_0(i)
-                elif i['size'] == 0.0168:
+                elif size == 0.0168:
                     self.set_sub_1(i)
             else:
-                print(f'方法 set_wall 输入错误, 请检查code_list_dict: {code_list_dict}\n 当前为: {i}\n min_x: {min_x}\tmin_y: {min_y}\tmax_x: {max_x}\tmax_y: {max_y}')
+                log_info(f'方法 set_wall 输入错误, 请检查code_list_dict: {code_list_dict}\n 当前为: {i}\n min_x: {min_x}\tmin_y: {min_y}\tmax_x: {max_x}\tmax_y: {max_y}')
                 return
         self.set_id_list(self.main_0.id, self.main_1.id, self.sub_0.id, self.sub_1.id)
         self.update_wall_calculated_data()
 
     # 有问题需要检查！！！！！！！！！不能使用id进行定义
-    def set_wall_from_apriltag(self, apriltag: JApril_Tag_Info):
-        id_list = apriltag.id
-        for i in id_list:
-            if i % 4 == 0:
-                self.set_main_0({'id': i})
-            elif i % 4 == 1:
-                self.set_main_1({'id': i})
-            elif i % 4 == 2:
-                self.set_sub_0({'id': i})
-            elif i % 4 == 3:
-                self.set_sub_1({'id': i})
-        self.set_id_list(self.main_0.id, self.main_1.id, self.sub_0.id, self.sub_1.id)
-        self.update_wall_calculated_data()
+    # def set_wall_from_apriltag(self, apriltag: JApril_Tag_Info):
+    #     id_list = apriltag.id
+    #     for i in id_list:
+    #         if i % 4 == 0:
+    #             self.set_main_0({'id': i})
+    #         elif i % 4 == 1:
+    #             self.set_main_1({'id': i})
+    #         elif i % 4 == 2:
+    #             self.set_sub_0({'id': i})
+    #         elif i % 4 == 3:
+    #             self.set_sub_1({'id': i})
+    #     self.set_id_list(self.main_0.id, self.main_1.id, self.sub_0.id, self.sub_1.id)
+    #     self.update_wall_calculated_data()
 
     def update_wall_calculated_data(self):
         self.set_middle()
@@ -414,23 +457,33 @@ class JWalls():
         self.max_middle_x: float = None
         self.max_middle_y: float = None
 
-    def build_JWall_list_from_yaml(self, yaml_data: yaml) -> list[JWall]:
-        list_dict = yaml_data['tag_bundles'][0]['layout']
-        code_list_dict = self._code_sort(list_dict)
-        wall_list = self._build_in_JWall_from_code_list(code_list_dict)
-        self.JWall_list = wall_list
-        self.range_Maze_x = int((self.max_middle_x-(WALL_WIDTH_HALF + WALL_THICKNESS)) / (WALL_WIDTH + WALL_THICKNESS) + 1)  # 最大中点位置 = (0.25 + 0.003) * (n - 1) + (0.125 + 0.003)
-        self.range_Maze_y = int((self.max_middle_y-(WALL_WIDTH_HALF + WALL_THICKNESS)) / (WALL_WIDTH + WALL_THICKNESS) + 1)
-        return wall_list
+    def build_JWall_list_from_yaml(self, yaml_data: yaml) -> list:
+        try:
+            list_dict = yaml_data['tag_bundles'][0]['layout']
+            code_list_dict = self._code_sort(list_dict)
+            wall_list = self._build_in_JWall_from_code_list(code_list_dict)
+            self.JWall_list = wall_list
+            self.range_Maze_x = int((self.max_middle_x-(WALL_WIDTH_HALF + WALL_THICKNESS)) / (WALL_WIDTH + WALL_THICKNESS) + 1)  # 最大中点位置 = (0.25 + 0.003) * (n - 1) + (0.125 + 0.003)
+            self.range_Maze_y = int((self.max_middle_y-(WALL_WIDTH_HALF + WALL_THICKNESS)) / (WALL_WIDTH + WALL_THICKNESS) + 1)
+            return wall_list
+        except Exception as e:
+            e = traceback.format_exc()
+            text = f'[JWalls][build_JWall_list_from_yaml][!错误!]: \n{e}'
+            log_error(text)
 
-    def _build_in_JWall_from_code_list(self, code_list_dict: list) -> list[JWall]:
-        temp_JWalls_list = []
-        for i in code_list_dict:  # i 是个列表, 里面是四个 code 的字典
-            temp_wall = JWall()
-            temp_wall.set_wall(i)
-            self.set_update_max_middle_x_y(temp_wall)
-            temp_JWalls_list.append(temp_wall)
-        return temp_JWalls_list
+    def _build_in_JWall_from_code_list(self, code_list_dict: list) -> list:
+        try:
+            temp_JWalls_list = []
+            for i in code_list_dict:  # i 是个列表, 里面是四个 code 的字典
+                temp_wall = JWall()
+                temp_wall.set_wall(i)
+                self.set_update_max_middle_x_y(temp_wall)
+                temp_JWalls_list.append(temp_wall)
+            return temp_JWalls_list
+        except Exception as e:
+            e = traceback.format_exc()
+            text = f'[JWalls][_build_in_JWall_from_code_list][!错误!]: \n{e}'
+            log_error(e)
 
     # 设置最大墙中点
     def set_update_max_middle_x_y(self, wall: JWall) -> None:
@@ -446,7 +499,7 @@ class JWalls():
             self.max_middle_y = wall.middle.y()
 
     # Apriltag分类，将一张板上的4个码放在一个列表中
-    def _code_sort(self, ori_list: list[dict]) -> list[list[dict]]:
+    def _code_sort(self, ori_list: list) -> list:
         temp_JWall_list = []
         for item_dict in ori_list[:]:
             code_list = []
