@@ -43,7 +43,7 @@ class JServer_Apriltag_QThread(QThread):
                     'angular_acceleration': [data.imu.angular_acceleration.xStr(), data.imu.angular_acceleration.yStr(), data.imu.angular_acceleration.zStr()],
                     'magnetic_field': [data.imu.magnetic_field.xStr(), data.imu.magnetic_field.yStr(), data.imu.magnetic_field.zStr()]
                 },
-                'current_position': data.current_position
+                # 'current_position': data.current_position
             }
         }
         if len(data.left_list) > 0:
@@ -92,6 +92,9 @@ class JServer_Apriltag_QThread(QThread):
             self.signal_jlocation_package.emit(data_send)
             if data.front.front.id and data.front.front.distance.zStr():
                 data_current_location = {'current_pos_float': [data.front.front.id, data.front.front.distance.zStr()]}
+                self.signal_current_location.emit(data_current_location)
+            else:
+                data_current_location = {'current_pos_float': None}
                 self.signal_current_location.emit(data_current_location)
 
     def stop(self):
