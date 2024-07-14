@@ -9,25 +9,31 @@ import rospy
 from sensor_msgs.msg import Imu, MagneticField
 from apriltag_ros.msg import AprilTagDetectionArray
 from sensor_msgs.msg import CompressedImage
+# from motor.msg import MotorPWM, MotorRPM
 from PyQt5.QtCore import QObject, pyqtSignal, QThread
 import yaml
+import numpy as np
+
+SIDE_DIFF = 0.05
+
+logger_dict_collector = JLog('Client', 'JClient')
+log_info = logger_dict_collector['info']
+log_error = logger_dict_collector['error']
 
 
 class JCollector_QThread(QThread):
 
-    def __init__(self, imu_callback, mag_callback, apriltag_callback, pos_callback, video_callback) -> None:
+    def __init__(self, imu_callback, mag_callback, apriltag_callback, video_callback) -> None:
         super().__init__()
         self.imu_callback = imu_callback
         self.mag_callback = mag_callback
         self.apriltag_callback = apriltag_callback
-        self.pos_callback = pos_callback
         self.video_callback = video_callback
 
     def run(self):
-        rospy.Subscriber("/imu/data_raw", Imu, self.imu_callback)
+        rospy.Subscriber("/imu/data_calib", Imu, self.imu_callback)
         rospy.Subscriber("/imu/mag", MagneticField, self.mag_callback)
         rospy.Subscriber("/tag_detections", AprilTagDetectionArray, self.apriltag_callback)
-        # rospy.Subscriber("/tag_detections", AprilTagDetectionArray, self.pos_callback)
         rospy.Subscriber("/tag_detections_image/compressed", CompressedImage, self.video_callback)
         rospy.spin()  # 保持节点运行
 
@@ -42,12 +48,9 @@ class JData_Collection(QObject):
         self.magnetic_field_data = None
         self.apriltag_data = None
         self.current_position = None
-        # self.yaml_path = '/opt/ros/noetic/share/apriltag_ros/config/tags.yaml'
-        # with open(self.yaml_path, 'r', encoding='utf-8') as yaml_file:
-        #     self.tag_map = yaml.safe_load(yaml_file)
         # 初始化 JLocation 对象
         self.jlocation = JLocation()
-        self.collector_thread = JCollector_QThread(self.imu_callback, self.mag_callback, self.apriltag_callback, self.pos_callback, self.video_callback)
+        self.collector_thread = JCollector_QThread(self.imu_callback, self.mag_callback, self.apriltag_callback, self.video_callback)
         self.collector_thread.start()
 
     def imu_callback(self, data):
@@ -108,34 +111,20 @@ class JData_Collection(QObject):
             apriltag_detections.append(tag_info)
         self.apriltag_data = apriltag_detections
 
-    # def pos_callback(self, data):
-    #     for detection in data.detections:
-    #         tag_id = detection.id[0]
-    #         for i in self.tag_map['tag_bundles']['layout']:
-    #             if tag_id in i['id']:
-    #                 tag_info = self.tag_map[tag_id]
-    #                 tag_pose = detection.pose.pose.pose
-    #                 self.current_position = [tag_pose.position.x, tag_pose.position.y, tag_pose.position.z]
-    #                 print(tag_id, tag_info)
-    #                 print(f"Detected tag {tag_id} at position ({tag_pose.position.x}, {tag_pose.position.y}, {tag_pose.position.z})")
-    #                 # rospy.loginfo(f"Detected tag {tag_id} at position ({tag_pose.position.x}, {tag_pose.position.y}, {tag_pose.position.z})")
-
     def video_callback(self, data):
         self.video_signal.emit(data.data)
 
-    # def set_imu_data(self, data):
-    #     self.imu_data = data
-
-    # def set_mag_data(self, data):
-    #     self.magnetic_field_data = data
-
-    # def set_apriltag_data(self, data):
-    #     self.apriltag_data = data
-
     # 四元数转换为欧拉角
     def quaternion_to_euler(self, quaternion):
-        r = Rotation.from_quat(quaternion)
-        euler = r.as_euler('xyz', degrees=True)
+        # 检查四元数的输入是否为单位四元数
+        q = np.array(quaternion, dtype=np.float32, copy=True)
+        # 用的是float32，还可以继续调整
+        n = np.dot(q, q)
+        if n < np.finfo(q.dtype).eps:
+            return [0.0, 0.0, 0.0]  # 如果四元数长度接近0，则返回零向量
+        else:
+            r = Rotation.from_quat(quaternion)
+            euler = r.as_euler('xyz', degrees=True)
         return list(euler)
 
     def update_jlocation_all(self):
@@ -152,10 +141,17 @@ class JData_Collection(QObject):
 
         max_distance = 0
         if apriltag_data:
+            # print(apriltag_data)
+            # for vor_item in apriltag_data:
+            #     euler_orientation = self.quaternion_to_euler(vor_item['orientation'])
+            #     if max_distance <= vor_item['position'][2] and abs(vor_item['position'][0]) < 0.125 and abs(euler_orientation[1]) < 45:
+            #         max_distance = vor_item['position'][2]
             for item in apriltag_data:
                 euler_orientation = self.quaternion_to_euler(item['orientation'])
                 # 置front.front
-                if max_distance < item['position'][2] and abs(item['position'][0]) < 0.125 and abs(euler_orientation[1]) < 45:
+
+                # print(item['id'], item['position'][0] < 0, abs(item['position'][0]) < 0.150, (max_distance - SIDE_DIFF) > item['position'][2], euler_orientation[1] < -45, '\n', max_distance, '\n')
+                if max_distance <= item['position'][2] and abs(item['position'][0]) < 0.150 and abs(euler_orientation[1]) < 45:
                     max_distance = item['position'][2]
                     location.front.front.distance.set_x(item['position'][0])
                     location.front.front.distance.set_y(item['position'][1])
@@ -165,7 +161,11 @@ class JData_Collection(QObject):
                     location.front.front.orientation.set_z(euler_orientation[2])
                     location.front.front.set_id(item['id'])
                 # 置左侧
-                elif item['position'][0] < 0 and euler_orientation[1] < -45:
+                # elif item['position'][0] < 0 and abs(item['position'][0]) < 0.150 and (max_distance - SIDE_DIFF) > item['position'][2] and euler_orientation[1] < -45:
+                elif item['position'][0] < 0 and abs(item['position'][0]) < 0.150 and euler_orientation[1] < -45 and abs(item['position'][2]) < 0.275:
+                    # print(item['position'][2])
+                    # print(item['position'][2] - 0.1)
+                    # print('左侧\n')
                     temp_left.distance.set_x(item['position'][0])
                     temp_left.distance.set_y(item['position'][1])
                     temp_left.distance.set_z(item['position'][2])
@@ -182,7 +182,9 @@ class JData_Collection(QObject):
                     elif len(left_list) == 2 and left_list[0].distance.z() < item['position'][2] and left_list[1].distance.z() > item['position'][2]:
                         left_list[1] = copy.deepcopy(temp_left)
                 # 置右侧
-                elif item['position'][0] > 0 and euler_orientation[1] > 45:
+                # elif item['position'][0] > 0 and abs(item['position'][0]) < 0.150 and (max_distance - SIDE_DIFF) > item['position'][2] and euler_orientation[1] > 45:
+                elif item['position'][0] > 0 and abs(item['position'][0]) < 0.150 and euler_orientation[1] > 45 and abs(item['position'][2]) < 0.275:
+                    # print('右侧\n')
                     temp_right.distance.set_x(item['position'][0])
                     temp_right.distance.set_y(item['position'][1])
                     temp_right.distance.set_z(item['position'][2])
