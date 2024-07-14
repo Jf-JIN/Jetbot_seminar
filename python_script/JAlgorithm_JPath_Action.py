@@ -1,6 +1,8 @@
 import math
 from JAlgorithm_JPath_Node import *
 
+log_info = logger_dict_algo['info']
+
 
 class JAction():
     def __init__(self) -> None:
@@ -79,7 +81,7 @@ class JAction():
 
     def set_mode(self, mode):
         if mode not in ['line', 'circle', '']:
-            print(f'set_mode只有两个模式, line 和 circle, 当前输入为 {mode}')
+            log_info(f'set_mode只有两个模式, line 和 circle, 当前输入为 {mode}')
             return
         self.__mode = mode
         if self.__mode == 'circle' and self.__end_node and self.__last_node and self.__start_node:
@@ -96,10 +98,3 @@ class JAction():
                                   (((self.__last_vector[0]**2 + self.__last_vector[1]**2) ** 0.5)*(self.__vector[0]**2 + self.__vector[1]**2) ** 0.5))
         self.__turn_radius = ((self.__last_vector[0] ** 2 + self.__last_vector[1] ** 2) ** 0.5) * math.tan((math.pi - angle_between)/2)
         self.__turn_angle = angle_between / 2
-
-
-# def get_angle(vector):
-#     return math.degrees(math.atan2(vector[1], vector[0]))
-
-
-# print(get_angle([0, 2]))
