@@ -9,6 +9,8 @@ from copy import deepcopy
 
 # 节点树类
 
+info = logger_dict_algo['info']
+
 
 class JPath_Tree():
     def __init__(self, start_index: Union[list, tuple], goal_index: Union[list, tuple], map_matrix: JMap_Grid_Matrix_From_Yaml) -> None:
@@ -41,8 +43,6 @@ class JPath_Tree():
             #         i.set_scaned_flag(True)
             for i in self.__node_list:
                 i: JPath_Node
-                # print(i.current_index, i.value)
-                # print('g\t',i.goal_index)
             read_node: JPath_Node = self.__node_list.pop(0)
             if read_node.current_index[0] == self.goal_index[0] and read_node.current_index[1] == self.goal_index[1]:
                 self.__end_node = read_node
@@ -70,7 +70,6 @@ class JPath_Tree():
                     [new_x, new_y], self.goal_index, parent_node)
                 self.matrix[new_x][new_y] = new_element
                 temp_child_node_list.append(new_element)
-        # print(temp_child_node_list)
 
         # 进行排序, 按照value从小到大, 先看value值大小, 若相等则看heuristic_cost大小
         if not temp_child_node_list:
@@ -90,7 +89,6 @@ class JPath_Tree():
                     break
                 if not inserted:
                     self.__node_list.append(element)
-                # print(self.__node_list)
 
     # 寻找父节点, 进行递归
     def find_parent_node(self, child_node: JPath_Node) -> None:
