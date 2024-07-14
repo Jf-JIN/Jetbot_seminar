@@ -7,11 +7,14 @@ JMap_Grid_Matrix_From_Yaml  读取Yaml文件, 建立抽象和对象地图矩阵
         JMap_generator (yaml_data: yaml) -> None    将Yaml文件转换为地图矩阵, 并存入属性中
 '''
 from JAlgorithm_JWall import *
-from JetBot_Parameter import *
 from JLocation import *
 from typing import Union
+import traceback
 
 # 读取Yaml类
+
+log_info = logger_dict_algo['info']
+log_error = logger_dict_algo['error']
 
 
 class JMap_Grid_Matrix_From_Yaml():
@@ -20,6 +23,8 @@ class JMap_Grid_Matrix_From_Yaml():
         self.__map_obj_matrix: list = []
         self.__map_abstract_matrix: list = []
         self.JMap_generator(yaml_data)
+        for i in self.__map_abstract_matrix:
+            print(i)
 
     @property
     def map_obj_matrix(self):
@@ -36,16 +41,22 @@ class JMap_Grid_Matrix_From_Yaml():
 
     # 获取含有对象的矩阵
     def _from_JWall_list_generate_map(self, JWall_list: JWalls) -> None:
-        temp_obj_matrix = [[None for _ in range(JWall_list.range_Maze_y * 2 + 1)] for _ in range(JWall_list.range_Maze_x * 2 + 1)]
-        for _, wall in enumerate(JWall_list.JWall_list):
-            wall: JWall
-            x_index = int((wall.middle.x() - WALL_THICKNESS_HALF) / (WALL_THICKNESS_HALF+WALL_WIDTH_HALF))  # 索引坐标(以中点计算) = 1.5 + (125 + 1.5) * 索引值 n
-            y_index = int((wall.middle.y() - WALL_THICKNESS_HALF) / (WALL_THICKNESS_HALF+WALL_WIDTH_HALF))
-            temp_obj_matrix[x_index][y_index] = wall
-        self.__map_obj_matrix = temp_obj_matrix
-        self._from_map_obj_to_abstract_matrix()
+        try:
+            temp_obj_matrix = [[None for _ in range(JWall_list.range_Maze_y * 2 + 1)] for _ in range(JWall_list.range_Maze_x * 2 + 1)]
+            for _, wall in enumerate(JWall_list.JWall_list):
+                wall: JWall
+                x_index = int((wall.middle.x() - WALL_THICKNESS_HALF) / (WALL_THICKNESS_HALF+WALL_WIDTH_HALF))  # 索引坐标(以中点计算) = 1.5 + (125 + 1.5) * 索引值 n
+                y_index = int((wall.middle.y() - WALL_THICKNESS_HALF) / (WALL_THICKNESS_HALF+WALL_WIDTH_HALF))
+                temp_obj_matrix[x_index][y_index] = wall
+            self.__map_obj_matrix = temp_obj_matrix
+            self._from_map_obj_to_abstract_matrix()
+        except Exception as e:
+            e = traceback.format_exc()
+            text = f'[JMap_Grid_Matrix_From_Yaml][_from_JWall_list_generate_map][!错误!]: \n{e}'
+            log_error(e)
 
     # 获取抽象矩阵
+
     def _from_map_obj_to_abstract_matrix(self) -> None:
         temp_abstract_matrix = [[1 for _ in range(len(self.__map_obj_matrix))] for _ in range(len(self.__map_obj_matrix))]
         for x_index, wall_list in enumerate(self.__map_obj_matrix):
@@ -64,36 +75,46 @@ class JMap_Grid_Matrix_From_Yaml():
     def from_id_to_index(self, id: int, distance: float = 0.0001):
         index = [None, None]
         distance = abs(distance)
-        for x_index, list_item in enumerate(self.map_obj_matrix):
-            for y_index, i in enumerate(list_item):
-                i: JWall
-                if i and id in i.id_list:
-                    if id in [i.main_0.id, i.main_1.id]:    # 正面 向上或向左
-                        if i.orientation == 'H':    # 向上， 车位于码的上方
-                            x_index = i.topside - distance
-                            y_index = i.middle.y()
-                        elif i.orientation == 'V':  # 向左， 车位于码的左侧
-                            x_index = i.middle.x()
-                            y_index = i.leftside - distance
-                    elif id in [i.sub_0.id, i.sub_1.id]:    # 背面 向下或向右
-                        if i.orientation == 'H':    # 向下， 车位于码的下方
-                            x_index = i.topside + distance
-                            y_index = i.middle.y()
-                        elif i.orientation == 'V':  # 向右， 车位于码的右侧
-                            x_index = i.middle.x()
-                            y_index = i.leftside + distance
-                    if x_index < 0 or y_index < 0:
-                        print(f'请正确输入id和距离, 当前id号({id})和距离{distance}对应部分x: {x_index} y: {y_index}超出地图范围')
-                        return None
+        x_pos_float = -1.0
+        y_pos_float = -1.0
+        try:
+            for x_index, list_item in enumerate(self.map_obj_matrix):
+                for y_index, i in enumerate(list_item):
+                    i: JWall
+                    if i and id in i.id_list:
+                        if id in [i.main_0.id, i.main_1.id]:    # 正面 向上或向左
+                            if i.orientation == 'H':    # 向上， 车位于码的上方
+                                x_pos_float = i.topside - distance
+                                y_pos_float = i.middle.y()
+                            elif i.orientation == 'V':  # 向左， 车位于码的左侧
+                                x_pos_float = i.middle.x()
+                                y_pos_float = i.leftside - distance
+                        elif id in [i.sub_0.id, i.sub_1.id]:    # 背面 向下或向右
+                            if i.orientation == 'H':    # 向下， 车位于码的下方
+                                x_pos_float = i.bottomside + distance
+                                y_pos_float = i.middle.y()
+                            elif i.orientation == 'V':  # 向右， 车位于码的右侧
+                                x_pos_float = i.middle.x()
+                                y_pos_float = i.rightside + distance
+                        # log_info(f'当前id号({id})，距离：{distance}, 位置: [{x_pos_float}, {y_pos_float}]\n当前墙id号{i.main_0.id} {i.main_1.id} {i.sub_0.id} {i.sub_1.id}\n墙的方向 {i.orientation}')
+                        if x_pos_float < 0 or y_pos_float < 0:
+                            log_info(f'请正确输入id和距离, 当前id号({id})和距离{distance}对应部分x: {x_pos_float} y: {y_pos_float}超出地图范围')
+                            return None
 
-                    print(f'当前id号({id})，距离：{distance}, 索引: [{x_index}, {y_index}]')
-                    index = self.from_coordinate_to_index([x_index, y_index])
-                    return index
+                        # log_info(f'当前id号({id})，距离：{distance}, 位置: [{x_pos_float}, {y_pos_float}]')
+                        # log_info(f'middle.x {i.middle.x()} middle.y {i.middle.y()} topside {i.topside} leftside {i.leftside} rightside {i.rightside} bottomside {i.bottomside}')
+                        index = self.from_coordinate_to_index([x_pos_float, y_pos_float])
+                        # log_info('索引', index)
+                        return index
+        except Exception as e:
+            e = traceback.format_exc()
+            log_error(e)
 
     # 将坐标系转换为索引
+
     def from_coordinate_to_index(self, coordinate: list) -> tuple:
         # coordinate: [[x, y]
-        if not coordinate[0] or not coordinate[1]:
+        if (not coordinate[0] and coordinate[0] != 0) or (not coordinate[1] and coordinate[1] != 0):
             raise ValueError(f'方法 from_coordinate_to_index 中, 输入含有 None 值: {coordinate[0]} {coordinate[1]}')
         temp_index = [None, None]
         for x_index, x_item in enumerate(self.map_obj_matrix):
@@ -105,18 +126,18 @@ class JMap_Grid_Matrix_From_Yaml():
                 # 判断条件: 方向为水平, 输入的 y 值小于当前板子的右边界, 同时 temp_index 为第一次赋值
                 if y_item.orientation == 'H' and coordinate[1] < y_item.rightside and not temp_index[1]:
                     temp_index[1] = y_index
-                    print(f'[板子y]: {y_item.topleft, y_item.bottomright}')
+                    # log_info(f'[板子y]: {y_item.topleft, y_item.bottomright}')
                     break
                 elif y_item.orientation == 'H' and coordinate[1] == y_item.rightside or coordinate[1] == y_item.leftside:
-                    print('请检查输入值, 输入值 y 与墙重叠')
+                    log_info('请检查输入值, 输入值 y 与墙重叠')
                     raise ValueError('请检查输入值, 输入值 y 与墙重叠')
                 # 判断条件: 方向为竖直, 输入的 x 值小于当前板子的下边界, 同时 temp_index 为第一次赋值
                 if y_item.orientation == 'V' and coordinate[0] < y_item.bottomside and not temp_index[0]:
-                    print(f'[板子x]: {y_item.topleft, y_item.bottomright}')
+                    # log_info(f'[板子x]: {y_item.topleft, y_item.bottomright}')
                     temp_index[0] = x_index
                     break
                 elif y_item.orientation == 'V' and (coordinate[0] == y_item.bottomside or coordinate[0] == y_item.topside):
-                    print('请检查输入值, 输入值 x 与墙重叠')
+                    log_info('请检查输入值, 输入值 x 与墙重叠')
                     raise ValueError('请检查输入值, 输入值 x 与墙重叠')
         return [temp_index[0], temp_index[1]]
 
