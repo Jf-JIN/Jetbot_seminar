@@ -343,9 +343,9 @@ class JMotor_Run_QThread(QThread):
             if distance_diff < PATH_TOLERANCE_DISTANCE + 0.01 or not self.flag_running:
                 break
             if self.location.front.front.distance.x() > 0.004:
-                self.publish_pwm(0.25, 0.2)
+                self.publish_pwm(0.23, 0.2)
             elif self.location.front.front.distance.x() < -0.004:
-                self.publish_pwm(0.2, 0.25)
+                self.publish_pwm(0.2, 0.23)
             else:
                 self.publish_pwm(0.2, 0.2)
             if current_distance <= PATH_DEFAULT_MIN_DISTANCE:
@@ -364,7 +364,9 @@ class JMotor_Run_QThread(QThread):
             self.update_location()
             current_distance = self.front_apriltag.distance.z()
             distance_diff = current_distance - (target_distance + distance_before_turn)  # 当前距离与目标距离之间的差值
-            log_info(f'current_distance, distance_diff {current_distance}, {distance_diff}')
+            log_info(f'current_distance, distance_diff, target_distance {current_distance}, {distance_diff}, {target_distance}')
+            if distance_diff >= 0:
+                break
             if abs(distance_diff) < PATH_TOLERANCE_DISTANCE+0.005 or not self.flag_running:
                 break
             if self.location.front.front.orientation.y() > 2:

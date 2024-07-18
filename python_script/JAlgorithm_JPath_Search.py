@@ -109,6 +109,10 @@ class JPath_Search(QThread):
         next_node: JMap_Path_Node = self.visiting_list[-1]
         while parent_node:  # and parent_node.start_id != self.location.front.front.id:
             log_info(f'退回 id:{node.start_id} 目标距离: {node.start_distance} 当前距离: {self.location.front.front.distance.z()} ')
+# *********************************************************************************************************************************************************************************************************
+            # if node.start_distance == self.location.front.front.distance.z():
+            #     continue
+
             # while parent_node.start_id == self.location.front.front.id:
             self.update_location()
             if parent_node.start_id == self.location.front.front.id and node.start_distance//WALL_WIDTH == self.location.front.front.distance.z()//WALL_WIDTH:

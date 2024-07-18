@@ -232,10 +232,16 @@ class JClient_UI(Ui_MainWindow):
         json_path_new = os.path.join(os.path.dirname(path), 'tags.json')
         yaml_path_new = os.path.join(os.path.dirname(path), 'tags.yaml')
         yaml_path_new_wall = os.path.join(os.path.dirname(path), 'wall.yaml')
+        yaml_path_new_wall2 = os.path.join(os.path.dirname(path), 'pyscript', 'wall.yaml')
         with open(yaml_path_new, 'w') as yaml_file:
             yaml.dump(loaded_data, yaml_file, default_flow_style=False, sort_keys=False)
+
         with open(yaml_path_new_wall, 'w') as yaml_file_wall:
             yaml.dump(loaded_data, yaml_file_wall, default_flow_style=False, sort_keys=False)
+
+        # with open(yaml_path_new_wall2, 'w') as yaml_file_wall2:
+        #     yaml.dump(loaded_data, yaml_file_wall2, default_flow_style=False, sort_keys=False)
+
         with open(json_path_new, 'w') as json_file:
             json.dump(signal_text, json_file, indent=4)
 

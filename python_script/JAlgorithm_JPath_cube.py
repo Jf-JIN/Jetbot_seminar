@@ -308,7 +308,7 @@ class JPath_Search_Cube(QThread):
             node_f = JMap_Path_Node(parent_node)
             node_f.set_parent_action('front')
             log_info(f'[action] {node_f.from_parent_action}')
-        for item in [node_l, node_r, node_f]:
+        for item in [node_l, node_f, node_r]:
             if item:
                 self.visiting_list.append(item)
                 parent_node.children_list.append(item)
@@ -530,7 +530,7 @@ class JPath_Search_Cube(QThread):
                     cube_z_distance = self.cube_location.cube.distance.z()
                     cube_y_orientation = self.cube_location.cube.orientation.y()
                     log_info(
-                        f'wall_x_distance, wall_z_distance {wall_x_distance}, {wall_z_distance}\ncube_x_distance, cube_z_distance {cube_x_distance}, {cube_z_distance}\ncube_y_orientation {cube_y_orientation}\n wall_dict_x_distance, wall_dict_y_distance {wall_dict_x_distance} {wall_dict_y_distance}')
+                        f'wall_x_distance, wall_z_distance {i["id"]}, {wall_x_distance}, {wall_z_distance}\ncube_x_distance, cube_z_distance {cube_x_distance}, {cube_z_distance}\ncube_y_orientation {cube_y_orientation}\n wall_dict_x_distance, wall_dict_y_distance {wall_dict_x_distance} {wall_dict_y_distance}')
                     if wall_orientation == 'H_U':  # 车在下方
                         tag_pos_y = wall_dict_y_distance + wall_x_distance + cube_x_distance
                         tag_pos_x = wall_dict_x_distance + (wall_z_distance - cube_z_distance)
