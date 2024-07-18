@@ -1,1 +1,0 @@
-sudo nmcli device wifi connect Roboterlabor password youhavetotypeaverylongsentence
