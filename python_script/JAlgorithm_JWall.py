@@ -326,9 +326,11 @@ class JWall():
                     break
         # 如果存在4个 Apriltag 码：
         if (self.main_0.pos.x() or self.main_0.pos.x() == 0) and (self.sub_0.pos.x() or self.sub_0.pos.x() == 0):
+
             self.middle.set_x((self.main_0.pos.x() + self.sub_0.pos.x()) / 2)
             self.middle.set_y((self.main_0.pos.y() + self.sub_0.pos.y()) / 2)
             self.middle.set_z((self.main_0.pos.z() + self.sub_0.pos.z()) / 2)
+            log_info(f'存在4个 Apriltag 码 id{self.main_0.id} {self.middle.x()} {self.middle.y()} {self.middle.z()}')
         # 如果只有 主Apriltag码：
         elif self.main_0.pos.x() or self.main_0.pos.x() == 0:
             if self.__orientation == 'H':

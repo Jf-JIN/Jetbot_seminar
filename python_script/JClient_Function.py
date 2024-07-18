@@ -11,12 +11,16 @@ from JAlgorithm_JMap_Matrix_Manager import *
 
 import functools
 
-PYTHON_FILE_PATH = os.path.dirname(__file__)
-# PYTHON_FILE_PATH = os.getcwd()
+# PYTHON_FILE_PATH = os.path.dirname(__file__)
+PYTHON_FILE_PATH = os.getcwd()
 
 
 log_info = logger_dict_client['info']
 log_error = logger_dict_client['error']
+
+
+logger_dict_a2_map = JLog('a2_map', 'a2_map')
+log_map = logger_dict_a2_map['info']
 
 
 class JClient_Function(JClient_UI):
@@ -53,6 +57,7 @@ class JClient_Function(JClient_UI):
         self.pb_reconnect_console.clicked.connect(self.console_connection_to_server)
         self.pb_reconnect_video.clicked.connect(self.video_connection_to_server)
         self.pb_close_server.clicked.connect(self.close_server)
+        # self.pb_map_clear.clicked.connect(self.clear_a2_map)
         self.pb_camera_listener.clicked.connect(lambda: self.signal_data_console_send.emit({'camera_listener': 'on'}))
         self.pb_force_accept.clicked.connect(lambda: self.signal_data_console_send.emit({'force_accept': True}))
         self.pb_stop.clicked.connect(lambda: self.signal_data_console_send.emit({'motor_action': {'mode': 'stop'}}))
@@ -104,6 +109,9 @@ class JClient_Function(JClient_UI):
                 # self.display_current_pos(0)
             elif self.tabWidget.currentIndex() == 1:
                 text = {'a2_map_build': 'on'}
+                self.signal_data_console_send.emit(text)
+            elif self.tabWidget.currentIndex() == 2:
+                text = {'a3_find': 'on'}
                 self.signal_data_console_send.emit(text)
         except Exception as e:
             e = traceback.format_exc()
@@ -228,6 +236,7 @@ class JClient_Function(JClient_UI):
             self.client_console.signal_connected_flag.connect(functools.partial(self.clear_port_display, self.lb_console_port))     # 断开连接信号
             self.client_console.signal_data_console_recv.connect(self.signal_sort)        # 接收命令提示符返回内容
             self.client_console.signal_server_close.connect(self.send_close_signal)   # 向服务器回复断开连接的命令
+            self.client_console.signal_ping.connect(self.display_ping)
 
             self.signal_data_console_send.connect(self.client_console.send)        # 发送信号
             self.signal_data_close_client_send.connect(self.client_console.send)   # 发送客户端关闭信号
@@ -253,6 +262,11 @@ class JClient_Function(JClient_UI):
         self.lb_video_port.setText(port)
         self.change_client_server_connection_display()
         self.reconnect_display()
+
+    def display_ping(self, ping_ms):
+        # current_time = time.time()
+        # ping_time_ms = (current_time - send_time)  # * 1000
+        self.lb_ping.setText(str(int(ping_ms))+' ms  ')
 
     # 断开连接时，清空端口显示
     def clear_port_display(self, tag: QLabel, flag: bool) -> None:
@@ -351,11 +365,29 @@ class JClient_Function(JClient_UI):
             'jlocation_package': lambda: self.display_jlocation(data['jlocation_package']),
             'map_generation': lambda: self.map_display_update(data['map_generation']),
             'motor_data': lambda: self.motor_data_display(data['motor_data']),
-            'a2_id_list': lambda: self.a2_map_build(data['a2_id_list'])
+            'a2_id_list': lambda: self.a2_map_build(data['a2_id_list']),
+            'send_time': lambda: self.display_ping(data['send_time']),
+            'cube_pos': lambda: self.cube_pos_display(data['cube_pos']),
+            'cube_tag_pos': lambda: self.cube_tag_pos_display(data['cube_tag_pos'])
         }
         for key, value in data_sort_dict.items():
             if key in data:
                 value()
+
+    def cube_tag_pos_display(self, data: list):
+        cube_x = '{:.6f}'.format(data[0])
+        cube_y = '{:.6f}'.format(data[1])
+        self.lb_cube_tag_pos.setText(f'{cube_x}, {cube_y}')
+
+    def cube_pos_display(self, data: list):
+        cube_x = '{:.6f}'.format(data[0])
+        cube_y = '{:.6f}'.format(data[1])
+        self.lb_cube_pos.setText(f'{cube_x}, {cube_y}')
+
+    def clear_a2_map(self):
+        map_layout = self.frame_a2_map.layout()
+        if map_layout:
+            self.clearLayout(map_layout)
 
     def complete_wall_list(self, data):
         try:
@@ -372,6 +404,7 @@ class JClient_Function(JClient_UI):
             temp_yaml = {'tag_bundles': [{'layout': None}]}
             temp_yaml['tag_bundles'][0]['layout'] = take_wall_list
             self.a2_map_data = copy.deepcopy(temp_yaml)
+            self.map_manager_a2 = JMap_Grid_Matrix_From_Yaml(self.a2_map_data)
             temp_yaml['standalone_tags'] = temp_yaml['tag_bundles'][0]['layout']
             # self.a2_map_data = copy.deepcopy(temp_yaml)
             with open(new_yaml_path, 'w', encoding='utf-8') as output_file:
@@ -384,11 +417,17 @@ class JClient_Function(JClient_UI):
 
     def a2_map_build(self, data):
         try:
+            log_map(f'data {data}')
             self.append_TB_text(data, self.tb_console)
             self.complete_wall_list(data)
-            map_manager = JMap_Grid_Matrix_From_Yaml(self.a2_map_data)
-            abstract_map = map_manager.map_abstract_matrix
-            obj_map = map_manager.map_obj_matrix
+            log_map(f'self.a2_map_data {self.a2_map_data}')
+            self.map_manager_a2.JMap_generator(self.a2_map_data)
+            abstract_map = self.map_manager_a2.map_abstract_matrix
+            obj_map = self.map_manager_a2.map_obj_matrix
+            matrix_text = ''
+            for i in abstract_map:
+                matrix_text += str(i) + '\n'
+            log_map(f'matrix_text {matrix_text}')
             map_layout = self.frame_a2_map.layout()
             if map_layout:
                 self.clearLayout(map_layout)
@@ -426,7 +465,7 @@ class JClient_Function(JClient_UI):
                     elif item == 1:
                         path_item = QPushButton()
                         path_item_name = f'pb_map_{x_index}_{y_index}'
-                        path_middle_x, path_middle_y = map_manager.from_index_to_coordinate([x_index, y_index])
+                        path_middle_x, path_middle_y = self.map_manager_a2.from_index_to_coordinate([x_index, y_index])
                         path_middle_x = '{:.{}f}'.format(path_middle_x * 1000, DIGITS_S)
                         path_middle_y = '{:.{}f}'.format(path_middle_y * 1000, DIGITS_S)
                         path_item.setObjectName(path_item_name)
@@ -455,6 +494,7 @@ class JClient_Function(JClient_UI):
             e = traceback.format_exc()
             text = f'[客户端][a2_map_build][!错误!]: \n{e}'
             log_error(e)
+            log_map(e)
             self.append_TB_text(text, self.tb_console)
 
     def check_pwm_data(self, object: QLabel, data):

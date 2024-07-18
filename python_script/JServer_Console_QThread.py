@@ -13,7 +13,7 @@ import functools
 import subprocess
 from JLogger import *
 
-logger_dict_server = JLog('Motor', 'Motor')
+logger_dict_server = JLog('Server', 'Server')
 log_info = logger_dict_server['info']
 log_error = logger_dict_server['error']
 

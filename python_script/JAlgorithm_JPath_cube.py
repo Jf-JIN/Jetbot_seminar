@@ -9,7 +9,7 @@ log_info = logger_dict_algo['info']
 log_error = logger_dict_algo['error']
 
 
-class JPath_Search(QThread):
+class JPath_Search_Cube(QThread):
     def __init__(self, data_collector, server_console_send_all) -> None:
         super().__init__()
         self.data_collector: JData_Collection = data_collector
@@ -22,6 +22,7 @@ class JPath_Search(QThread):
         self.visiting_list = []
         self.start_node = None
         self.id_list = []
+        self.cube_location: JLocation = None
         log_info('开始')
         # yaml_path = '/opt/ros/noetic/share/apriltag_ros/config/tags.yaml'
         # with open(yaml_path, 'r', encoding='utf-8') as yaml_file:
@@ -132,6 +133,35 @@ class JPath_Search(QThread):
             if node.start_id == next_node.parent_node.start_id and node.start_distance//WALL_WIDTH == next_node.parent_node.start_distance//WALL_WIDTH:
                 break
 
+    def return_to_original_node(self, node: JMap_Path_Node):
+        # next_node: JMap_Path_Node = self.visiting_list.pop(-1)
+        log_info('已进入退回起点操作线程')
+        parent_node: JMap_Path_Node = node.parent_node
+        while parent_node:  # and parent_node.start_id != self.location.front.front.id:
+            log_info(f'退回起点 退回 id:{node.start_id} 目标距离: {node.start_distance} 当前距离: {self.location.front.front.distance.z()} ')
+            # while parent_node.start_id == self.location.front.front.id:
+            self.update_location()
+            if parent_node.start_id == self.location.front.front.id and node.start_distance//WALL_WIDTH == self.location.front.front.distance.z()//WALL_WIDTH:
+                break
+            else:
+                self.straight_back(node.start_id, node.start_distance)
+            self.update_location()
+            self.correction()
+            action = node.from_parent_action
+            if action == 'left':
+                self.turn_right()
+            elif action == 'right':
+                self.turn_left()
+            else:
+                pass
+            # self.correction()
+            # self.back_fix_time(0.5)
+            self.correction()
+            node = node.parent_node
+            parent_node = node.parent_node
+            if not parent_node:
+                break
+
     def stop_motor(self):
         self.motor.stop_motor()
 
@@ -147,8 +177,8 @@ class JPath_Search(QThread):
                 log_info(f'已找到码，正在角度正对 {self.location.front.front.id}')
                 angle_diff = self.location.front.front.orientation.y()
                 turn_time = 0.2 * abs(angle_diff) / 10
-                if turn_time < 0.1:
-                    turn_time = 0.1
+                if turn_time < 0.15:
+                    turn_time = 0.15
                 log_info(f'angle_diff turn_time {angle_diff} {turn_time}')
                 self.search_rotation(time_diff=turn_time, degrees=-angle_diff)
                 self.update_location()
@@ -315,9 +345,16 @@ class JPath_Search(QThread):
         # 赋值当前节点定位
         branch_num = 0
         flag_to_end = False
+        self.flag_found = False
         while self.flag_running:
             self.update_location()
             node.front = self.location.front.front.id
+            cube = self.location.cube
+            if cube:
+                log_info('找到骰子')
+                self.flag_found = True
+                self.cube_location = copy.deepcopy(self.location)
+                break
             log_info(f'node.front {node.front}')
             if isinstance(node.front, list) and (node.front[0] in self.id_list or node.front[1] in self.id_list):
                 log_info('前方重复节点')
@@ -367,7 +404,10 @@ class JPath_Search(QThread):
             log_info(f'前方有路，但有支路 {node.start_id} {node.start_distance}')
             self.create_child_node(node)
             self.straight_front(node.start_id, self.location.front.front.distance.z())
-
+        elif self.flag_found:
+            log_info('找到骰子返回起点')
+            self.return_to_original_node(node)
+            log_info('完成返回')
         # 前方无路, 且无子节点
         elif flag_to_end:
             log_info('前方无路, 且无子节点')
@@ -422,6 +462,8 @@ class JPath_Search(QThread):
                 node: JMap_Path_Node = self.visiting_list.pop(-1)
                 log_info(f'node: {node} {node.start_id}')
                 self.extent_node(node)
+                if self.flag_found:
+                    break
                 self.get_id_list()
         except Exception as e:
             e = traceback.format_exc()
@@ -462,20 +504,65 @@ class JPath_Search(QThread):
             text = {'a2_id_list': self.id_list}
             self.server_consolesend_all(text)
             yaml_path = '/opt/ros/noetic/share/apriltag_ros/config/tags.yaml'
-            take_wall_list = []
             with open(yaml_path, 'r', encoding='utf-8') as yaml_file:
                 yaml_data = yaml.safe_load(yaml_file)
             wall_list = yaml_data['tag_bundles'][0]['layout']
-            for index, wall_item in enumerate(wall_list):
-                for id_item in self.id_list:
-                    if wall_item['id'] == id_item:
-                        take_wall_list.append(wall_item)
-            new_yaml_path = '/home/jetson/workspace/catkin_ws/src/server/Aufgabe2.yaml'
-            temp_yaml = {'tag_bundles': [{'layout': None}]}
-            temp_yaml['tag_bundles'][0]['layout'] = take_wall_list
-            temp_yaml['standalone_tags'] = temp_yaml['tag_bundles'][0]['layout']
-            with open(new_yaml_path, 'w', encoding='utf-8') as output_file:
-                yaml.dump(temp_yaml, output_file, default_flow_style=False, sort_keys=False)
+            wall_orientation = None
+            for i in wall_list:
+                # i['qx'] == 0.5: 横向  qy = -0.5 朝上 + 0.5 朝下
+                # i['qx'] != 0.5: 横向  qy = 0 朝左 qx = 0 朝右
+                wall_dict_x_distance = i['x']
+                wall_dict_y_distance = i['y']
+                if i['qx'] == 0.5:
+                    if i['qy'] == -0.5:  # 朝上
+                        wall_orientation = 'H_O'
+                    else:  # 朝下
+                        wall_orientation = 'H_U'
+                else:
+                    if i['qy'] == 0:  # 朝左
+                        wall_orientation = 'V_L'
+                    else:  # 朝右
+                        wall_orientation = 'V_R'
+                if i['id'] in self.cube_location.front.front.id:
+                    wall_x_distance = self.cube_location.front.front.distance.x()
+                    wall_z_distance = self.cube_location.front.front.distance.z()
+                    cube_x_distance = self.cube_location.cube.distance.x()
+                    cube_z_distance = self.cube_location.cube.distance.z()
+                    cube_y_orientation = self.cube_location.cube.orientation.y()
+                    log_info(
+                        f'wall_x_distance, wall_z_distance {wall_x_distance}, {wall_z_distance}\ncube_x_distance, cube_z_distance {cube_x_distance}, {cube_z_distance}\ncube_y_orientation {cube_y_orientation}\n wall_dict_x_distance, wall_dict_y_distance {wall_dict_x_distance} {wall_dict_y_distance}')
+                    if wall_orientation == 'H_U':  # 车在下方
+                        tag_pos_y = wall_dict_y_distance + wall_x_distance + cube_x_distance
+                        tag_pos_x = wall_dict_x_distance + (wall_z_distance - cube_z_distance)
+                        cube_center_y = tag_pos_y - CUBE_TO_CENTER * math.sin(math.radians(cube_y_orientation))
+                        cube_center_x = tag_pos_x - CUBE_TO_CENTER * math.cos(math.radians(cube_y_orientation))
+
+                    elif wall_orientation == 'H_O':  # 车在上方
+                        tag_pos_y = wall_dict_y_distance + wall_x_distance + cube_x_distance
+                        tag_pos_x = wall_dict_x_distance - (wall_z_distance - cube_z_distance)
+                        cube_center_y = tag_pos_y + CUBE_TO_CENTER * math.sin(math.radians(cube_y_orientation))
+                        cube_center_x = tag_pos_x + CUBE_TO_CENTER * math.cos(math.radians(cube_y_orientation))
+
+                    elif wall_orientation == 'V_R':  # 车在右侧
+                        tag_pos_x = wall_dict_x_distance + wall_x_distance + cube_x_distance
+                        tag_pos_y = wall_dict_y_distance + (wall_z_distance - cube_z_distance)
+                        cube_center_x = tag_pos_x + CUBE_TO_CENTER * math.sin(math.radians(cube_y_orientation))
+                        cube_center_y = tag_pos_y - CUBE_TO_CENTER * math.cos(math.radians(cube_y_orientation))
+
+                    elif wall_orientation == 'V_L':  # 车在左侧
+                        tag_pos_x = wall_dict_x_distance + wall_x_distance + cube_x_distance
+                        tag_pos_y = wall_dict_y_distance - (wall_z_distance - cube_z_distance)
+                        cube_center_x = tag_pos_x - CUBE_TO_CENTER * math.sin(math.radians(cube_y_orientation))
+                        cube_center_y = tag_pos_y + CUBE_TO_CENTER * math.cos(math.radians(cube_y_orientation))
+                    log_info(f'wall_orientation {wall_orientation}')
+                    log_info(f'骰子位置: {cube_center_x}, {cube_center_y}')
+                    log_info(f'骰子Apriltag位置: {tag_pos_x}, {tag_pos_y}')
+                    text = {'cube_pos': [cube_center_x, cube_center_y]}
+                    text2 = {'cube_tag_pos': [tag_pos_x, tag_pos_y]}
+                    self.server_consolesend_all(text)
+                    self.server_consolesend_all(text2)
+                    break
+
         except Exception as e:
             e = traceback.format_exc()
             log_error(e)

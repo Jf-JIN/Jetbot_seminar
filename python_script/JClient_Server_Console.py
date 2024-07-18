@@ -31,6 +31,7 @@ class Client_Console_QThread(QThread):
     signal_connected_port = pyqtSignal(str)      # 端口号信号
     signal_error_output = pyqtSignal(str)            # 报错信号
     signal_server_close = pyqtSignal()              # 服务端将关闭的信号
+    signal_ping = pyqtSignal(float)     # 延迟信号
 
     def __init__(self, ip: str) -> None:
         super().__init__()
@@ -130,6 +131,11 @@ class Client_Console_QThread(QThread):
                 # info('\n[客户端_文本端口-server_close]:', data)
                 info(f'请求关闭服务器 - {self.formatted_time}')
                 self.signal_server_close.emit()     # 发送服务器关闭时, 与服务器断开连接的信号
+                return
+            if 'send_time' in data:
+                send_time = data['send_time']
+                ping_ms = (time.time() - send_time) * 1000
+                self.signal_ping.emit(ping_ms)
                 return
             self.send_analysed_data_signal(data)
         except:
@@ -244,6 +250,8 @@ class Server_Console_QThread(QThread):
     def send_all(self, text: dict) -> None:
         for client_socket, client_address in self.clients_list:
             self.send(client_socket, text)
+            send_time = {'send_time': time.time()}
+            self.send(client_socket, send_time)
 
     # 删除clients_list中的元素
     def clients_list_remove(self, client: list) -> None:

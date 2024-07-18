@@ -16,7 +16,7 @@ import numpy as np
 
 SIDE_DIFF = 0.05
 
-logger_dict_collector = JLog('Client', 'JClient')
+logger_dict_collector = JLog('Collector', 'Collector')
 log_info = logger_dict_collector['info']
 log_error = logger_dict_collector['error']
 
@@ -138,7 +138,7 @@ class JData_Collection(QObject):
         temp_right = JApril_Tag_Info()
         left_list = []
         right_list = []
-
+        flag_front = False
         max_distance = 0
         if apriltag_data:
             # print(apriltag_data)
@@ -146,13 +146,16 @@ class JData_Collection(QObject):
             #     euler_orientation = self.quaternion_to_euler(vor_item['orientation'])
             #     if max_distance <= vor_item['position'][2] and abs(vor_item['position'][0]) < 0.125 and abs(euler_orientation[1]) < 45:
             #         max_distance = vor_item['position'][2]
+            min_x_front = 9999
             for item in apriltag_data:
                 euler_orientation = self.quaternion_to_euler(item['orientation'])
                 # 置front.front
 
                 # print(item['id'], item['position'][0] < 0, abs(item['position'][0]) < 0.150, (max_distance - SIDE_DIFF) > item['position'][2], euler_orientation[1] < -45, '\n', max_distance, '\n')
-                if max_distance <= item['position'][2] and abs(item['position'][0]) < 0.150 and abs(euler_orientation[1]) < 45:
-                    max_distance = item['position'][2]
+                # if max_distance <= item['position'][2] and abs(item['position'][0]) < 0.200 and abs(euler_orientation[1]) < 45:
+                if min_x_front >= abs(item['position'][0]) and abs(euler_orientation[1]) < 30 and item['id'][0] < 900:
+                    min_x_front = abs(item['position'][0])
+                    flag_front = True
                     location.front.front.distance.set_x(item['position'][0])
                     location.front.front.distance.set_y(item['position'][1])
                     location.front.front.distance.set_z(item['position'][2])
@@ -162,7 +165,7 @@ class JData_Collection(QObject):
                     location.front.front.set_id(item['id'])
                 # 置左侧
                 # elif item['position'][0] < 0 and abs(item['position'][0]) < 0.150 and (max_distance - SIDE_DIFF) > item['position'][2] and euler_orientation[1] < -45:
-                elif item['position'][0] < 0 and abs(item['position'][0]) < 0.150 and euler_orientation[1] < -45 and abs(item['position'][2]) < 0.275:
+                elif item['position'][0] < 0 and abs(item['position'][0]) < 0.2 and euler_orientation[1] < -30 and abs(item['position'][2]) < 0.275 and item['id'][0] < 900:
                     # print(item['position'][2])
                     # print(item['position'][2] - 0.1)
                     # print('左侧\n')
@@ -183,7 +186,7 @@ class JData_Collection(QObject):
                         left_list[1] = copy.deepcopy(temp_left)
                 # 置右侧
                 # elif item['position'][0] > 0 and abs(item['position'][0]) < 0.150 and (max_distance - SIDE_DIFF) > item['position'][2] and euler_orientation[1] > 45:
-                elif item['position'][0] > 0 and abs(item['position'][0]) < 0.150 and euler_orientation[1] > 45 and abs(item['position'][2]) < 0.275:
+                elif item['position'][0] > 0 and abs(item['position'][0]) < 0.200 and euler_orientation[1] > 30 and abs(item['position'][2]) < 0.275 and item['id'][0] < 900:
                     # print('右侧\n')
                     temp_right.distance.set_x(item['position'][0])
                     temp_right.distance.set_y(item['position'][1])
@@ -200,6 +203,16 @@ class JData_Collection(QObject):
                         right_list.insert(0, copy.deepcopy(temp_right))
                     elif len(right_list) == 2 and right_list[0].distance.z() < item['position'][2] and right_list[1].distance.z() > item['position'][2]:
                         right_list[1] = copy.deepcopy(temp_right)
+            for item in apriltag_data:
+                if item['id'][0] >= 900 and flag_front:
+                    location.set_cube(JApril_Tag_Info())
+                    location.cube.distance.set_x(item['position'][0])
+                    location.cube.distance.set_y(item['position'][1])
+                    location.cube.distance.set_z(item['position'][2])
+                    location.cube.orientation.set_x(euler_orientation[0])
+                    location.cube.orientation.set_y(euler_orientation[1])
+                    location.cube.orientation.set_z(euler_orientation[2])
+                    location.cube.set_id(item['id'])
             location.set_left_list(left_list)
             location.set_right_list(right_list)
 

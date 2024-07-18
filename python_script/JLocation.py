@@ -488,6 +488,7 @@ class JLocation():
         self.__cube = data
 
     # 深复制JLocation
+
     def copy_JLocation(self) -> "JLocation":
         return copy.deepcopy(self)
         # location = JLocation()

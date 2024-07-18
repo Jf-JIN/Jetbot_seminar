@@ -119,6 +119,8 @@ class JMap_Path_Node():
         temp_sort = []
         if self.front:
             temp.append(self.front)
+        if self.back:
+            temp.append(self.back)
         if len(self.left_list) > 0:
             for i in self.left_list:
                 if not i:
@@ -153,12 +155,12 @@ class JMap_Path_Node():
         elif action == 'left':
             self.from_parent_action = 'left'
             self.back = self.parent_node.right_list[-1]
-            self.right_list.append(self.front)
+            self.right_list.append(self.parent_node.front)
             self.left_list.append(None)
         elif action == 'right':
             self.from_parent_action = 'right'
             self.back = self.parent_node.left_list[-1]
-            self.left_list.append(self.front)
+            self.left_list.append(self.parent_node.front)
             self.right_list.append(None)
         else:
             log_info(f'[JMap_Path_Node][set_parent_action]: 参数 action 错误， 当前为 {action}')

@@ -43,6 +43,8 @@ class JMap_Grid_Matrix_From_Yaml():
     def _from_JWall_list_generate_map(self, JWall_list: JWalls) -> None:
         try:
             temp_obj_matrix = [[None for _ in range(JWall_list.range_Maze_y * 2 + 1)] for _ in range(JWall_list.range_Maze_x * 2 + 1)]
+            for i in temp_obj_matrix:
+                print(i)
             for _, wall in enumerate(JWall_list.JWall_list):
                 wall: JWall
                 x_index = int((wall.middle.x() - WALL_THICKNESS_HALF) / (WALL_THICKNESS_HALF+WALL_WIDTH_HALF))  # 索引坐标(以中点计算) = 1.5 + (125 + 1.5) * 索引值 n
@@ -58,7 +60,9 @@ class JMap_Grid_Matrix_From_Yaml():
     # 获取抽象矩阵
 
     def _from_map_obj_to_abstract_matrix(self) -> None:
-        temp_abstract_matrix = [[1 for _ in range(len(self.__map_obj_matrix))] for _ in range(len(self.__map_obj_matrix))]
+        temp_abstract_matrix = [[1 for _ in range(len(self.__map_obj_matrix[0]))] for _ in range(len(self.__map_obj_matrix))]
+        for i in temp_abstract_matrix:
+            print(i)
         for x_index, wall_list in enumerate(self.__map_obj_matrix):
             for y_index, wall in enumerate(wall_list):
                 wall: JWall
@@ -97,6 +101,7 @@ class JMap_Grid_Matrix_From_Yaml():
                                 x_pos_float = i.middle.x()
                                 y_pos_float = i.rightside + distance
                         # log_info(f'当前id号({id})，距离：{distance}, 位置: [{x_pos_float}, {y_pos_float}]\n当前墙id号{i.main_0.id} {i.main_1.id} {i.sub_0.id} {i.sub_1.id}\n墙的方向 {i.orientation}')
+
                         if x_pos_float < 0 or y_pos_float < 0:
                             log_info(f'请正确输入id和距离, 当前id号({id})和距离{distance}对应部分x: {x_pos_float} y: {y_pos_float}超出地图范围')
                             return None
@@ -104,7 +109,7 @@ class JMap_Grid_Matrix_From_Yaml():
                         # log_info(f'当前id号({id})，距离：{distance}, 位置: [{x_pos_float}, {y_pos_float}]')
                         # log_info(f'middle.x {i.middle.x()} middle.y {i.middle.y()} topside {i.topside} leftside {i.leftside} rightside {i.rightside} bottomside {i.bottomside}')
                         index = self.from_coordinate_to_index([x_pos_float, y_pos_float])
-                        # log_info('索引', index)
+                        # log_info(f'索引 {index}')
                         return index
         except Exception as e:
             e = traceback.format_exc()

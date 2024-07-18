@@ -129,7 +129,7 @@ class JPath_Finding_A_Star():
             temp_path.append(temp_action_dict)
         log_info('[分解路径]')
         for i in temp_path:
-            log_info(i)
+            print(i)
         log_info('[路径字典]')
         log_info(temp_path)
         return temp_path

@@ -291,9 +291,10 @@ class JMotor_Run_QThread(QThread):
         target_distance = target_distance - JB_DISTANCE_FROM_CAMERA_TO_CENTER
         while self.check_front_tag_and_turn_to_search(target_id) and self.flag_running:
             current_distance = self.front_apriltag.distance.z()
-            distance_diff = current_distance - (target_distance + distance_before_turn)  # 当前距离与目标距离之间的差值
+            distance_diff = current_distance - (target_distance+0.05 + distance_before_turn)  # 当前距离与目标距离之间的差值
             log_info(f'current_distance, distance_diff {current_distance}, {distance_diff}')
             if distance_diff < PATH_TOLERANCE_DISTANCE or not self.flag_running:
+                log_info('直线已抵达')
                 break
             # if time.time() - self.__start_time <= 0.5 and distance_diff > 0.125:
             #     self.publish_pwm(0.2, 0.2)
@@ -303,30 +304,31 @@ class JMotor_Run_QThread(QThread):
             #     self.publish_pwm(0.4, 0.4)
             if distance_diff > 0.125:
                 if self.location.front.front.distance.x() > 0.005:
-                    self.publish_pwm(0.3, 0.25)
+                    self.publish_pwm(0.3, 0.26)
                 elif self.location.front.front.distance.x() < -0.005:
-                    self.publish_pwm(0.25, 0.3)
+                    self.publish_pwm(0.26, 0.3)
                 else:
                     self.publish_pwm(0.3, 0.3)
             else:
                 self.publish_pwm(0.2, 0.2)
             if current_distance <= PATH_DEFAULT_MIN_DISTANCE:
-                log_info(f'[急停]: 距离墙过近，电机急停')
+                log_info('[急停]: 距离墙过近，电机急停')
                 self.pi_controler.reset_error_and_integral()
                 self.publish_pwm(0, 0, send_emit=False)
                 break
-
-        log_info(end_orientation)
+        log_info(f'end_orientation {end_orientation}')
         if not end_orientation:
-            log_info(f'[结束]: 清空 PID 数值, 停止电机')
+            log_info('[结束]: 清空 PID 数值, 停止电机')
             self.publish_pwm(0, 0, send_emit=False)
         elif end_orientation == 'turn_left':
+            log_info('直线接左转')
             log_info('left')
-            self.rotation_fixed_time(1.4, 85, radius=0, end_speed=PATH_TURN_SPEED, target_id=end_id)
+            self.rotation_fixed_time(1.6, 85, radius=0, end_speed=PATH_TURN_SPEED, target_id=end_id)
         elif end_orientation == 'turn_right':
             log_info('right')
-            self.rotation_fixed_time(1.4, -85, radius=0, end_speed=PATH_TURN_SPEED, target_id=end_id)
-        log_info(f'[阶段结束]: 直线阶段结束')
+            log_info('直线接右转')
+            self.rotation_fixed_time(1.6, -85, radius=0, end_speed=PATH_TURN_SPEED, target_id=end_id)
+        log_info('[阶段结束]: 直线阶段结束')
 
     def straight_slow(self, target_id, target_distance, distance_before_turn=0, end_orientation=None, end_id=None):
         target_distance = target_distance - JB_DISTANCE_FROM_CAMERA_TO_CENTER
@@ -347,7 +349,7 @@ class JMotor_Run_QThread(QThread):
             else:
                 self.publish_pwm(0.2, 0.2)
             if current_distance <= PATH_DEFAULT_MIN_DISTANCE:
-                log_info(f'[急停]: 距离墙过近，电机急停')
+                log_info('[急停]: 距离墙过近，电机急停')
                 self.pi_controler.reset_error_and_integral()
                 self.publish_pwm(0, 0, send_emit=False)
                 break
@@ -355,25 +357,33 @@ class JMotor_Run_QThread(QThread):
         self.publish_pwm(0, 0, send_emit=False)
 
     def straight_return(self, target_id, target_distance, distance_before_turn=0, end_orientation=None):
+        log_info(f'开始执行直线后退动作 {self.flag_running}')
         target_distance = target_distance - JB_DISTANCE_FROM_CAMERA_TO_CENTER
         while self.check_front_tag_and_turn_to_search(target_id) and self.flag_running:
+            log_info('直线后退循环')
+            self.update_location()
             current_distance = self.front_apriltag.distance.z()
             distance_diff = current_distance - (target_distance + distance_before_turn)  # 当前距离与目标距离之间的差值
             log_info(f'current_distance, distance_diff {current_distance}, {distance_diff}')
-            if distance_diff < PATH_TOLERANCE_DISTANCE+0.005 or not self.flag_running:
+            if abs(distance_diff) < PATH_TOLERANCE_DISTANCE+0.005 or not self.flag_running:
                 break
-            self.publish_pwm(-0.2, -0.2)
+            if self.location.front.front.orientation.y() > 2:
+                self.publish_pwm(-0.2, -0.23)
+            elif self.location.front.front.orientation.y() < -2:
+                self.publish_pwm(-0.23, -0.2)
+            else:
+                self.publish_pwm(-0.2, -0.2)
             if current_distance <= PATH_DEFAULT_MIN_DISTANCE:
-                log_info(f'[急停]: 距离墙过近，电机急停')
+                log_info('[急停]: 距离墙过近，电机急停')
                 self.pi_controler.reset_error_and_integral()
                 self.publish_pwm(0, 0, send_emit=False)
                 break
         self.publish_pwm(0, 0, send_emit=False)
 
-    def straight_return(self, time_diff):
-        target_distance = target_distance - JB_DISTANCE_FROM_CAMERA_TO_CENTER
+    def straight_return_fix_time(self, time_diff):
+        # target_distance = target_distance - JB_DISTANCE_FROM_CAMERA_TO_CENTER
         start_time = time.time()
-        while time.time()-start_time and self.flag_running:
+        while time.time()-start_time < time_diff and self.flag_running:
             self.publish_pwm(-0.2, -0.2)
         self.publish_pwm(0, 0, send_emit=False)
 
@@ -383,11 +393,11 @@ class JMotor_Run_QThread(QThread):
             self.publish_pwm(0.2, 0.2)
         self.publish_pwm(0, 0, send_emit=False)
 
-    def straight_return_fix_time(self, time_diff):
-        start_time = time.time()
-        while (time.time() - start_time) < time_diff:
-            self.publish_pwm(-0.2, -0.2)
-        self.publish_pwm(0, 0, send_emit=False)
+    # def straight_return_fix_time(self, time_diff):
+    #     start_time = time.time()
+    #     while (time.time() - start_time) < time_diff:
+    #         self.publish_pwm(-0.2, -0.2)
+    #     self.publish_pwm(0, 0, send_emit=False)
 
     # 单路径
 
@@ -404,7 +414,7 @@ class JMotor_Run_QThread(QThread):
 
         # 处理路径段操作
         if mode == "line":
-            self.straight_slow(target_id, target_distance, distance_before_turn, end_orientation, end_id=end_id)
+            self.straight(target_id, target_distance, distance_before_turn, end_orientation, end_id=end_id)
             log_info('[执行路径]: 直线行进')
             # 根据end_orientation进行相应的自转操作
             # if end_orientation == "turn_left" and self.flag_running:
@@ -465,25 +475,32 @@ class JMotor_Run_QThread(QThread):
         target_distance = self.action_dict['target_distance']
         end_id = self.action_dict['end_id']
         if mode == 'line':
+            self.flag_running = True
             log_info(f'当前模式 {mode}')
             self.straight(target_id, target_distance, end_id=end_id)
         elif mode == 'line_slow':
+            self.flag_running = True
             log_info(f'当前模式 {mode}')
             self.straight_slow(target_id, target_distance)
         elif mode == 'line_fix_time':
+            self.flag_running = True
             log_info(f'当前模式 {mode}')
             self.straight_slow_fix_time(time_diff)
         elif mode == 'line_return':
+            self.flag_running = True
             log_info(f'当前模式 {mode}')
             self.straight_return(target_id, target_distance)
         elif mode == 'line_return_fix_time':
+            self.flag_running = True
             log_info(f'当前模式 {mode}')
             self.straight_return_fix_time(time_diff)
         elif mode == 'circle':
+            self.flag_running = True
             log_info(f'当前模式 {mode}')
             log_info(degrees)
             self.rotation_fixed_time(time_diff, degrees, radius=radius)
         elif mode == 'path':
+            self.flag_running = True
             log_info(f'当前模式 {mode}')
             self.path_list_launch(path)
         else:
@@ -530,7 +547,7 @@ class JMotor(QObject):
         # log_info(f'已退出线程')
         self.motor_thread.wait()
         self.signal_finished.emit(False)
-        log_info(f'线程清理已完成')
+        log_info('线程清理已完成')
 
     def qthread_init(self, action_dict):
         log_info(action_dict)

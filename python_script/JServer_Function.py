@@ -15,6 +15,7 @@ from JServer_Console_QThread import *
 from JServer_Apriltag_QThread import *
 from JMotor_Drive_main import *
 from JAlgorithm_JPath_Search import *
+from JAlgorithm_JPath_cube import *
 
 
 log_info = logger_dict_server['info']
@@ -84,7 +85,7 @@ class JServer_Function(QMainWindow):
         log_info(f'[执行解包]: {data}')
         key_list = [
             'camera_listener', 'jlocation_listener', 'ros_node_init', 'a1_map_yaml_dict', 'motor_action', 'a1_path_dict', 'roscore', 'ros_camera', 'ros_rectify',
-            'ros_apriltag_detection', 'ros_imu', 'ros_imu_calib', 'ros_motor', 'ros_algorithm', 'motor_parameter', 'force_accept', 'a2_map_build'
+            'ros_apriltag_detection', 'ros_imu', 'ros_imu_calib', 'ros_motor', 'ros_algorithm', 'motor_parameter', 'force_accept', 'a2_map_build', 'a3_find'
         ]
         key = None
         for item in key_list:
@@ -169,6 +170,9 @@ class JServer_Function(QMainWindow):
                     self.motor.motor_thread_object.motor_right_calib = sub_value[1]
         elif key == 'a2_map_build':
             self.path_search = JPath_Search(self.data_collector, self.server_console.send_all)
+            self.path_search.start()
+        elif key == 'a3_find':
+            self.path_search = JPath_Search_Cube(self.data_collector, self.server_console.send_all)
             self.path_search.start()
         elif key not in self.active_threads and data[key] != 'Emergency_Stop':
             self.concole_thread(key, data)

@@ -74,7 +74,7 @@ class Client_Video_QThread(QThread):
         except OSError as e:
             e = traceback.format_exc()
             self.client_socket.close()
-            self.signal_error_stop_motor.emit()
+            self.signal_error_output.emit()
             return None
 
         except Exception as e:
