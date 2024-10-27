@@ -49,7 +49,9 @@ The primary role is to pass the pathfinding results to the motor drive for execu
 Responsible for path computation and planning, creating the map, and sending suggestions to the central processing unit. The pathfinding module employs two primary algorithms: A* and DFS* (Depth First Search).
 
 <div style="display:inline-block;"> <img src="https://github.com/Jf-JIN/Jetbot_seminar/blob/main/image/A+Algo.png" alt="A*Algo" height = "200"> </div>
-*  A* Algorithm Used in tasks 1 and 3, with two path extension options: four-directional and eight-directional.
+* A* Algorithm 
+
+  Used in tasks 1 and 3, with two path extension options: four-directional and eight-directional.
 <div style="display:inline-block;"> <img src="https://github.com/Jf-JIN/Jetbot_seminar/blob/main/image/erweitung4.png" alt="erweitung4" height = "200"> <img src="https://github.com/Jf-JIN/Jetbot_seminar/blob/main/image/erweitung8.png" alt="erweitung8" height = "200"></div>
 For a predefined maze, the algorithm results are as shown (using Manhattan distance):
 
@@ -60,11 +62,15 @@ The calculated path contains multiple waypoints. These points are then connected
 The car then moves according to the path instructions.
 
 <div style="display:inline-block;"> <img src="https://github.com/Jf-JIN/Jetbot_seminar/blob/main/image/DFS-Algo.png" alt="DFS-Algo" height = "200"> </div>
-* DFS Algorithm Mainly used for tasks 2 and 3 to systematically explore each branch (node) in an unknown map. Two key challenges in this task include:
-Free Wall Problem: Can cause the car to revisit the same node indefinitely. Recognizing visited nodes is essential to prevent infinite loops.
-No Wall Problem: The car reliably detects AprilTags only one unit in front. When no AprilTag is detected ahead, a new node is added as a branch, potentially causing the same issue as the free wall problem.
+* DFS Algorithm 
+
+  Mainly used for tasks 2 and 3 to systematically explore each branch (node) in an unknown map. Two key challenges in this task include:
+  Free Wall Problem: Can cause the car to revisit the same node indefinitely. Recognizing visited nodes is essential to prevent infinite loops.
+  No Wall Problem: The car reliably detects AprilTags only one unit in front. When no AprilTag is detected ahead, a new node is added as a branch, potentially causing the same issue as the free wall problem.
 <div style="display:inline-block;"> <img src="https://github.com/Jf-JIN/Jetbot_seminar/blob/main/image/freiWand.png" alt="freiWand" height = "200"> <img src="https://github.com/Jf-JIN/Jetbot_seminar/blob/main/image/keinWand.png" alt="keinWand" height = "200"></div>
-* BFS algorithm was not completed in time to compare with DFS.
+* BFS algorithm 
+
+  It was not completed in time to compare with DFS.
 
 ## Remaining Issues
 1. AprilTag Recognition Angle: In task 1, the Jetbot sometimes approaches AprilTags at a slant, leading to positioning errors and potential collisions.
