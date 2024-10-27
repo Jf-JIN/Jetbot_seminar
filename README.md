@@ -36,7 +36,9 @@ The client parses the YAML file, constructs a map class, communicates with the c
 Map construction involves analyzing the YAML file, establishing different wall classes based on each wall's center point and orientation, and placing them within a map (manager) class containing two matrices: an object matrix (containing actual wall objects for extracting wall information) and an abstract matrix (a binary matrix for path calculation using A*).
 
 <div style="display:inline-block;"> <img src="https://github.com/Jf-JIN/Jetbot_seminar/blob/main/image/matrix2.png" alt="matrix2" height = "200"> <img src="https://github.com/Jf-JIN/Jetbot_seminar/blob/main/image/matrix3.png" alt="matrix3" height = "200"></div>
+
 #### Motor Drive
+
 Primarily responsible for motor control, using PID or other control algorithms, including pose correction. The module receives data packets from the data acquisition unit to determine location and then executes movements as directed by the central processing algorithm.
 
 #### Data Acquisition
