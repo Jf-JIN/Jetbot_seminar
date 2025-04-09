@@ -155,7 +155,7 @@ class Client_Console_QThread(QThread):
             while self.flag_running:
                 data_decode: str = self.receive_decode()
                 if data_decode:
-                    for i in ['\x00', '\x00', '\x00', '\x01']:      # 莫名其妙的符号，不必管
+                    for i in ['\x00', '\x01']:      # 莫名其妙的符号，不必管
                         if i in data_decode:
                             data_decode = data_decode.replace(i, '')
                     if not data_decode:
@@ -246,7 +246,7 @@ class Server_Console_QThread(QThread):
             client_socket.close()
 
     # 向所有设备发送信息
-    @ pyqtSlot(dict)
+    @pyqtSlot(dict)
     def send_all(self, text: dict) -> None:
         for client_socket, client_address in self.clients_list:
             self.send(client_socket, text)
